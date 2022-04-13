@@ -87,17 +87,18 @@ class MainWindow(QMainWindow):
         bead_and_pallete_picker = QLabel("Bead and Pallete Picker")
         bead_and_pallete_picker.setObjectName("bead_and_pallete_picker")
         bead_and_pallete_picker.setMinimumSize(150, 200)
-        # only expand in the vertical direction; size policy: https://doc.qt.io/qt-5/qwidget.html#size-prop
-        bead_and_pallete_picker.setSizePolicy(QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding))
+        bead_and_pallete_picker.setSizePolicy(QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)) # only expand in the vertical direction; size policy: https://doc.qt.io/qt-5/qwidget.html#size-prop
 
         ### EDITTING WINDOW
         # TODO: change background to white
         editting_window = QLabel("Editting Window")
+        editting_window.setObjectName("editting_window")
 
         ### MAIN LAYOUT
         layout = QHBoxLayout()
         layout.addWidget(bead_and_pallete_picker)
         layout.addWidget(editting_window)
+        layout.setContentsMargins(0,0,0,0)
 
         container = QWidget()
         container.setLayout(layout)
