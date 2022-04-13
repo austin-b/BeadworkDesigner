@@ -1,8 +1,13 @@
-QVBoxLayout#bead_and_pallete_picker {
-    /*border: 1px solid red;*/
-    margin: 0;
-    padding-left: 5;
+QLabel#bead_picker {
+    border: 1px solid red;
+    margin: 5px 0px 0px 5px;
 }
+
+QListWidget#bead_list {
+    border: 1px solid blue;
+    margin: 0px 0px 5px 5px;
+}
+
 QLabel#editting_window {
     border-left: 1px solid lightgray;
     margin: 0;

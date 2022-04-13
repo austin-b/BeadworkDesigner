@@ -16,8 +16,8 @@ from PyQt6.QtWidgets import (
     QApplication, 
     QHBoxLayout,
     QLabel,
+    QListWidget,
     QMainWindow,
-    QSizePolicy,
     QToolBar,
     QVBoxLayout,
     QWidget
@@ -93,9 +93,17 @@ class MainWindow(QMainWindow):
         # TODO: put in its own class
         bead_and_pallete_picker = QVBoxLayout()
         bead_and_pallete_picker.setObjectName("bead_and_pallete_picker")
+
         bead_picker = QLabel("Bead Picker")
-        bead_picker.setFixedWidth(150)
+        bead_picker.setObjectName("bead_picker")
+        bead_picker.setFixedSize(150, 150)
+
+        bead_list = QListWidget()
+        bead_list.setObjectName("bead_list")
+        bead_list.setFixedWidth(150)
+        
         bead_and_pallete_picker.addWidget(bead_picker)
+        bead_and_pallete_picker.addWidget(bead_list)
 
         ### EDITTING WINDOW
         editting_window = QLabel("Editting Window")
