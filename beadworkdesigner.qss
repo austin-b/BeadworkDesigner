@@ -1,4 +1,4 @@
-QLabel#bead_and_pallete_picker {
+QVBoxLayout#bead_and_pallete_picker {
     /*border: 1px solid red;*/
     margin: 0;
     padding-left: 5;
