@@ -3,6 +3,8 @@ TODO: sketch design
 TODO: README
 TODO: create basic outline of design
 TODO: sketch database design
+TODO: create stylesheet
+
 
 Notes:
 - venv: bwdesigner
