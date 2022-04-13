@@ -1,0 +1,37 @@
+TODO: set up main file
+TODO: sketch design
+
+Notes:
+- table or database for storage?
+    - check resource usage for efficiency
+- logging in multiple modules: https://stackoverflow.com/questions/15727420/using-logging-in-multiple-modules
+- tdd with gui:
+        The answer which has evolved over the last few years is, you don't apply TDD to the GUI, 
+        you design the GUI in such as way that there's a layer just underneath you can develop with TDD. 
+        The Gui is reduced to a trivial mapping of controls to the ViewModel, often with framework 
+        bindings, and so is ignored for TDD.
+- generate documentation from docstrings and in-code documentation: https://pdoc3.github.io/pdoc/doc/pdoc/#pdoc&gsc.tab=0
+- 
+
+Basic Features to implement:
+- bead layouts:
+    - loom/square stitch
+    - 2 and 3 drop peyote stitch
+    - rosette
+- bead types (seed bead vs miyuki squared types)
+- ruler guides in design space
+- list of colors in design
+- color picking
+- keyboard shortcuts
+- auto save
+- orientation switching
+- print/export to pdf
+
+Advanced Features to implement:
+- 3d design view
+- picture-to-design
+- color recommendations
+- web version
+- changing bead types in pattern
+- "sketch" mode
+- design api
