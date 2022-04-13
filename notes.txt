@@ -1,5 +1,7 @@
 TODO: set up main file
 TODO: sketch design
+TODO: README
+TODO: create main window with file menu
 
 Notes:
 - venv: bwdesigner
