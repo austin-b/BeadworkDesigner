@@ -11,8 +11,12 @@ import sys
 
 from PyQt6.QtCore import QSize
 from PyQt6.QtGui import QAction
-from PyQt6.QtWidgets import QApplication, QMainWindow
-
+from PyQt6.QtWidgets import (
+    QApplication, 
+    QLabel,
+    QMainWindow,
+    QToolBar
+)
 
 class MainWindow(QMainWindow):
     """Main window of application.
@@ -24,6 +28,8 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Beadwork Designer")
 
         self.create_menus()
+
+        self.create_toolbar()
 
         self.setMinimumSize(QSize(1024, 600))
 
@@ -50,7 +56,13 @@ class MainWindow(QMainWindow):
         # TODO: add About widget
 
         logging.info("Created menus.")
-        
+
+    def create_toolbar(self):
+        """Create toolbar for main window.
+        """
+        toolbar = QToolBar("Main Toolbar")
+        toolbar.addWidget(QLabel("Toolbar"))
+        self.addToolBar(toolbar)
 
 if __name__ == "__main__":
 
