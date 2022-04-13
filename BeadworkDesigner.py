@@ -9,6 +9,7 @@ TODO: what goes in a package summary?
 import logging
 import sys
 
+from PyQt6.QtCore import QSize
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import QApplication, QMainWindow
 
@@ -23,6 +24,8 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Beadwork Designer")
 
         self.create_menus()
+
+        self.setMinimumSize(QSize(1024, 600))
 
     def create_menus(self):
         """Create all menus for main window.
@@ -39,6 +42,10 @@ class MainWindow(QMainWindow):
 
         ### EDIT MENU
         edit_menu = menu.addMenu("Edit")
+
+        ### HELP MENU
+        help_menu = menu.addMenu("Help")
+        # TODO: add About widget
         
 
 if __name__ == "__main__":
