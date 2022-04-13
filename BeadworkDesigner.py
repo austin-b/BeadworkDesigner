@@ -33,8 +33,13 @@ class MainWindow(QMainWindow):
 
         # TODO: make this changeable
         stylesheet = "beadworkdesigner.qss"
-        with open(stylesheet, "r") as f:
+        try:
+            f = open(stylesheet, "r")
             self.setStyleSheet(f.read())
+            logging.info("Set style.")
+        except Exception as e:
+            logging.critical("Failed to open stylesheet")
+            exit()
 
         self.create_menus()
 
