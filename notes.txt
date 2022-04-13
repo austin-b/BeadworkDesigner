@@ -1,7 +1,8 @@
 TODO: set up main file
 TODO: sketch design
 TODO: README
-TODO: 
+TODO: create basic outline of design
+TODO: sketch database design
 
 Notes:
 - venv: bwdesigner
@@ -10,6 +11,9 @@ Notes:
     - multiple qt models connecting to same db?
         - corruption likelihood?
     - using a db would allow to change colors of many widgets at same time
+    - table:
+        - can load up from xml file save
+        - for colors: each widget can have an onColorChange signal that updates a list model in memory
 - logging in multiple modules: https://stackoverflow.com/questions/15727420/using-logging-in-multiple-modules
 - tdd with gui:
         The answer which has evolved over the last few years is, you don't apply TDD to the GUI, 
