@@ -1,0 +1,3 @@
+QLabel#bead_and_pallete_picker {
+    border: 1px solid red;
+}
