@@ -90,6 +90,7 @@ class MainWindow(QMainWindow):
 
         ### BEAD AND PALLETE PICKER
         # TODO: actually make this the widget it should be
+        # TODO: put in its own class
         bead_and_pallete_picker = QVBoxLayout()
         bead_and_pallete_picker.setObjectName("bead_and_pallete_picker")
         bead_picker = QLabel("Bead Picker")
@@ -97,7 +98,6 @@ class MainWindow(QMainWindow):
         bead_and_pallete_picker.addWidget(bead_picker)
 
         ### EDITTING WINDOW
-        # TODO: change background to white
         editting_window = QLabel("Editting Window")
         editting_window.setObjectName("editting_window")
 

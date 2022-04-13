@@ -1,8 +1,9 @@
 TODO: README
 TODO: create basic outline of design
 TODO: sketch database design
-TODO: create stylesheet
 
+Goals:
+4/20/22 - have a frontend that I can begin building backend
 
 Notes:
 - venv: bwdesigner
