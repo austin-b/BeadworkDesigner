@@ -31,6 +31,11 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("Beadwork Designer")
 
+        # TODO: make this changeable
+        stylesheet = "beadworkdesigner.stylesheet"
+        with open(stylesheet, "r") as f:
+            self.setStyleSheet(f)
+
         self.create_menus()
 
         self.create_toolbar()
