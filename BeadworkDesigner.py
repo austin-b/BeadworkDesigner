@@ -27,6 +27,8 @@ class MainWindow(QMainWindow):
 
         self.setMinimumSize(QSize(1024, 600))
 
+        logging.info("Finished setup.")
+
     def create_menus(self):
         """Create all menus for main window.
         """
@@ -46,6 +48,8 @@ class MainWindow(QMainWindow):
         ### HELP MENU
         help_menu = menu.addMenu("Help")
         # TODO: add About widget
+
+        logging.info("Created menus.")
         
 
 if __name__ == "__main__":
@@ -62,6 +66,6 @@ if __name__ == "__main__":
 
     window.show()
 
-    logging.info("Running app")
+    logging.info("Executing app.")
 
     app.exec()
