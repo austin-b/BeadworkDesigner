@@ -70,6 +70,8 @@ class MainWindow(QMainWindow):
         toolbar.addWidget(QLabel("Toolbar"))
         self.addToolBar(toolbar)
 
+        logging.info("Created toolbar.")
+
     def create_main_window(self):
         """Creates main viewing window and widgets
         """
@@ -90,6 +92,8 @@ class MainWindow(QMainWindow):
         container.setLayout(layout)
 
         self.setCentralWidget(container)
+
+        logging.info("Created main window.")
 
 if __name__ == "__main__":
 
