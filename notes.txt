@@ -1,5 +1,3 @@
-TODO: set up main file
-TODO: sketch design
 TODO: README
 TODO: create basic outline of design
 TODO: sketch database design
@@ -8,6 +6,7 @@ TODO: create stylesheet
 
 Notes:
 - venv: bwdesigner
+- styling widgets: https://doc.qt.io/qtforpython/overviews/stylesheet-examples.html
 - table or database for storage?
     - check resource usage for efficiency
     - multiple qt models connecting to same db?

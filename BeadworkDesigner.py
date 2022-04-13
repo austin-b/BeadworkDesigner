@@ -17,6 +17,7 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QMainWindow,
+    QSizePolicy,
     QToolBar,
     QWidget
 )
@@ -76,15 +77,19 @@ class MainWindow(QMainWindow):
         """Creates main viewing window and widgets
         """
 
-        # TODO: determine width to set this widget too
+        ### BEAD AND PALLETE PICKER
         # TODO: actually make this the widget it should be
         bead_and_pallete_picker = QLabel("Bead and Pallete Picker")
+        bead_and_pallete_picker.setMaximumSize(150, 200)
+        # only expand in the vertical direction; size policy: https://doc.qt.io/qt-5/qwidget.html#size-prop
+        bead_and_pallete_picker.setSizePolicy(QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding))
 
+        ### EDITTING WINDOW
         # TODO: change background to white
         editting_window = QLabel("Editting Window")
 
+        ### MAIN LAYOUT
         layout = QHBoxLayout()
-
         layout.addWidget(bead_and_pallete_picker)
         layout.addWidget(editting_window)
 
