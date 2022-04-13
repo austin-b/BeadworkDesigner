@@ -77,9 +77,15 @@ class MainWindow(QMainWindow):
     def create_toolbar(self):
         """Create toolbar for main window.
         """
-        # TODO: add help tips for toolbar
         toolbar = QToolBar("Main Toolbar")
         toolbar.addWidget(QLabel("Toolbar"))
+
+        ### SAVE
+
+
+        ### LOAD
+
+
         self.addToolBar(toolbar)
 
         logging.info("Created toolbar.")
