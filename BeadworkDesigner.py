@@ -101,13 +101,17 @@ class MainWindow(QMainWindow):
         bead_list = QListWidget()
         bead_list.setObjectName("bead_list")
         bead_list.setFixedWidth(150)
-        
+
         bead_and_pallete_picker.addWidget(bead_picker)
         bead_and_pallete_picker.addWidget(bead_list)
+
+        logging.info("Created bead and pallete picker layout.")
 
         ### EDITTING WINDOW
         editting_window = QLabel("Editting Window")
         editting_window.setObjectName("editting_window")
+
+        logging.info("Created editting window.")
 
         ### MAIN LAYOUT
         layout = QHBoxLayout()

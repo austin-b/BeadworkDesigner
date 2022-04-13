@@ -53,3 +53,4 @@ Advanced Features to implement:
 - changing bead types in pattern
 - "sketch" mode
 - design api
+- get list of beads from manufacturer
