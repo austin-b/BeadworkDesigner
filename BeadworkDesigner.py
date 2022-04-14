@@ -128,6 +128,34 @@ class MainWindow(QMainWindow):
 
         toolbar.addSeparator()
 
+        ### ADD
+        add_button = QAction(QIcon("icons/fugure-icons/paint-brush--plus.png"), "Add", self)
+        add_button.setStatusTip("Add")
+        # TODO: add add method
+        toolbar.addAction(add_button)
+
+        ### READ
+        
+
+        ### FILL
+
+
+        ### LINE
+
+
+        ### ADD ROW
+
+
+        ### ADD COLUMN
+
+
+        ### REMOVE ROW
+
+
+        ### REMOVE COLUMN
+
+
+
         self.addToolBar(toolbar)
 
         logging.info("Created toolbar.")
