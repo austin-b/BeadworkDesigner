@@ -68,6 +68,10 @@ class MainWindow(QMainWindow):
         """Create all actions to be used by menus and toolbar.
         """
 
+        ### EXIT
+        self.exit_action = QAction("Exit", self)
+        self.exit_action.triggered.connect(quit)
+
         ### NEW
         self.new_project_action = QAction(QIcon("icons/fugue-icons/document--plus.png"), "New Project", self)
         self.new_project_action.setStatusTip("New Project")
@@ -147,15 +151,19 @@ class MainWindow(QMainWindow):
 
         ### FILE MENU
         file_menu = menu.addMenu("File")
-
-        exit_action = QAction("Exit", self)
-        exit_action.triggered.connect(quit)
-
-        file_menu.addAction(exit_action)
+        file_menu.addAction(self.new_project_action)
+        file_menu.addAction(self.save_project_action)
+        file_menu.addAction(self.load_project_action)
+        file_menu.addSeparator()
+        file_menu.addAction(self.print_project_action)
+        file_menu.addSeparator()
+        file_menu.addAction(self.exit_action)
 
         ### EDIT MENU
         edit_menu = menu.addMenu("Edit")
-        # TODO: add actions
+        edit_menu.addAction(self.undo_action)
+        edit_menu.addAction(self.redo_action)
+        # TODO: more actions?
 
         ### HELP MENU
         help_menu = menu.addMenu("Help")
