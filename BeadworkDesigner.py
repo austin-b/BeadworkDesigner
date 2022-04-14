@@ -227,7 +227,6 @@ class MainWindow(QMainWindow):
         bead_and_pallete_picker = QVBoxLayout()
         bead_and_pallete_picker.setObjectName("bead_and_pallete_picker")
 
-        # TODO: create mapper widget
         bead_picker = BeadPicker()
 
         list_search = QLineEdit()
