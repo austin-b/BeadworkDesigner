@@ -25,6 +25,7 @@ from PyQt6.QtWidgets import (
     QApplication, 
     QHBoxLayout,
     QLabel,
+    QLineEdit,
     QListWidget,
     QMainWindow,
     QToolBar,
@@ -154,6 +155,7 @@ class MainWindow(QMainWindow):
 
         ### EDIT MENU
         edit_menu = menu.addMenu("Edit")
+        # TODO: add actions
 
         ### HELP MENU
         help_menu = menu.addMenu("Help")
@@ -210,20 +212,25 @@ class MainWindow(QMainWindow):
         """
 
         ### BEAD AND PALLETE PICKER
-        # TODO: actually make this the widget it should be
         # TODO: put in its own class
         bead_and_pallete_picker = QVBoxLayout()
         bead_and_pallete_picker.setObjectName("bead_and_pallete_picker")
 
+        # TODO: create mapper widget
         bead_picker = QLabel("Bead Picker")
         bead_picker.setObjectName("bead_picker")
         bead_picker.setFixedSize(150, 150)
+
+        list_search = QLineEdit()
+        list_search.setObjectName("list_search")
+        list_search.setFixedWidth(150)
 
         bead_list = QListWidget()
         bead_list.setObjectName("bead_list")
         bead_list.setFixedWidth(150)
 
         bead_and_pallete_picker.addWidget(bead_picker)
+        bead_and_pallete_picker.addWidget(list_search)
         bead_and_pallete_picker.addWidget(bead_list)
 
         logging.info("Created bead and pallete picker layout.")
