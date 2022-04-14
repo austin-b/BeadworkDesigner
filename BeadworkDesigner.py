@@ -129,33 +129,56 @@ class MainWindow(QMainWindow):
         toolbar.addSeparator()
 
         ### ADD
-        add_button = QAction(QIcon("icons/fugure-icons/paint-brush--plus.png"), "Add", self)
+        add_button = QAction(QIcon("icons/fugue-icons/paint-brush--plus.png"), "Add", self)
         add_button.setStatusTip("Add")
         # TODO: add add method
         toolbar.addAction(add_button)
 
-        ### READ
-        
+        ### DELETE
+        delete_button = QAction(QIcon("icons/fugue-icons/paint-brush--minus.png"), "Delete", self)
+        delete_button.setStatusTip("Delete")
+        # TODO: add delete method
+        toolbar.addAction(delete_button)
 
         ### FILL
-
+        fill_button = QAction(QIcon("icons/fugue-icons/paint-can.png"), "Fill", self)
+        fill_button.setStatusTip("Fill")
+        # TODO: add fill method
+        toolbar.addAction(fill_button)
 
         ### LINE
+        line_button = QAction(QIcon("icons/fugue-icons/layer-shape-line.png"), "Line", self)
+        line_button.setStatusTip("Line")
+        # TODO: add line method
+        toolbar.addAction(line_button)
 
+        toolbar.addSeparator()
 
         ### ADD ROW
-
+        add_row_button = QAction(QIcon("icons/fugue-icons/table-insert-row.png"), "Add Row", self)
+        add_row_button.setStatusTip("Add Row")
+        # TODO: add add row method
+        toolbar.addAction(add_row_button)
 
         ### ADD COLUMN
-
+        add_column_button = QAction(QIcon("icons/fugue-icons/table-insert-column.png"), "Add Column", self)
+        add_column_button.setStatusTip("Add Column")
+        # TODO: add add column method
+        toolbar.addAction(add_column_button)
 
         ### REMOVE ROW
-
+        remove_row_button = QAction(QIcon("icons/fugue-icons/table-delete-row.png"), "Remove Row", self)
+        remove_row_button.setStatusTip("Remove Row")
+        # TODO: add remove row method
+        toolbar.addAction(remove_row_button)
 
         ### REMOVE COLUMN
+        remove_column_button = QAction(QIcon("icons/fugue-icons/table-delete-column.png"), "Remove Column", self)
+        remove_column_button.setStatusTip("Remove Column")
+        # TODO: add remove column method
+        toolbar.addAction(remove_column_button)
 
-
-
+        # add toolbar to window
         self.addToolBar(toolbar)
 
         logging.info("Created toolbar.")
