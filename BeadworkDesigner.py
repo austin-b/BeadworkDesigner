@@ -104,6 +104,17 @@ class MainWindow(QMainWindow):
         self.redo_action = QAction(QIcon("icons/fugue-icons/arrow-curve.png"), "Redo", self)
         self.redo_action.setStatusTip("Redo")
         # TODO: add redo method
+
+        ### Loom & Square Stitch
+        self.loom_square_stitch = QAction("Loom/Square Stitch", self)
+        self.loom_square_stitch.setCheckable(True)
+        # TODO: add loom/square stitch method
+
+        ### Peyote Stitch
+        self.peyote_stitch = QAction("Peyote Stitch", self)
+        self.peyote_stitch.setCheckable(True)
+        # TODO: add more peyote stitch drops
+        # TODO: add peyote stitch method 
         
         ### ADD
         self.add_action = QAction(QIcon("icons/fugue-icons/paint-brush--plus.png"), "Add", self)
@@ -170,6 +181,11 @@ class MainWindow(QMainWindow):
         edit_menu = menu.addMenu("Edit")
         edit_menu.addAction(self.undo_action)
         edit_menu.addAction(self.redo_action)
+        edit_menu.addSeparator()
+
+        stitch_submenu = edit_menu.addMenu("Stitch")
+        stitch_submenu.addAction(self.loom_square_stitch)
+        stitch_submenu.addAction(self.peyote_stitch)
         # TODO: more actions?
 
         ### HELP MENU

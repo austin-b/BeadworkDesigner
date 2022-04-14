@@ -1,6 +1,6 @@
 import logging
 
-from PyQt6.QtGui import QAction, QFont, QColor, QIcon
+from PyQt6.QtGui import QFont, QIcon
 from PyQt6.QtWidgets import QComboBox, QFormLayout, QHBoxLayout, QLabel, QPushButton, QSpinBox, QColorDialog
 
 log = logging.getLogger(__name__)
