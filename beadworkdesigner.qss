@@ -1,11 +1,11 @@
 QLabel#bead_picker {
-    border: 1px solid red;
-    margin: 5px 0px 0px 5px; /* top right bottom left */
+    /*border: 1px solid red;*/
+    margin: 6px 0px 0px 6px; /* top right bottom left */
 }
 
 QListWidget#bead_list {
-    border: 1px solid blue;
-    margin: 0px 0px 5px 5px; /* top right bottom left */
+    /*border: 1px solid blue;*/
+    margin: 0px 0px 6px 6px; /* top right bottom left */
 }
 
 QLabel#editting_window {
