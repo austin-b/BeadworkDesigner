@@ -38,10 +38,10 @@ class BeadPicker(QFormLayout):
         color_picker.addWidget(color)
         color_picker.addWidget(color_dialog)
 
-        self.addRow(QLabel("Bead Type"), bead_type)
-        self.addRow(QLabel("Rows"), rows)
-        self.addRow(QLabel("Columns"), columns)
-        self.addRow(QLabel("Color"), color_picker)
+        self.addRow(QLabel("Bead Type:"), bead_type)
+        self.addRow(QLabel("Rows:"), rows)
+        self.addRow(QLabel("Columns:"), columns)
+        self.addRow(QLabel("Color:"), color_picker)
 
         # left, top, right, bottom
         self.setContentsMargins(6, 6, 0, 0)
