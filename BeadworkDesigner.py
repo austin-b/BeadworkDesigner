@@ -235,11 +235,11 @@ class MainWindow(QMainWindow):
 
         list_search = QLineEdit()
         list_search.setObjectName("list_search")
-        list_search.setFixedWidth(150)
+        list_search.setFixedWidth(170)
 
         bead_list = QListWidget()
         bead_list.setObjectName("bead_list")
-        bead_list.setFixedWidth(150)
+        bead_list.setFixedWidth(170)
 
         bead_and_pallete_picker.addLayout(bead_picker)
         bead_and_pallete_picker.addWidget(list_search)
