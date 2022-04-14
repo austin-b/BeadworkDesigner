@@ -95,7 +95,10 @@ class MainWindow(QMainWindow):
         toolbar.addAction(new_project_button)
 
         ### SAVE
-
+        save_project_button = QAction(QIcon("icons/fugue-icons/disk--pencil.png"), "Save Project", self)
+        save_project_button.setStatusTip("Save Project")
+        # TODO: add save method
+        toolbar.addAction(save_project_button)
 
         ### LOAD
 
