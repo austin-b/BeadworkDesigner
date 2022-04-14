@@ -51,6 +51,8 @@ class MainWindow(QMainWindow):
             logging.critical("Failed to open stylesheet")
             exit()
 
+        self.create_actions()
+
         self.create_menus()
 
         self.create_toolbar()
@@ -60,6 +62,82 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(QSize(1024, 600))
 
         logging.info("Finished setup.")
+
+    def create_actions(self):
+        """Create all actions to be used by menus and toolbar.
+        """
+
+        ### NEW
+        self.new_project_action = QAction(QIcon("icons/fugue-icons/document--plus.png"), "New Project", self)
+        self.new_project_action.setStatusTip("New Project")
+        # TODO: add new method
+
+        ### SAVE
+        self.save_project_action = QAction(QIcon("icons/fugue-icons/disk--pencil.png"), "Save Project", self)
+        self.save_project_action.setStatusTip("Save Project")
+        # TODO: add save method
+
+        ### LOAD
+        self.load_project_action = QAction(QIcon("icons/fugue-icons/disk--arrow.png"), "Load Project", self)
+        self.load_project_action.setStatusTip("Load Project")
+        # TODO: add load method
+        
+        ### PRINT
+        self.print_project_action = QAction(QIcon("icons/fugue-icons/printer-monochrome.png"), "Print Project", self)
+        self.print_project_action.setStatusTip("Print Project")
+        # TODO: add print method
+        
+        ### UNDO
+        self.undo_action = QAction(QIcon("icons/fugue-icons/arrow-curve-180-left.png"), "Undo", self)
+        self.undo_action.setStatusTip("Undo")
+        # TODO: add undo method
+
+        ### REDO
+        self.redo_action = QAction(QIcon("icons/fugue-icons/arrow-curve.png"), "Redo", self)
+        self.redo_action.setStatusTip("Redo")
+        # TODO: add redo method
+        
+        ### ADD
+        self.add_action = QAction(QIcon("icons/fugue-icons/paint-brush--plus.png"), "Add", self)
+        self.add_action.setStatusTip("Add")
+        # TODO: add add method
+        
+        ### DELETE
+        self.delete_action = QAction(QIcon("icons/fugue-icons/paint-brush--minus.png"), "Delete", self)
+        self.delete_action.setStatusTip("Delete")
+        # TODO: add delete method
+
+        ### FILL
+        self.fill_action = QAction(QIcon("icons/fugue-icons/paint-can.png"), "Fill", self)
+        self.fill_action.setStatusTip("Fill")
+        # TODO: add fill method
+        
+        ### LINE
+        self.line_action = QAction(QIcon("icons/fugue-icons/layer-shape-line.png"), "Line", self)
+        self.line_action.setStatusTip("Line")
+        # TODO: add line method
+        
+        ### ADD ROW
+        self.add_row_action = QAction(QIcon("icons/fugue-icons/table-insert-row.png"), "Add Row", self)
+        self.add_row_action.setStatusTip("Add Row")
+        # TODO: add add row method
+        
+        ### ADD COLUMN
+        self.add_column_action = QAction(QIcon("icons/fugue-icons/table-insert-column.png"), "Add Column", self)
+        self.add_column_action.setStatusTip("Add Column")
+        # TODO: add add column method
+
+        ### REMOVE ROW
+        self.remove_row_action = QAction(QIcon("icons/fugue-icons/table-delete-row.png"), "Remove Row", self)
+        self.remove_row_action.setStatusTip("Remove Row")
+        # TODO: add remove row method
+        
+        ### REMOVE COLUMN
+        self.remove_column_action = QAction(QIcon("icons/fugue-icons/table-delete-column.png"), "Remove Column", self)
+        self.remove_column_action.setStatusTip("Remove Column")
+        # TODO: add remove column method
+
+        logging.info("Created actions.")
 
     def create_menus(self):
         """Create all menus for main window.
@@ -88,95 +166,39 @@ class MainWindow(QMainWindow):
         """
         toolbar = QToolBar("Main Toolbar")
 
-        ### NEW
-        new_project_button = QAction(QIcon("icons/fugue-icons/document--plus.png"), "New Project", self)
-        new_project_button.setStatusTip("New Project")
-        # TODO: add new method
-        toolbar.addAction(new_project_button)
+        toolbar.addAction(self.new_project_action)
 
-        ### SAVE
-        save_project_button = QAction(QIcon("icons/fugue-icons/disk--pencil.png"), "Save Project", self)
-        save_project_button.setStatusTip("Save Project")
-        # TODO: add save method
-        toolbar.addAction(save_project_button)
+        toolbar.addAction(self.save_project_action)
 
-        ### LOAD
-        load_project_button = QAction(QIcon("icons/fugue-icons/disk--arrow.png"), "Load Project", self)
-        load_project_button.setStatusTip("Load Project")
-        # TODO: add load method
-        toolbar.addAction(load_project_button)
+        toolbar.addAction(self.load_project_action)
 
-        ### PRINT
-        print_project_button = QAction(QIcon("icons/fugue-icons/printer-monochrome.png"), "Print Project", self)
-        print_project_button.setStatusTip("Print Project")
-        # TODO: add print method
-        toolbar.addAction(print_project_button)
+        toolbar.addAction(self.print_project_action)
 
         toolbar.addSeparator()
 
-        ### UNDO
-        undo_button = QAction(QIcon("icons/fugue-icons/arrow-curve-180-left.png"), "Undo", self)
-        undo_button.setStatusTip("Undo")
-        # TODO: add undo method
-        toolbar.addAction(undo_button)
+        toolbar.addAction(self.undo_action)
 
-        ### REDO
-        redo_button = QAction(QIcon("icons/fugue-icons/arrow-curve.png"), "Redo", self)
-        redo_button.setStatusTip("Redo")
-        # TODO: add redo method
-        toolbar.addAction(redo_button)
+        toolbar.addAction(self.redo_action)
 
         toolbar.addSeparator()
 
-        ### ADD
-        add_button = QAction(QIcon("icons/fugue-icons/paint-brush--plus.png"), "Add", self)
-        add_button.setStatusTip("Add")
-        # TODO: add add method
-        toolbar.addAction(add_button)
+        toolbar.addAction(self.add_action)
 
-        ### DELETE
-        delete_button = QAction(QIcon("icons/fugue-icons/paint-brush--minus.png"), "Delete", self)
-        delete_button.setStatusTip("Delete")
-        # TODO: add delete method
-        toolbar.addAction(delete_button)
+        toolbar.addAction(self.delete_action)
 
-        ### FILL
-        fill_button = QAction(QIcon("icons/fugue-icons/paint-can.png"), "Fill", self)
-        fill_button.setStatusTip("Fill")
-        # TODO: add fill method
-        toolbar.addAction(fill_button)
+        toolbar.addAction(self.fill_action)
 
-        ### LINE
-        line_button = QAction(QIcon("icons/fugue-icons/layer-shape-line.png"), "Line", self)
-        line_button.setStatusTip("Line")
-        # TODO: add line method
-        toolbar.addAction(line_button)
+        toolbar.addAction(self.line_action)
 
         toolbar.addSeparator()
 
-        ### ADD ROW
-        add_row_button = QAction(QIcon("icons/fugue-icons/table-insert-row.png"), "Add Row", self)
-        add_row_button.setStatusTip("Add Row")
-        # TODO: add add row method
-        toolbar.addAction(add_row_button)
+        toolbar.addAction(self.add_row_action)
 
-        ### ADD COLUMN
-        add_column_button = QAction(QIcon("icons/fugue-icons/table-insert-column.png"), "Add Column", self)
-        add_column_button.setStatusTip("Add Column")
-        # TODO: add add column method
-        toolbar.addAction(add_column_button)
+        toolbar.addAction(self.add_column_action)
 
-        ### REMOVE ROW
-        remove_row_button = QAction(QIcon("icons/fugue-icons/table-delete-row.png"), "Remove Row", self)
-        remove_row_button.setStatusTip("Remove Row")
-        # TODO: add remove row method
-        toolbar.addAction(remove_row_button)
+        toolbar.addAction(self.remove_row_action)
 
-        ### REMOVE COLUMN
-        remove_column_button = QAction(QIcon("icons/fugue-icons/table-delete-column.png"), "Remove Column", self)
-        remove_column_button.setStatusTip("Remove Column")
-        # TODO: add remove column method
-        toolbar.addAction(remove_column_button)
+        toolbar.addAction(self.remove_column_action)
 
         # add toolbar to window
         self.addToolBar(toolbar)
