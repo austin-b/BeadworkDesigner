@@ -33,6 +33,9 @@ from PyQt6.QtWidgets import (
     QWidget
 )
 
+from BeadPicker import BeadPicker
+
+
 class MainWindow(QMainWindow):
     """Main window of application.
     """
@@ -225,9 +228,7 @@ class MainWindow(QMainWindow):
         bead_and_pallete_picker.setObjectName("bead_and_pallete_picker")
 
         # TODO: create mapper widget
-        bead_picker = QLabel("Bead Picker")
-        bead_picker.setObjectName("bead_picker")
-        bead_picker.setFixedSize(150, 150)
+        bead_picker = BeadPicker()
 
         list_search = QLineEdit()
         list_search.setObjectName("list_search")
@@ -237,7 +238,7 @@ class MainWindow(QMainWindow):
         bead_list.setObjectName("bead_list")
         bead_list.setFixedWidth(150)
 
-        bead_and_pallete_picker.addWidget(bead_picker)
+        bead_and_pallete_picker.addLayout(bead_picker)
         bead_and_pallete_picker.addWidget(list_search)
         bead_and_pallete_picker.addWidget(bead_list)
 
