@@ -101,10 +101,18 @@ class MainWindow(QMainWindow):
         toolbar.addAction(save_project_button)
 
         ### LOAD
-
+        load_project_button = QAction(QIcon("icons/fugue-icons/disk--arrow.png"), "Load Project", self)
+        load_project_button.setStatusTip("Load Project")
+        # TODO: add load method
+        toolbar.addAction(load_project_button)
 
         ### PRINT
+        print_project_button = QAction(QIcon("icons/fugue-icons/printer-monochrome.png"), "Print Project", self)
+        print_project_button.setStatusTip("Print Project")
+        # TODO: add print method
+        toolbar.addAction(print_project_button)
 
+        toolbar.addSeparator()
 
         ### UNDO
 
