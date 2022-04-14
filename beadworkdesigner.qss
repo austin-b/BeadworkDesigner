@@ -1,9 +1,3 @@
-QLabel#bead_picker {
-    /* border-bottom: 1px solid red; */
-    margin: 6px 0px 0px 6px; /* top right bottom left */
-    /* padding-bottom: 3px; */
-}
-
 QLineEdit#list_search {
     /* border: 1px solid green; */
     margin: 0px 0px 0px 6px;
@@ -12,6 +6,10 @@ QLineEdit#list_search {
 QListWidget#bead_list {
     /* border: 1px solid blue; */
     margin: 0px 0px 6px 6px; /* top right bottom left */
+}
+
+QSpinBox#color {
+    margin: 0px;
 }
 
 QLabel#editting_window {

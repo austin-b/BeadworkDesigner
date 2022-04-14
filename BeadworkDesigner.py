@@ -233,6 +233,7 @@ class MainWindow(QMainWindow):
 
         bead_picker = BeadPicker()
 
+        # TODO: create layout for these two and connect them
         list_search = QLineEdit()
         list_search.setObjectName("list_search")
         list_search.setFixedWidth(170)

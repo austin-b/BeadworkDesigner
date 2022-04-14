@@ -21,6 +21,7 @@ class BeadPicker(QFormLayout):
         columns = QSpinBox()
 
         color = QSpinBox()
+        color.setObjectName("color")
         color.setPrefix("#")
         color.setDisplayIntegerBase(16)
         color.setRange(0,0xFFFFFF)
