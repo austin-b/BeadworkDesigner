@@ -108,21 +108,25 @@ class MainWindow(QMainWindow):
         ### ADD
         self.add_action = QAction(QIcon("icons/fugue-icons/paint-brush--plus.png"), "Add", self)
         self.add_action.setStatusTip("Add")
+        self.add_action.setCheckable(True)
         # TODO: add add method
         
         ### DELETE
         self.delete_action = QAction(QIcon("icons/fugue-icons/paint-brush--minus.png"), "Delete", self)
         self.delete_action.setStatusTip("Delete")
+        self.delete_action.setCheckable(True)
         # TODO: add delete method
 
         ### FILL
         self.fill_action = QAction(QIcon("icons/fugue-icons/paint-can.png"), "Fill", self)
         self.fill_action.setStatusTip("Fill")
+        self.fill_action.setCheckable(True)
         # TODO: add fill method
         
         ### LINE
         self.line_action = QAction(QIcon("icons/fugue-icons/layer-shape-line.png"), "Line", self)
         self.line_action.setStatusTip("Line")
+        self.line_action.setCheckable(True)
         # TODO: add line method
         
         ### ADD ROW
