@@ -115,10 +115,18 @@ class MainWindow(QMainWindow):
         toolbar.addSeparator()
 
         ### UNDO
-
+        undo_button = QAction(QIcon("icons/fugue-icons/arrow-curve-180-left.png"), "Undo", self)
+        undo_button.setStatusTip("Undo")
+        # TODO: add undo method
+        toolbar.addAction(undo_button)
 
         ### REDO
+        redo_button = QAction(QIcon("icons/fugue-icons/arrow-curve.png"), "Redo", self)
+        redo_button.setStatusTip("Redo")
+        # TODO: add redo method
+        toolbar.addAction(redo_button)
 
+        toolbar.addSeparator()
 
         self.addToolBar(toolbar)
 
