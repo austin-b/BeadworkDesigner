@@ -17,21 +17,12 @@ Attribution 3.0 License.
 
 import logging
 import sys
-from typing import Container
 
 from PyQt6.QtCore import QSize
 from PyQt6.QtGui import QAction, QIcon
-from PyQt6.QtWidgets import (
-    QApplication, 
-    QHBoxLayout,
-    QLabel,
-    QLineEdit,
-    QListWidget,
-    QMainWindow,
-    QToolBar,
-    QVBoxLayout,
-    QWidget
-)
+from PyQt6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QLineEdit,
+                             QListWidget, QMainWindow, QToolBar, QVBoxLayout,
+                             QWidget)
 
 from BeadPicker import BeadPicker
 
