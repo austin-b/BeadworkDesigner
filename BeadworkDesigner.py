@@ -3,6 +3,15 @@ Beadwork Designer by austin-b
 
 TODO: determine license
 TODO: what goes in a package summary?
+
+
+Fugue Icons:
+
+(C) 2013 Yusuke Kamiyamane. All rights reserved.
+
+These icons are licensed under a Creative Commons
+Attribution 3.0 License.
+<http://creativecommons.org/licenses/by/3.0/>
 """
 
 
@@ -11,7 +20,7 @@ import sys
 from typing import Container
 
 from PyQt6.QtCore import QSize
-from PyQt6.QtGui import QAction
+from PyQt6.QtGui import QAction, QIcon
 from PyQt6.QtWidgets import (
     QApplication, 
     QHBoxLayout,
@@ -78,12 +87,26 @@ class MainWindow(QMainWindow):
         """Create toolbar for main window.
         """
         toolbar = QToolBar("Main Toolbar")
-        toolbar.addWidget(QLabel("Toolbar"))
+
+        ### NEW
+        new_project_button = QAction(QIcon("icons/fugue-icons/document--plus.png"), "New Project", self)
+        new_project_button.setStatusTip("New Project")
+        # TODO: add new method
+        toolbar.addAction(new_project_button)
 
         ### SAVE
 
 
         ### LOAD
+
+
+        ### PRINT
+
+
+        ### UNDO
+
+
+        ### REDO
 
 
         self.addToolBar(toolbar)
