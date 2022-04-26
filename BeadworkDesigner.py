@@ -25,6 +25,7 @@ from PyQt6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QLineEdit,
                              QWidget)
 
 from BeadPicker import BeadPicker
+from EdittingWindow import EdittingWindow
 
 
 class MainWindow(QMainWindow):
@@ -106,6 +107,8 @@ class MainWindow(QMainWindow):
         self.peyote_stitch.setCheckable(True)
         # TODO: add more peyote stitch drops
         # TODO: add peyote stitch method 
+
+        # TODO: on all edit actions, change cursor while in editting window
         
         ### ADD
         self.add_action = QAction(QIcon("icons/fugue-icons/paint-brush--plus.png"), "Add", self)
