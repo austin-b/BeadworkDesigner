@@ -259,7 +259,7 @@ class MainWindow(QMainWindow):
         logging.info("Created bead and pallete picker layout.")
 
         ### EDITTING WINDOW
-        editting_window = QLabel("Editting Window")
+        editting_window = EdittingWindow()
         editting_window.setObjectName("editting_window")
 
         logging.info("Created editting window.")

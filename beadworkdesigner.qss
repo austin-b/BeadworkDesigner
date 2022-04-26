@@ -12,8 +12,8 @@ QSpinBox#color {
     margin: 0px;
 }
 
-QLabel#editting_window {
-    border-left: 1px solid lightgray;
-    margin: 0;
-    background: white;
+#editting_window {
+    /* border-left: 1px solid lightgray; */
+    padding: 10px;
+    background-color: white;
 }
