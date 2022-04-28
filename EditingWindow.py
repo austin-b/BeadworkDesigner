@@ -36,7 +36,7 @@ class Beadwork(QWidget):
 
         self.setLayout(test_grid)
 
-class EdittingWindow(QScrollArea):
+class EditingWindow(QScrollArea):
     """Layout for editting the actual bead design.
     """
 

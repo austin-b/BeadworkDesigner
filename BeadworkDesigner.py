@@ -25,7 +25,7 @@ from PyQt6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QLineEdit,
                              QWidget)
 
 from BeadPicker import BeadPicker
-from EdittingWindow import EdittingWindow
+from EditingWindow import EditingWindow
 
 
 class MainWindow(QMainWindow):
@@ -259,7 +259,7 @@ class MainWindow(QMainWindow):
         logging.info("Created bead and pallete picker layout.")
 
         ### EDITTING WINDOW
-        editting_window = EdittingWindow()
+        editting_window = EditingWindow()
         editting_window.setObjectName("editting_window")
 
         logging.info("Created editting window.")
