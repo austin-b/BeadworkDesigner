@@ -19,6 +19,5 @@ QSpinBox#color {
 }
 
 #beadwork {
-    padding: 20px;
     background: white;
 }
