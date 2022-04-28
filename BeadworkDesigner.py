@@ -23,9 +23,9 @@ from PyQt6.QtGui import QAction, QIcon
 from PyQt6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QLineEdit,
                              QListWidget, QMainWindow, QToolBar, QVBoxLayout,
                              QWidget)
-
 from BeadPicker import BeadPicker
 from EditingWindow import EditingWindow
+from AboutWindow import AboutWindow
 
 
 class MainWindow(QMainWindow):
@@ -66,6 +66,10 @@ class MainWindow(QMainWindow):
         ### EXIT
         self.exit_action = QAction("Exit", self)
         self.exit_action.triggered.connect(quit)
+
+        ### ABOUT
+        self.about_action = QAction("About", self)
+        self.about_action.triggered.connect(self.open_about_window)
 
         ### NEW
         self.new_project_action = QAction(QIcon("icons/fugue-icons/document--plus.png"), "New Project", self)
@@ -184,7 +188,7 @@ class MainWindow(QMainWindow):
 
         ### HELP MENU
         help_menu = menu.addMenu("Help")
-        # TODO: add About widget
+        help_menu.addAction(self.about_action)
 
         logging.info("Created menus.")
 
@@ -276,6 +280,10 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(container)
 
         logging.info("Created main window.")
+
+    def open_about_window(self):
+        self.about_window = AboutWindow()
+        self.about_window.show()
 
 if __name__ == "__main__":
 
