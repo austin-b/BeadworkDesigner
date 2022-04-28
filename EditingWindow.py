@@ -10,8 +10,8 @@ from PyQt6.QtWidgets import QGridLayout, QWidget, QScrollArea
 
 log = logging.getLogger(__name__)
 
-### TODO: FOR TEST PURPOSES ONLY, DELETE WHEN FINISHED
-class Color(QWidget):
+### TODO: add resizing and color change functions
+class Bead(QWidget):
     def __init__(self, color):
         super().__init__()
         self.setAutoFillBackground(True)
@@ -19,7 +19,8 @@ class Color(QWidget):
         palette = self.palette()
         palette.setColor(QPalette.ColorRole.Window, QColor(color))
         self.setPalette(palette)
-        self.setFixedHeight(500)
+        self.setFixedHeight(15)
+        self.setFixedWidth(10)
 
 # TODO: Export this to its own file
 class Beadwork(QWidget):
@@ -27,12 +28,14 @@ class Beadwork(QWidget):
         super(QWidget, self).__init__()
 
         test_grid = QGridLayout()
+        test_grid.setSpacing(1)
 
-        for i in range(0,3):
-            test_grid.addWidget(Color("red"), i, 0)
-            test_grid.addWidget(Color("blue"), i, 1)
-            test_grid.addWidget(Color("green"), i, 2)
-            test_grid.addWidget(Color("purple"), i, 3)
+        for i in range(0,200):
+            for j in [0,4,8,12]:    # test values to make the grid wider
+                test_grid.addWidget(Bead("red"), i, j)
+                test_grid.addWidget(Bead("blue"), i, j+1)
+                test_grid.addWidget(Bead("green"), i, j+2)
+                test_grid.addWidget(Bead("purple"), i, j+3)
 
         self.setLayout(test_grid)
         
@@ -48,4 +51,4 @@ class EditingWindow(QScrollArea):
         beadwork.setObjectName("beadwork")
 
         self.setWidget(beadwork)
-        self.setWidgetResizable(True)
+        #self.setWidgetResizable(True)

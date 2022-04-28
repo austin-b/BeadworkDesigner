@@ -15,6 +15,7 @@ QSpinBox#color {
 #editing_window {
     border: 1px solid lightgray;
     background: white;
+    padding-left: 20px;
 }
 
 #beadwork {
