@@ -1,5 +1,4 @@
 ###
-# TODO: inherit from QGridLayout
 # TODO: populates with default bead widgets until read from file (ie, default model)
 # TODO: add logging functionality
 ###
@@ -22,6 +21,7 @@ class Color(QWidget):
         self.setPalette(palette)
         self.setFixedHeight(500)
 
+# TODO: Export this to its own file
 class Beadwork(QWidget):
     def __init__(self):
         super(QWidget, self).__init__()
@@ -32,9 +32,10 @@ class Beadwork(QWidget):
             test_grid.addWidget(Color("red"), i, 0)
             test_grid.addWidget(Color("blue"), i, 1)
             test_grid.addWidget(Color("green"), i, 2)
-            #test_grid.addWidget(Color("purple"), i, 3)
+            test_grid.addWidget(Color("purple"), i, 3)
 
         self.setLayout(test_grid)
+        
 
 class EditingWindow(QScrollArea):
     """Layout for editting the actual bead design.
@@ -43,7 +44,8 @@ class EditingWindow(QScrollArea):
     def __init__(self):
         super(QWidget, self).__init__()
 
-        test_beadwork = Beadwork()
+        beadwork = Beadwork()
+        beadwork.setObjectName("beadwork")
 
-        self.setWidget(test_beadwork)
+        self.setWidget(beadwork)
         self.setWidgetResizable(True)

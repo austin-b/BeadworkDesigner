@@ -259,15 +259,15 @@ class MainWindow(QMainWindow):
         logging.info("Created bead and pallete picker layout.")
 
         ### EDITTING WINDOW
-        editting_window = EditingWindow()
-        editting_window.setObjectName("editting_window")
+        editing_window = EditingWindow()
+        editing_window.setObjectName("editing_window")
 
         logging.info("Created editting window.")
 
         ### MAIN LAYOUT
         layout = QHBoxLayout()
         layout.addLayout(bead_and_pallete_picker)
-        layout.addWidget(editting_window)
+        layout.addWidget(editing_window)
         layout.setContentsMargins(0,0,0,0)
 
         container = QWidget()

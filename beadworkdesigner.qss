@@ -12,8 +12,12 @@ QSpinBox#color {
     margin: 0px;
 }
 
-#editting_window {
-    /* border-left: 1px solid lightgray; */
-    padding: 10px;
-    background-color: white;
+#editing_window {
+    border: 1px solid lightgray;
+    background: white;
+}
+
+#beadwork {
+    padding: 20px;
+    background: white;
 }
