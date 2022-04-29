@@ -2,8 +2,8 @@ TODO: README
 TODO: create basic outline of design
 TODO: sketch database design
 TODO: determime major interactions of user with design
-TODO: FIGURE OUT WHY THE BACKGROUND ISNT CHANGING COLORS
 TODO: add localization
+TODO: look at performance techniques
 
 Goals:
 4/20/22 - have a frontend that I can begin building backend
