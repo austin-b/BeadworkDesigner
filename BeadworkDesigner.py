@@ -19,7 +19,7 @@ import logging
 import sys
 
 from PyQt6.QtCore import QSize
-from PyQt6.QtGui import QAction, QIcon
+from PyQt6.QtGui import QAction, QColor, QIcon
 from PyQt6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QLineEdit,
                              QListWidget, QMainWindow, QToolBar, QVBoxLayout,
                              QWidget)
@@ -31,6 +31,8 @@ from AboutWindow import AboutWindow
 class MainWindow(QMainWindow):
     """Main window of application.
     """
+
+    color = QColor()
 
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -242,10 +244,11 @@ class MainWindow(QMainWindow):
 
         ### BEAD AND PALLETE PICKER
         # TODO: put in its own class
-        bead_and_pallete_picker = QVBoxLayout()
-        bead_and_pallete_picker.setObjectName("bead_and_pallete_picker")
+        self.bead_and_palette_picker = QVBoxLayout()
+        self.bead_and_palette_picker.setObjectName("bead_and_pallete_picker")
 
-        bead_picker = BeadPicker()
+        self.bead_picker = BeadPicker()
+        self.bead_picker.color_changed.connect(self.on_color_change)
 
         # TODO: create layout for these two and connect them
         list_search = QLineEdit()
@@ -256,9 +259,9 @@ class MainWindow(QMainWindow):
         bead_list.setObjectName("bead_list")
         bead_list.setFixedWidth(170)
 
-        bead_and_pallete_picker.addLayout(bead_picker)
-        bead_and_pallete_picker.addWidget(list_search)
-        bead_and_pallete_picker.addWidget(bead_list)
+        self.bead_and_palette_picker.addLayout(self.bead_picker)
+        self.bead_and_palette_picker.addWidget(list_search)
+        self.bead_and_palette_picker.addWidget(bead_list)
 
         logging.info("Created bead and pallete picker layout.")
 
@@ -270,7 +273,7 @@ class MainWindow(QMainWindow):
 
         ### MAIN LAYOUT
         layout = QHBoxLayout()
-        layout.addLayout(bead_and_pallete_picker)
+        layout.addLayout(self.bead_and_palette_picker)
         layout.addWidget(editing_window)
         layout.setContentsMargins(0,0,0,0)
 
@@ -284,6 +287,10 @@ class MainWindow(QMainWindow):
     def open_about_window(self):
         self.about_window = AboutWindow()
         self.about_window.show()
+
+    def on_color_change(self, new_color):
+        self.color = new_color
+        logging.info(f"color changed: {hex(self.bead_picker.qcolor_to_hex(new_color))}")
 
 if __name__ == "__main__":
 
