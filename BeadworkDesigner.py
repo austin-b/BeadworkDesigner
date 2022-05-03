@@ -20,19 +20,21 @@ import sys
 
 from PyQt6.QtCore import QSize
 from PyQt6.QtGui import QAction, QColor, QIcon
-from PyQt6.QtWidgets import (QApplication, QHBoxLayout, QLabel, QLineEdit,
-                             QListWidget, QMainWindow, QToolBar, QVBoxLayout,
-                             QWidget)
-from BeadPicker import BeadPicker
-from EditingWindow import EditingWindow
-from AboutWindow import AboutWindow
+from PyQt6.QtWidgets import (QApplication, QHBoxLayout, QLineEdit,
+                             QListWidget, QMainWindow, QScrollArea, 
+                             QToolBar, QVBoxLayout, QWidget)
 
+from AboutWindow import AboutWindow
+from BeadPicker import BeadPicker
+from Beadwork import Beadwork
+
+color = QColor()
 
 class MainWindow(QMainWindow):
     """Main window of application.
     """
 
-    color = QColor()
+    
 
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -266,10 +268,13 @@ class MainWindow(QMainWindow):
         logging.info("Created bead and pallete picker layout.")
 
         ### EDITTING WINDOW
-        editing_window = EditingWindow()
+        editing_window = QScrollArea()
         editing_window.setObjectName("editing_window")
+        beadwork = Beadwork()
+        beadwork.setObjectName("beadwork")
+        editing_window.setWidget(beadwork)
 
-        logging.info("Created editting window.")
+        logging.info("Created editing window.")
 
         ### MAIN LAYOUT
         layout = QHBoxLayout()
@@ -289,8 +294,8 @@ class MainWindow(QMainWindow):
         self.about_window.show()
 
     def on_color_change(self, new_color):
-        self.color = new_color
-        logging.info(f"color changed: {hex(self.bead_picker.qcolor_to_hex(new_color))}")
+        color = new_color
+        logging.info(f"color changed: {hex(self.bead_picker.qcolor_to_hex(color))}")
 
 if __name__ == "__main__":
 

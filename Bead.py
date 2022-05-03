@@ -22,4 +22,9 @@ class Bead(QWidget):
         self.setFixedHeight(15)
         self.setFixedWidth(10)
 
+        self.mouseReleaseEvent = self.change_color
+
+    def change_color(self, e):
+        #logging.info(f"current color: {color}")
+        pass
  

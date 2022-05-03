@@ -4,8 +4,7 @@
 
 import logging
 
-from PyQt6.QtGui import QColor, QPalette
-from PyQt6.QtWidgets import QGridLayout, QWidget, QScrollArea
+from PyQt6.QtWidgets import QGridLayout, QWidget
 
 from Bead import Bead
 
@@ -31,18 +30,3 @@ class Beadwork(QWidget):
         self.setLayout(test_grid)
 
         log.info("Created Beadwork.")
-        
-
-class EditingWindow(QScrollArea):
-    """Widget for editting the actual bead design.
-    """
-
-    def __init__(self):
-        super(QWidget, self).__init__()
-
-        beadwork = Beadwork()
-        beadwork.setObjectName("beadwork")
-
-        self.setWidget(beadwork)
-
-        log.info("Created EditingWindow")
