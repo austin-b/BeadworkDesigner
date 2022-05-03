@@ -28,6 +28,8 @@ class Bead(QWidget):
         self.mouseReleaseEvent = self.change_color
 
     def change_color(self, e):
-        #logging.info(f"current color: {color}")
-        pass
+        palette = self.palette()
+        palette.setColor(QPalette.ColorRole.Window, self.color_handler.picked_color)
+        self.setPalette(palette)
+        logging.info(f"changed color")
  
