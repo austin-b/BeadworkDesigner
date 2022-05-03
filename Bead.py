@@ -10,8 +10,11 @@ log = logging.getLogger(__name__)
 ### TODO: add resizing and color change functions
 class Bead(QWidget):
     """Widget for individual beads."""
-    def __init__(self, color):
+    def __init__(self, color_handler, color="white"):
         super().__init__()
+
+        self.color_handler = color_handler
+
         self.setAutoFillBackground(True)
 
         palette = self.palette()

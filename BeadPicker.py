@@ -1,6 +1,5 @@
 import logging
 
-from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtGui import QColor, QFont, QIcon
 from PyQt6.QtWidgets import QColorDialog, QComboBox, QFormLayout, QHBoxLayout, QLabel, QPushButton, QSpinBox, QColorDialog
 
@@ -12,12 +11,13 @@ class BeadPicker(QFormLayout):
 
     # TODO: create mapper widget ------- wat?
 
-    color = QColor(255,255,255)
+    color = QColor(255, 255, 255)
 
-    color_changed = pyqtSignal(QColor)
-
-    def __init__(self):
+    def __init__(self, color_handler):
         super(QFormLayout, self).__init__()
+
+        # TODO: need to refactor to handle this
+        self.color_handler = color_handler
 
         bead_type = QComboBox()
 
@@ -101,7 +101,7 @@ class BeadPicker(QFormLayout):
             self.color.setRgb(red, green, blue)
 
             # emit the color_changed signal
-            self.color_changed.emit(self.color)
+            self.color_handler.change_picked_color(self.color)
             log.info(f"Updated color: red {self.color.red()}, green {self.color.green()}, blue {self.color.blue()}")
         except:
             log.error(f"Invalid color operation.")

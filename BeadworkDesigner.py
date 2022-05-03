@@ -27,14 +27,13 @@ from PyQt6.QtWidgets import (QApplication, QHBoxLayout, QLineEdit,
 from AboutWindow import AboutWindow
 from BeadPicker import BeadPicker
 from Beadwork import Beadwork
+from ColorHandler import ColorHandler
 
-color = QColor()
+color_handler = ColorHandler()
 
 class MainWindow(QMainWindow):
     """Main window of application.
     """
-
-    
 
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -249,8 +248,7 @@ class MainWindow(QMainWindow):
         self.bead_and_palette_picker = QVBoxLayout()
         self.bead_and_palette_picker.setObjectName("bead_and_pallete_picker")
 
-        self.bead_picker = BeadPicker()
-        self.bead_picker.color_changed.connect(self.on_color_change)
+        self.bead_picker = BeadPicker(color_handler=color_handler)
 
         # TODO: create layout for these two and connect them
         list_search = QLineEdit()
@@ -270,7 +268,7 @@ class MainWindow(QMainWindow):
         ### EDITTING WINDOW
         editing_window = QScrollArea()
         editing_window.setObjectName("editing_window")
-        beadwork = Beadwork()
+        beadwork = Beadwork(color_handler=color_handler)
         beadwork.setObjectName("beadwork")
         editing_window.setWidget(beadwork)
 
@@ -292,10 +290,6 @@ class MainWindow(QMainWindow):
     def open_about_window(self):
         self.about_window = AboutWindow()
         self.about_window.show()
-
-    def on_color_change(self, new_color):
-        color = new_color
-        logging.info(f"color changed: {hex(self.bead_picker.qcolor_to_hex(color))}")
 
 if __name__ == "__main__":
 
