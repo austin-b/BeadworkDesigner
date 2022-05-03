@@ -296,7 +296,11 @@ if __name__ == "__main__":
 
     # TODO: implement CLI argument for logging file
     # TODO: make default a log file
-    logging.basicConfig(stream = sys.stdout, level=logging.DEBUG)
+    logging.basicConfig(stream = sys.stdout, level=logging.DEBUG, format='%(filename)s: '    
+                                                                        '%(levelname)s: '
+                                                                        '%(funcName)s(): '
+                                                                        '%(lineno)d:\t'
+                                                                        '%(message)s')
 
     logging.info("Starting...")
 

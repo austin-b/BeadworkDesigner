@@ -62,7 +62,6 @@ class BeadPicker(QFormLayout):
 
         # TODO: see if there is a more effecient way to do this
         hex_color = int( str(red)[2:] + str(green)[2:] + str(blue)[2:], 16)
-        log.info(f"hex color: {hex(hex_color)}")
         return hex_color
 
     def open_color_picker(self):
