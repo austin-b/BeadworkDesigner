@@ -19,7 +19,7 @@ import logging
 import sys
 
 from PyQt6.QtCore import QSize
-from PyQt6.QtGui import QAction, QColor, QIcon
+from PyQt6.QtGui import QAction, QIcon
 from PyQt6.QtWidgets import (QApplication, QHBoxLayout, QLineEdit,
                              QListWidget, QMainWindow, QScrollArea, 
                              QToolBar, QVBoxLayout, QWidget)
