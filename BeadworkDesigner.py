@@ -18,8 +18,8 @@ Attribution 3.0 License.
 import logging
 import sys
 
-from PyQt6.QtCore import QSize
-from PyQt6.QtGui import QAction, QIcon
+from PyQt6.QtCore import QSize, Qt
+from PyQt6.QtGui import QAction, QIcon, QRegion
 from PyQt6.QtWidgets import (QApplication, QHBoxLayout, QLineEdit,
                              QListWidget, QMainWindow, QScrollArea, 
                              QToolBar, QVBoxLayout, QWidget)
@@ -265,7 +265,7 @@ class MainWindow(QMainWindow):
 
         logging.info("Created bead and pallete picker layout.")
 
-        ### EDITTING WINDOW
+        ### EDITING WINDOW
         editing_window = QScrollArea()
         editing_window.setObjectName("editing_window")
         beadwork = Beadwork(color_handler=color_handler)
