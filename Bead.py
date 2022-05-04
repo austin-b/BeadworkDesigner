@@ -4,7 +4,7 @@
 
 import logging
 
-from PyQt6.QtCore import QEvent, Qt
+from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QColor, QPalette
 from PyQt6.QtWidgets import QWidget
 
@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 ### TODO: add resizing and color change functions
 class Bead(QWidget):
     """Widget for individual beads."""
-    def __init__(self, color_handler, color="white"):
+    def __init__(self, color_handler, color=QColor("blue")):
         super().__init__()
 
         self.color_handler = color_handler
@@ -21,7 +21,7 @@ class Bead(QWidget):
         self.setAutoFillBackground(True)
 
         palette = self.palette()
-        palette.setColor(QPalette.ColorRole.Window, QColor(color))
+        palette.setColor(QPalette.ColorRole.Window, color)
         self.setPalette(palette)
 
         # TODO: find more accurate bead size
