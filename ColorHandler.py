@@ -10,7 +10,6 @@ class ColorHandler(QObject):
 
     picked_color = QColor(255, 255, 255)
 
-    # TODO: implement the signal
     colorChanged = pyqtSignal(int)
 
     def __init__(self):

@@ -5,6 +5,7 @@ TODO: determime major interactions of user with design
 TODO: add localization
 TODO: look at performance techniques
 TODO: add a BeadDesignHandler to intermediate between widgets and Beadwork
+TODO: should I have one model/view setup to simplify this whole thing?
 
 Goals:
 4/20/22 - have a frontend that I can begin building backend
