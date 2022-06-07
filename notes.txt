@@ -6,6 +6,9 @@ TODO: add localization
 TODO: look at performance techniques
 TODO: add a BeadDesignHandler to intermediate between widgets and Beadwork
 TODO: should I have one model/view setup to simplify this whole thing?
+TODO: maybe create a "cursor" or "action" class for switching between remove, paint single bead, fill, etc.
+TODO: don't forget to add incremental saving of the file
+TODO: check for upper bounds on memory for big projects and set max column/row limits
 
 Goals:
 4/20/22 - have a frontend that I can begin building backend

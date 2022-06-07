@@ -40,15 +40,18 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("Beadwork Designer")
 
-        # TODO: make this changeable
+        # TODO: make this changeable -- light vs dark mode?
         stylesheet = "beadworkdesigner.qss"
         try:
             f = open(stylesheet, "r")
             self.setStyleSheet(f.read())
             logging.info("Set style.")
+            f.close()
         except Exception as e:
             logging.critical("Failed to open stylesheet")
             exit()
+
+        self.setMinimumSize(QSize(1024, 600))
 
         self.create_actions()
 
@@ -57,8 +60,6 @@ class MainWindow(QMainWindow):
         self.create_toolbar()
 
         self.create_main_window()
-
-        self.setMinimumSize(QSize(1024, 600))
 
         logging.info("Finished setup.")
 
