@@ -21,12 +21,12 @@ import sys
 from PyQt6.QtCore import QSize, Qt
 from PyQt6.QtGui import QAction, QIcon, QRegion
 from PyQt6.QtWidgets import (QApplication, QHBoxLayout, QLineEdit,
-                             QListWidget, QMainWindow, QScrollArea, 
+                             QListWidget, QMainWindow, QTableView, 
                              QToolBar, QVBoxLayout, QWidget)
 
 from AboutWindow import AboutWindow
 from BeadPicker import BeadPicker
-from Beadwork import Beadwork
+from BeadworkModel import BeadworkModel
 from ColorHandler import ColorHandler
 
 color_handler = ColorHandler()
@@ -266,19 +266,33 @@ class MainWindow(QMainWindow):
 
         logging.info("Created bead and pallete picker layout.")
 
+        #################################################
+
         ### EDITING WINDOW
-        editing_window = QScrollArea()
-        editing_window.setObjectName("editing_window")
-        beadwork = Beadwork(color_handler=color_handler)
+        beadwork = QTableView()
         beadwork.setObjectName("beadwork")
-        editing_window.setWidget(beadwork)
+        
+        # TODO: test data
+        data = [
+            [4, 9, 2],
+            [1, -1, -1],
+            [3, 5, -5],
+            [3, 3, 2],
+            [7, 8, 9],
+        ]
+
+        beadwork_model = BeadworkModel(data)
+
+        beadwork.setModel(beadwork_model)
+
+        #################################################
 
         logging.info("Created editing window.")
 
         ### MAIN LAYOUT
         layout = QHBoxLayout()
         layout.addLayout(self.bead_and_palette_picker)
-        layout.addWidget(editing_window)
+        layout.addWidget(beadwork)
         layout.setContentsMargins(0,0,0,0)
 
         container = QWidget()
