@@ -7,9 +7,10 @@ def generate_random_color():
     return '#{:06x}'.format(random.randint(0, 0xFFFFFF))
 def color(random=False):
     if random:
-        generate_random_color()
+        return generate_random_color()
+        print("picking random color")
     else:
-        "#FFFFFF"
+        "#000000"
 #####################
 
 class BeadworkModel(QtCore.QAbstractTableModel):
@@ -51,13 +52,13 @@ class BeadworkModel(QtCore.QAbstractTableModel):
      
     def insertRow(self, row, index):
         self.beginInsertRows(QtCore.QModelIndex(), row, row)
-        self._data.insert(row, [color(random=self.debug) for _ in range(self.columnCount(index))]) # TODO: alter this to account for index -- currently only adds to end
+        self._data.insert(index.row()+1, [color(random=self._debug) for _ in range(self.columnCount(index))]) # TODO: alter this to account for index -- currently only adds to end
         self.endInsertRows()
     
     def insertColumn(self, column, index):
         self.beginInsertColumns(QtCore.QModelIndex(), column, column)
         for row in range(self.rowCount(index)):
-            self._data[row].insert(column, color(random=self.debug))    # TODO: alter this to account for index -- currently only adds to end
+            self._data[row].insert(index.column()+1, color(random=self._debug))    # TODO: alter this to account for index -- currently only adds to end
         self.endInsertColumns()
     
     def removeRow(self, row, index):

@@ -1,7 +1,5 @@
 """
 Icons are provided by https://p.yusukekamiyamane.com/. They are licensed under a Creative Commons Attribution 3.0 License.
-
-TODO: connect to Github
 """
 
 import sys
@@ -38,6 +36,8 @@ class MainWindow(QMainWindow):
         ### SETUP MENU
         menu = self.menuBar()
         fileMenu = menu.addMenu('File')
+
+        ### TODO: add dialog for width x height
 
         ### SETUP COLOR DIALOG
         colorDialog = QWidget()
