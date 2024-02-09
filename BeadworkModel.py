@@ -52,13 +52,13 @@ class BeadworkModel(QtCore.QAbstractTableModel):
      
     def insertRow(self, row, index):
         self.beginInsertRows(QtCore.QModelIndex(), row, row)
-        self._data.insert(index.row()+1, [color(random=self._debug) for _ in range(self.columnCount(index))]) # TODO: alter this to account for index -- currently only adds to end
+        self._data.insert(index.row()+1, [color(random=self._debug) for _ in range(self.columnCount(index))])
         self.endInsertRows()
     
     def insertColumn(self, column, index):
         self.beginInsertColumns(QtCore.QModelIndex(), column, column)
         for row in range(self.rowCount(index)):
-            self._data[row].insert(index.column()+1, color(random=self._debug))    # TODO: alter this to account for index -- currently only adds to end
+            self._data[row].insert(index.column()+1, color(random=self._debug))
         self.endInsertColumns()
     
     def removeRow(self, row, index):
