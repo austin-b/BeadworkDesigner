@@ -6,7 +6,7 @@ import sys
 import os
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QAction
+from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import (
     QApplication,
     QColorDialog,
@@ -67,17 +67,22 @@ class MainWindow(QMainWindow):
 
         ### SETUP ACTIONS
         # TODO: Add icons to the actions
+        # TODO: Add hints to actions
         addColumnAction = QAction('Add Column', self)
         addColumnAction.triggered.connect(self.addColumn)
+        addColumnAction.setIcon(QIcon(os.path.join(icons_dir, "table-insert-column.png")))
 
         removeColumnAction = QAction('Remove Column', self)
         removeColumnAction.triggered.connect(lambda: self.model.removeColumn(self.model.columnCount(None) - 1, self.beadworkView.currentIndex()))
+        removeColumnAction.setIcon(QIcon(os.path.join(icons_dir, "table-delete-column.png")))
 
         addRowAction = QAction('Add Row', self)
         addRowAction.triggered.connect(self.addRow)
+        addRowAction.setIcon(QIcon(os.path.join(icons_dir, "table-insert-row.png")))
 
         removeRowAction = QAction('Remove Row', self)
         removeRowAction.triggered.connect(lambda: self.model.removeRow(self.model.rowCount(None) - 1, self.beadworkView.currentIndex()))
+        removeRowAction.setIcon(QIcon(os.path.join(icons_dir, "table-delete-row.png")))
 
         self.selectionMode = QAction('Selection Mode', self)
         self.selectionMode.setCheckable(True)
