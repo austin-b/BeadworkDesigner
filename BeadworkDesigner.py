@@ -37,7 +37,23 @@ class MainWindow(QMainWindow):
         menu = self.menuBar()
         fileMenu = menu.addMenu('File')
 
-        ### TODO: add dialog for width x height
+         ### SETUP BEADWORK VIEW
+        self.beadworkView = BeadworkView()
+        self.model = BeadworkModel(debug=debug)
+        self.delegate = BeadDelegate()
+        self.beadworkView.setModel(self.model)
+        self.beadworkView.setItemDelegate(self.delegate)
+        self.beadworkView.clicked.connect(lambda c: currentColor.setText((self.model.data(c, Qt.ItemDataRole.DisplayRole)).upper()))
+
+        ### SETUP WIDTH x HEIGHT
+        # TODO: make these editable
+        self.widthLabel = QLabel(f"Width: {self.model.columnCount(None)}")
+        self.heightLabel = QLabel(f"Height: {self.model.rowCount(None)}")
+        widthXHeightLayout = QHBoxLayout()
+        widthXHeightLayout.addWidget(self.widthLabel)
+        widthXHeightLayout.addWidget(self.heightLabel)
+        widthXHeightWidget = QWidget()
+        widthXHeightWidget.setLayout(widthXHeightLayout)
 
         ### SETUP COLOR DIALOG
         colorDialog = QWidget()
@@ -57,14 +73,6 @@ class MainWindow(QMainWindow):
         colorDialogLayout.addWidget(colorDialogButton)
         colorDialog.setLayout(colorDialogLayout)
 
-        ### SETUP BEADWORK VIEW
-        self.beadworkView = BeadworkView()
-        self.model = BeadworkModel(debug=debug)
-        self.delegate = BeadDelegate()
-        self.beadworkView.setModel(self.model)
-        self.beadworkView.setItemDelegate(self.delegate)
-        self.beadworkView.clicked.connect(lambda c: currentColor.setText((self.model.data(c, Qt.ItemDataRole.DisplayRole)).upper()))
-
         ### SETUP ACTIONS
         # TODO: Add icons to the actions
         # TODO: Add hints to actions
@@ -73,7 +81,7 @@ class MainWindow(QMainWindow):
         addColumnAction.setIcon(QIcon(os.path.join(icons_dir, "table-insert-column.png")))
 
         removeColumnAction = QAction('Remove Column', self)
-        removeColumnAction.triggered.connect(lambda: self.model.removeColumn(self.model.columnCount(None) - 1, self.beadworkView.currentIndex()))
+        removeColumnAction.triggered.connect(self.removeColumn)
         removeColumnAction.setIcon(QIcon(os.path.join(icons_dir, "table-delete-column.png")))
 
         addRowAction = QAction('Add Row', self)
@@ -81,7 +89,7 @@ class MainWindow(QMainWindow):
         addRowAction.setIcon(QIcon(os.path.join(icons_dir, "table-insert-row.png")))
 
         removeRowAction = QAction('Remove Row', self)
-        removeRowAction.triggered.connect(lambda: self.model.removeRow(self.model.rowCount(None) - 1, self.beadworkView.currentIndex()))
+        removeRowAction.triggered.connect(self.removeRow)
         removeRowAction.setIcon(QIcon(os.path.join(icons_dir, "table-delete-row.png")))
 
         self.selectionMode = QAction('Selection Mode', self)
@@ -114,17 +122,18 @@ class MainWindow(QMainWindow):
         colorList.setModel(self.model)
 
         ### SETUP COLOR SIDEBAR
-        colorSidebarLayout = QVBoxLayout()
-        colorSidebarLayout.addWidget(colorDialog)
-        colorSidebarLayout.addWidget(QLabel('Colors in use:'))
-        colorSidebarLayout.addWidget(colorList)
-        colorSidebar = QWidget()
-        colorSidebar.setLayout(colorSidebarLayout)
-        colorSidebar.setMaximumWidth(200)
+        sidebarLayout = QVBoxLayout()
+        sidebarLayout.addWidget(widthXHeightWidget)
+        sidebarLayout.addWidget(colorDialog)
+        sidebarLayout.addWidget(QLabel('Colors in use:'))
+        sidebarLayout.addWidget(colorList)
+        sidebar = QWidget()
+        sidebar.setLayout(sidebarLayout)
+        sidebar.setMaximumWidth(200)
 
         ### SETUP MAIN LAYOUT & WIDGET
         mainLayout = QHBoxLayout()
-        mainLayout.addWidget(colorSidebar)
+        mainLayout.addWidget(sidebar)
         mainLayout.addWidget(self.beadworkView)
 
         mainWidget = QWidget()
@@ -138,11 +147,21 @@ class MainWindow(QMainWindow):
     def addColumn(self):
         self.model.insertColumn(self.model.columnCount(None), self.beadworkView.currentIndex())
         self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(None) - 1, self.model.columnCount(None) - 1), [Qt.ItemDataRole.BackgroundRole])
+        self.widthLabel.setText(f"Width: {self.model.columnCount(None)}")
+
+    def removeColumn(self):
+        self.model.removeColumn(self.model.columnCount(None) - 1, self.beadworkView.currentIndex())
+        self.widthLabel.setText(f"Width: {self.model.columnCount(None)}")
 
     # TODO: only adds onto the end, not the current index -- FIX
     def addRow(self):
         self.model.insertRow(self.model.rowCount(None), self.beadworkView.currentIndex())
         self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(None) - 1, self.model.columnCount(None) - 1), [Qt.ItemDataRole.BackgroundRole])
+        self.heightLabel.setText(f"Height: {self.model.rowCount(None)}")
+
+    def removeRow(self):
+        self.model.removeRow(self.model.rowCount(None) - 1, self.beadworkView.currentIndex())
+        self.heightLabel.setText(f"Height: {self.model.rowCount(None)}")
 
     # TODO: implement
     def inSelectionMode(self, checked):
