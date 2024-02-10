@@ -1,5 +1,4 @@
-from PySide6.QtWidgets import (QHeaderView, QLayout, QTableView)
-from PySide6.QtCore import (QModelIndex, QPersistentModelIndex, Qt)
+from PySide6.QtWidgets import (QTableView)
 
 class BeadworkView(QTableView):
     def __init__(self):

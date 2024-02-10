@@ -1,11 +1,23 @@
-from PySide6.QtCore import QAbstractProxyModel
+from PySide6.QtCore import QAbstractItemModel, QAbstractProxyModel, QModelIndex, QPersistentModelIndex
 from PySide6.QtWidgets import QListView
 
-# TODO: Implement this class to provide an interface between the
-# BeadworkModel and the ColorList view in the MainWindow
-class ColorListModel(QAbstractProxyModel):
+class BeadworkToColorListProxyModel(QAbstractProxyModel):
     def __init__(self, parent = None):
-        super().__init__(parent)       
+        super().__init__(parent) 
+
+        self.colors = {}
+
+    # TODO: implement and build the colors dictionary
+    def setSourceModel(self, sourceModel):
+        super().setSourceModel(sourceModel)  
+
+    # TODO: implement and map from source to proxy
+    def mapFromSource(self, sourceIndex: QModelIndex | QPersistentModelIndex) -> QModelIndex:
+        return super().mapFromSource(sourceIndex)
+
+    # TODO: implement and map from proxy of all selected colors to source
+    def mapToSource(self, proxyIndex: QModelIndex | QPersistentModelIndex) -> QModelIndex:
+        return super().mapToSource(proxyIndex)    
 
 # TODO: Implement this class
 class ColorList(QListView):
