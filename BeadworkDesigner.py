@@ -64,8 +64,9 @@ class MainWindow(QMainWindow):
         currentColor.textChanged.connect(lambda c: self.model.setData(self.beadworkView.currentIndex(), f"#{c}", Qt.ItemDataRole.EditRole)) # TODO: this currently only changes the last one selected, multiple selections do not work
         colorDialogWidget = QColorDialog()
         # colorDialogWidget.colorSelected.connect(lambda c: currentColor.setText(c.name().upper())) TODO: see below regarding .open()
-        colorDialogButton = QPushButton('C') # TODO: add icon
+        colorDialogButton = QPushButton() # TODO: add icon
         colorDialogButton.setFixedWidth(20)
+        colorDialogButton.setIcon(QIcon(os.path.join(icons_dir, "palette.png")))
         # colorDialogButton.clicked.connect(colorDialogWidget.open) TODO: use .open()
         colorDialogLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
         colorDialogLayout.addWidget(currentColorLabel)
@@ -95,14 +96,17 @@ class MainWindow(QMainWindow):
         self.selectionMode = QAction('Selection Mode', self)
         self.selectionMode.setCheckable(True)
         self.selectionMode.triggered.connect(self.inSelectionMode)
+        self.selectionMode.setIcon(QIcon(os.path.join(icons_dir, "selection.png")))
 
         self.colorMode = QAction('Color Mode', self)
         self.colorMode.setCheckable(True)
         self.colorMode.triggered.connect(self.inColorMode)
+        self.colorMode.setIcon(QIcon(os.path.join(icons_dir, "color.png")))
 
         self.clearMode = QAction('Clear Mode', self)
         self.clearMode.setCheckable(True)
         self.clearMode.triggered.connect(self.inClearMode)
+        self.clearMode.setIcon(QIcon(os.path.join(icons_dir, "eraser.png")))
 
         ### SETUP TOOLBAR
         toolbar = QToolBar()
