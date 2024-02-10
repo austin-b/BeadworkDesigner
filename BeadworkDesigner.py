@@ -64,7 +64,7 @@ class MainWindow(QMainWindow):
         currentColor.textChanged.connect(lambda c: self.model.setData(self.beadworkView.currentIndex(), f"#{c}", Qt.ItemDataRole.EditRole)) # TODO: this currently only changes the last one selected, multiple selections do not work
         colorDialogWidget = QColorDialog()
         # colorDialogWidget.colorSelected.connect(lambda c: currentColor.setText(c.name().upper())) TODO: see below regarding .open()
-        colorDialogButton = QPushButton() # TODO: add icon
+        colorDialogButton = QPushButton()
         colorDialogButton.setFixedWidth(20)
         colorDialogButton.setIcon(QIcon(os.path.join(icons_dir, "palette.png")))
         # colorDialogButton.clicked.connect(colorDialogWidget.open) TODO: use .open()
@@ -75,8 +75,6 @@ class MainWindow(QMainWindow):
         colorDialog.setLayout(colorDialogLayout)
 
         ### SETUP ACTIONS
-        # TODO: Add icons to the actions
-        # TODO: Add hints to actions
         addColumnAction = QAction('Add Column', self)
         addColumnAction.triggered.connect(self.addColumn)
         addColumnAction.setIcon(QIcon(os.path.join(icons_dir, "table-insert-column.png")))
