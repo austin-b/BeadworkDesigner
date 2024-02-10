@@ -145,7 +145,6 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(1200, 600)   
         self.setWindowTitle('Beadwork Designer')
 
-    # TODO: only adds onto the end, not the current index -- FIX
     def addColumn(self):
         self.model.insertColumn(self.model.columnCount(None), self.beadworkView.currentIndex())
         self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(None) - 1, self.model.columnCount(None) - 1), [Qt.ItemDataRole.BackgroundRole])
@@ -155,7 +154,6 @@ class MainWindow(QMainWindow):
         self.model.removeColumn(self.model.columnCount(None) - 1, self.beadworkView.currentIndex())
         self.widthLabel.setText(f"Width: {self.model.columnCount(None)}")
 
-    # TODO: only adds onto the end, not the current index -- FIX
     def addRow(self):
         self.model.insertRow(self.model.rowCount(None), self.beadworkView.currentIndex())
         self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(None) - 1, self.model.columnCount(None) - 1), [Qt.ItemDataRole.BackgroundRole])
