@@ -11,8 +11,17 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
     # TODO: implement and build the colors dictionary
     def setSourceModel(self, sourceModel):
         super().setSourceModel(sourceModel)  
+
+        self._sourceModel = sourceModel
         
         self.evaluateModelForUniqueColors()
+
+    # TODO: these are both implemented, am I forgetting another method that needs to be implemented?
+    def rowCount(self, parent):
+        return len(self._colors_index)
+    
+    def columnCount(self, parent):
+        return 1
 
     # TODO: implement and map from source to proxy
     # - create a sorted dictionary in setSourceModel
@@ -24,14 +33,15 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
 
         color = self.sourceModel().data(sourceIndex, Qt.ItemDataRole.DisplayRole)
 
-
+        print(f"color: {color}, index: {sourceIndex}")
         if color in self._colors:
-            return self.createIndex(self._colors_index.index(color), 0)
+            return self.createIndex(self._colors_index.index(color)[0], 0) # TODO: only returns the first index
         else:
             self.evaluateModelForUniqueColors()
             return self.createIndex(self._colors_index.index(color), 0)
 
     # TODO: implement and map from proxy of all selected colors to source
+    # TODO: does this have to be implemented before the proxy model can be used?
     def mapToSource(self, proxyIndex: QModelIndex | QPersistentModelIndex) -> QModelIndex:
         return super().mapToSource(proxyIndex) 
 
@@ -39,12 +49,16 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
     def evaluateModelForUniqueColors(self):
         for row in range(self.sourceModel().rowCount(None)):
             for column in range(self.sourceModel().columnCount(None)):
-                color = self.sourceModel().data(self.sourceModel().index(row, column), Qt.ItemDataRole.DisplayRole)
+                color = self.sourceModel().data(self._sourceModel.index(row, column), Qt.ItemDataRole.DisplayRole)
                 if color not in self._colors:
-                    self._colors[color] = (row, column)
-        self._colors_index = list(self._colors.keys()).sort()
-        print("self._colors_index", self._colors_index)     # TODO: prints None, why?
-        # self.dataChanged.emit(self.index(0, 0), self.index(len(self.colors), 0)) why?
+                    self._colors[color] = [(row, column)]
+                else:
+                    self._colors[color].append((row, column))
+        print("self._colors", self._colors)
+        self._colors_index = list(self._colors)
+        self._colors_index.sort()
+        print("self._colors_index", self._colors_index)     # NOTE: this has a list of colors
+        self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(len(self._colors_index), 0))
 
 # TODO: Implement this class
 class ColorList(QListView):
