@@ -23,7 +23,7 @@ from PySide6.QtWidgets import (
 from BeadworkModel import BeadworkModel
 from BeadDelegate import BeadDelegate
 from BeadworkView import BeadworkView
-from ColorList import ColorList
+from ColorList import BeadworkToColorListProxyModel, ColorList
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 bin_dir = os.path.join(base_dir, "bin")
@@ -121,6 +121,8 @@ class MainWindow(QMainWindow):
         ### SETUP COLOR LIST
         colorList = ColorList()
         # TODO: use proxy model to connect colorList to beadworkView
+        self.proxyModel = BeadworkToColorListProxyModel()
+        self.proxyModel.setSourceModel(self.model)
         colorList.setModel(self.model)
 
         ### SETUP COLOR SIDEBAR
