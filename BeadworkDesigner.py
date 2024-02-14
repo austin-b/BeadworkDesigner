@@ -120,9 +120,9 @@ class MainWindow(QMainWindow):
 
         ### SETUP COLOR LIST
         colorList = ColorList()
-        # TODO: use proxy model to connect colorList to beadworkView
-        self.proxyModel = BeadworkToColorListProxyModel()
-        self.proxyModel.setSourceModel(self.model)
+        # TODO: proxyModel does not work -- fix
+        # self.proxyModel = BeadworkToColorListProxyModel()
+        # self.proxyModel.setSourceModel(self.model)
         colorList.setModel(self.model)
 
         ### SETUP COLOR SIDEBAR

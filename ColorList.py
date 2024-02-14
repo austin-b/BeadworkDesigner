@@ -1,6 +1,10 @@
 from PySide6.QtCore import QAbstractItemModel, QAbstractProxyModel, QModelIndex, QPersistentModelIndex, Qt
 from PySide6.QtWidgets import QListView
 
+# TODO: This class does not work -- do not know why
+# last error given when trying to run:
+#   NotImplementedError: pure virtual method 'QAbstractProxyModel.parent' not implemented.
+
 class BeadworkToColorListProxyModel(QAbstractProxyModel):
     def __init__(self, parent = None):
         super().__init__(parent) 
@@ -22,6 +26,9 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
     
     def columnCount(self, parent):
         return 1
+    
+    def index(self, row, column, parent=QModelIndex()):
+        return self.createIndex(row, column)
 
     # TODO: implement and map from source to proxy
     # - create a sorted dictionary in setSourceModel
@@ -29,8 +36,6 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
     # - if it is, return the index of the color in the list
     # - if it isn't, add it to the list and return the index of the color in the list
     def mapFromSource(self, sourceIndex):
-        super().mapFromSource(sourceIndex)
-
         color = self.sourceModel().data(sourceIndex, Qt.ItemDataRole.DisplayRole)
 
         print(f"color: {color}, index: {sourceIndex}")
@@ -42,8 +47,16 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
 
     # TODO: implement and map from proxy of all selected colors to source
     # TODO: does this have to be implemented before the proxy model can be used?
-    def mapToSource(self, proxyIndex: QModelIndex | QPersistentModelIndex) -> QModelIndex:
-        return super().mapToSource(proxyIndex) 
+    def mapToSource(self, proxyIndex):
+        # print(f"proxy data: {proxyIndex.data()}")
+        # color = proxyIndex.data(Qt.ItemDataRole.DisplayRole)
+
+        # if color in self._colors:
+            # return self.createIndex(self._colors[color][0][0], self._colors[color][0][1])
+        res = self.sourceModel().match(self.sourceModel().index(0, 0), Qt.DisplayRole, proxyIndex.row(), flags=Qt.MatchExactly)
+        if res:
+            return res[0].sibling(res[0].row(), proxyIndex.column())
+        return QModelIndex()
 
     # runs through model and recreates a dictionary of unique colors
     def evaluateModelForUniqueColors(self):
