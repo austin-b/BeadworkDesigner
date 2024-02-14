@@ -1,6 +1,12 @@
 from PySide6 import QtCore, QtGui
 from PySide6.QtCore import Qt
 
+#####################
+#
+# TODO: create methods for saving and loading to file
+#
+#####################
+
 ### FOR DEBUGGING ###
 def generate_random_color():
     import random

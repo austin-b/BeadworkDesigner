@@ -2,6 +2,23 @@
 Icons are provided by https://p.yusukekamiyamane.com/. They are licensed under a Creative Commons Attribution 3.0 License.
 """
 
+#####################
+#
+# TODO: add save and load options to file menu
+# TODO: add a way to change the size of the beads
+# TODO: add a way to zoom in and out
+# TODO: add a way to change orientation of the model
+# TODO: add a way to change the color of the background
+# TODO: add a "bucket fill" option/tool
+# TODO: implement undo and redo functionality
+# TODO: implement a copy and paste functionality for selected beads
+# TODO: add a way to align beads horizontally and vertically
+# TODO: implement a way to group and ungroup beads for easier manipulation
+# TODO: Add a way to add text labels or annotations to the beadwork design
+# TODO: add a way to print or export to PDF
+#
+#####################
+
 import sys
 import os
 
