@@ -15,18 +15,20 @@ class BeadworkView(QTableView):
     def setModel(self, model):
         super().setModel(model)
 
+        self.source = model
+
         self.verticalHeader().setMinimumSectionSize(0)
         self.horizontalHeader().setMinimumSectionSize(0)
 
-        self.setBeadSize(model.rowCount(None), model.columnCount(None))
+        self.setBeadSize()
 
     def dataChanged(self, topLeft, bottomRight, roles):
         super().dataChanged(topLeft, bottomRight, roles)
 
-        self.setBeadSize(bottomRight.row(), bottomRight.column())
+        self.setBeadSize()
 
-    def setBeadSize(self, rows, columns):
-        for i in range(rows):
+    def setBeadSize(self):
+        for i in range(self.source.rowCount(None)):
             self.setRowHeight(i, self.bead_height)
-        for i in range(columns):
+        for i in range(self.source.columnCount(None)):
             self.setColumnWidth(i, self.bead_width)

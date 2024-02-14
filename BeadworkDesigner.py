@@ -15,6 +15,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QLineEdit,
     QMainWindow,
+    QSpinBox,
     QToolBar,
     QWidget,
     QVBoxLayout
@@ -37,7 +38,7 @@ class MainWindow(QMainWindow):
         menu = self.menuBar()
         fileMenu = menu.addMenu('File')
 
-         ### SETUP BEADWORK VIEW
+        ### SETUP BEADWORK VIEW
         self.beadworkView = BeadworkView()
         self.model = BeadworkModel(debug=debug)
         self.delegate = BeadDelegate()
@@ -45,13 +46,24 @@ class MainWindow(QMainWindow):
         self.beadworkView.setItemDelegate(self.delegate)
         self.beadworkView.clicked.connect(lambda c: currentColor.setText((self.model.data(c, Qt.ItemDataRole.DisplayRole)).upper()))
 
+        ### KEEP TRACK OF WIDTH x HEIGHT
+        self.modelWidth = self.model.columnCount(None)
+        self.modelHeight = self.model.rowCount(None)
+
         ### SETUP WIDTH x HEIGHT
-        # TODO: make these editable
-        self.widthLabel = QLabel(f"Width: {self.model.columnCount(None)}")
-        self.heightLabel = QLabel(f"Height: {self.model.rowCount(None)}")
+        self.widthLabel = QLabel("Width:")
+        self.widthSpinBox = QSpinBox()
+        self.widthSpinBox.setValue(self.modelWidth)
+        self.widthSpinBox.valueChanged.connect(self.widthChanged)
+        self.heightLabel = QLabel("Height:")
+        self.heightSpinBox = QSpinBox()
+        self.heightSpinBox.setValue(self.modelHeight)
+        self.heightSpinBox.valueChanged.connect(self.heightChanged)
         widthXHeightLayout = QHBoxLayout()
         widthXHeightLayout.addWidget(self.widthLabel)
+        widthXHeightLayout.addWidget(self.widthSpinBox)
         widthXHeightLayout.addWidget(self.heightLabel)
+        widthXHeightLayout.addWidget(self.heightSpinBox)
         widthXHeightWidget = QWidget()
         widthXHeightWidget.setLayout(widthXHeightLayout)
 
@@ -150,20 +162,38 @@ class MainWindow(QMainWindow):
     def addColumn(self):
         self.model.insertColumn(self.model.columnCount(None), self.beadworkView.currentIndex())
         self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(None) - 1, self.model.columnCount(None) - 1), [Qt.ItemDataRole.BackgroundRole])
-        self.widthLabel.setText(f"Width: {self.model.columnCount(None)}")
+        self.modelWidth = self.model.columnCount(None)
+        self.widthSpinBox.setValue(self.modelWidth)
 
     def removeColumn(self):
         self.model.removeColumn(self.model.columnCount(None) - 1, self.beadworkView.currentIndex())
-        self.widthLabel.setText(f"Width: {self.model.columnCount(None)}")
+        self.modelWidth = self.model.columnCount(None)
+        self.widthSpinBox.setValue(self.modelWidth)
 
     def addRow(self):
         self.model.insertRow(self.model.rowCount(None), self.beadworkView.currentIndex())
         self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(None) - 1, self.model.columnCount(None) - 1), [Qt.ItemDataRole.BackgroundRole])
-        self.heightLabel.setText(f"Height: {self.model.rowCount(None)}")
+        self.modelHeight = self.model.rowCount(None)
+        self.heightSpinBox.setValue(self.modelHeight)
 
     def removeRow(self):
         self.model.removeRow(self.model.rowCount(None) - 1, self.beadworkView.currentIndex())
-        self.heightLabel.setText(f"Height: {self.model.rowCount(None)}")
+        self.modelHeight = self.model.rowCount(None)
+        self.heightSpinBox.setValue(self.modelHeight)
+
+    def widthChanged(self, value):
+        self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth - 1))
+        if value > self.modelWidth:
+            self.addColumn()
+        else:
+            self.removeColumn()
+
+    def heightChanged(self, value):
+        self.beadworkView.setCurrentIndex(self.model.index(self.modelHeight-1, 0))
+        if value > self.modelHeight:
+            self.addRow()
+        else:
+            self.removeRow()
 
     # TODO: implement
     def inSelectionMode(self, checked):
