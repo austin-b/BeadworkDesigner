@@ -1,0 +1,6 @@
+#beadworkView {
+    /* TODO: fix why this padding messes up the initial render of the table */
+    padding-left: 20px;
+    padding-top: 20px;
+    background-color: #FFFFFF;
+}

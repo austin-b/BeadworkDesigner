@@ -64,6 +64,7 @@ class MainWindow(QMainWindow):
         self.beadworkView.setModel(self.model)
         self.beadworkView.setItemDelegate(self.delegate)
         self.beadworkView.clicked.connect(lambda c: currentColor.setText((self.model.data(c, Qt.ItemDataRole.DisplayRole)).upper()))
+        self.beadworkView.setObjectName("beadworkView")
 
         ### KEEP TRACK OF WIDTH x HEIGHT
         self.modelWidth = self.model.columnCount(None)
