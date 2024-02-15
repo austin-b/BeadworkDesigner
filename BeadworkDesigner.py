@@ -90,8 +90,10 @@ class MainWindow(QMainWindow):
         ### SETUP COLOR DIALOG
         colorDialog = QWidget()
         colorDialogLayout = QHBoxLayout()
-        currentColorLabel = QLabel('Current Color: #') # TODO: fix padding with stylesheets
+        currentColorLabel = QLabel('Current Color: #')
+        currentColorLabel.setObjectName("currentColorLabel")
         currentColor = QLineEdit()
+        currentColor.setFixedWidth(47)
         currentColor.setInputMask('HHHHHH')   # only allows hex color input
         currentColor.textChanged.connect(lambda c: self.model.setData(self.beadworkView.currentIndex(), f"#{c}", Qt.ItemDataRole.EditRole)) # TODO: this currently only changes the last one selected, multiple selections do not work
         colorDialogWidget = QColorDialog()
