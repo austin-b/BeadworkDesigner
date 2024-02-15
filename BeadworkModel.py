@@ -1,5 +1,5 @@
 from PySide6 import QtCore, QtGui
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTransposeProxyModel
 
 #####################
 #
@@ -77,3 +77,13 @@ class BeadworkModel(QtCore.QAbstractTableModel):
         for row in range(self.rowCount(index)):
             del self._data[row][column]
         self.endRemoveColumns()
+
+class BeadworkTransposeModel(QTransposeProxyModel):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+    def rowCount(self, parent):
+        return self.sourceModel().columnCount(parent)
+    
+    def columnCount(self, parent):
+        return self.sourceModel().rowCount(parent)

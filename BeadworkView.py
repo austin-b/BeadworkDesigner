@@ -33,3 +33,7 @@ class BeadworkView(QTableView):
             self.setRowHeight(i, self.bead_height)
         for i in range(self.source.columnCount(QModelIndex())):
             self.setColumnWidth(i, self.bead_width)
+
+    def changeOrientation(self):
+        self.bead_height, self.bead_width = self.bead_width, self.bead_height
+        self.setBeadSize()

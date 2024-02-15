@@ -34,13 +34,12 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QMainWindow,
     QSpinBox,
-    QTableView,
     QToolBar,
     QWidget,
     QVBoxLayout
 )
 
-from BeadworkModel import BeadworkModel
+from BeadworkModel import BeadworkModel, BeadworkTransposeModel
 from BeadDelegate import BeadDelegate
 from BeadworkView import BeadworkView
 from ColorList import BeadworkToColorListProxyModel, ColorList
@@ -60,10 +59,10 @@ class MainWindow(QMainWindow):
 
         ### SETUP BEADWORK VIEW
         self.beadworkView = BeadworkView()
-        origModel = BeadworkModel(debug=False)
-        #self.model = BeadworkModel(debug=debug)
-        self.model = QTransposeProxyModel() # TODO: does not show any data -- when trying to use spinboxes, values go to 0; maybe implement my own transpose model to check why it doesn't work?
-        self.model.setSourceModel(origModel)
+        origModel = BeadworkModel(debug=debug)
+        self.model = BeadworkModel(debug=debug)
+        self.transposeModel = BeadworkTransposeModel() # TODO: create method/way to change orientation (use BeadworkView.changeOrientation()) and switch models
+        self.transposeModel.setSourceModel(origModel)
         self.delegate = BeadDelegate()
         self.beadworkView.setModel(self.model)
         self.beadworkView.setItemDelegate(self.delegate)
