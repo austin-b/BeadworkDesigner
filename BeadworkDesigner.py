@@ -4,6 +4,7 @@ Icons are provided by https://p.yusukekamiyamane.com/. They are licensed under a
 
 #####################
 #
+# TODO: create/make stylesheet
 # TODO: add save and load options to file menu
 # TODO: add a way to change the size of the beads
 # TODO: add a way to zoom in and out

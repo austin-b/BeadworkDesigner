@@ -4,6 +4,10 @@ from PySide6.QtWidgets import QListView
 # TODO: This class does not work -- do not know why
 # last error given when trying to run:
 #   NotImplementedError: pure virtual method 'QAbstractProxyModel.parent' not implemented.
+#
+#
+#   IDEA: Have the ProxyModel give a 1-1 mapping of the source model sorted by color,
+#   then have the ColorList only display the unique colors
 
 class BeadworkToColorListProxyModel(QAbstractProxyModel):
     def __init__(self, parent = None):
