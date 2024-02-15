@@ -23,7 +23,7 @@ Icons are provided by https://p.yusukekamiyamane.com/. They are licensed under a
 import sys
 import os
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import QModelIndex, Qt, QTransposeProxyModel
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import (
     QApplication,
@@ -34,6 +34,7 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QMainWindow,
     QSpinBox,
+    QTableView,
     QToolBar,
     QWidget,
     QVBoxLayout
@@ -59,7 +60,10 @@ class MainWindow(QMainWindow):
 
         ### SETUP BEADWORK VIEW
         self.beadworkView = BeadworkView()
-        self.model = BeadworkModel(debug=debug)
+        origModel = BeadworkModel(debug=False)
+        #self.model = BeadworkModel(debug=debug)
+        self.model = QTransposeProxyModel() # TODO: does not show any data -- when trying to use spinboxes, values go to 0; maybe implement my own transpose model to check why it doesn't work?
+        self.model.setSourceModel(origModel)
         self.delegate = BeadDelegate()
         self.beadworkView.setModel(self.model)
         self.beadworkView.setItemDelegate(self.delegate)
@@ -67,8 +71,8 @@ class MainWindow(QMainWindow):
         self.beadworkView.setObjectName("beadworkView")
 
         ### KEEP TRACK OF WIDTH x HEIGHT
-        self.modelWidth = self.model.columnCount(None)
-        self.modelHeight = self.model.rowCount(None)
+        self.modelWidth = self.model.columnCount(QModelIndex())
+        self.modelHeight = self.model.rowCount(QModelIndex())
 
         ### SETUP WIDTH x HEIGHT
         self.widthLabel = QLabel("Width:")
@@ -183,25 +187,25 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('Beadwork Designer')
 
     def addColumn(self):
-        self.model.insertColumn(self.model.columnCount(None), self.beadworkView.currentIndex())
-        self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(None) - 1, self.model.columnCount(None) - 1), [Qt.ItemDataRole.BackgroundRole])
-        self.modelWidth = self.model.columnCount(None)
+        self.model.insertColumn(self.model.columnCount(QModelIndex()), self.beadworkView.currentIndex())
+        self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(QModelIndex()) - 1, self.model.columnCount(QModelIndex()) - 1), [Qt.ItemDataRole.BackgroundRole])
+        self.modelWidth = self.model.columnCount(QModelIndex())
         self.widthSpinBox.setValue(self.modelWidth)
 
     def removeColumn(self):
-        self.model.removeColumn(self.model.columnCount(None) - 1, self.beadworkView.currentIndex())
-        self.modelWidth = self.model.columnCount(None)
+        self.model.removeColumn(self.model.columnCount(QModelIndex()) - 1, self.beadworkView.currentIndex())
+        self.modelWidth = self.model.columnCount(QModelIndex())
         self.widthSpinBox.setValue(self.modelWidth)
 
     def addRow(self):
-        self.model.insertRow(self.model.rowCount(None), self.beadworkView.currentIndex())
-        self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(None) - 1, self.model.columnCount(None) - 1), [Qt.ItemDataRole.BackgroundRole])
-        self.modelHeight = self.model.rowCount(None)
+        self.model.insertRow(self.model.rowCount(QModelIndex()), self.beadworkView.currentIndex())
+        self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(QModelIndex()) - 1, self.model.columnCount(QModelIndex()) - 1), [Qt.ItemDataRole.BackgroundRole])
+        self.modelHeight = self.model.rowCount(QModelIndex())
         self.heightSpinBox.setValue(self.modelHeight)
 
     def removeRow(self):
-        self.model.removeRow(self.model.rowCount(None) - 1, self.beadworkView.currentIndex())
-        self.modelHeight = self.model.rowCount(None)
+        self.model.removeRow(self.model.rowCount(QModelIndex()) - 1, self.beadworkView.currentIndex())
+        self.modelHeight = self.model.rowCount(QModelIndex())
         self.heightSpinBox.setValue(self.modelHeight)
 
     def widthChanged(self, value):

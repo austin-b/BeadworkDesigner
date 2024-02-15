@@ -8,6 +8,8 @@ class BeadDelegate(QItemDelegate):
         super().__init__()
      
     def paint(self, painter, option, index): 
+        print(f"painting: {index.data()}")
+
         # draw outside black rectangle if selected
         if bool(option.state & QStyle.StateFlag.State_Selected):
             painter.setPen(QColor("#000000"))

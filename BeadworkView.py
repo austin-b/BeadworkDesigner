@@ -1,4 +1,5 @@
-from PySide6.QtWidgets import (QTableView)
+from PySide6.QtCore import QModelIndex
+from PySide6.QtWidgets import QTableView
 
 class BeadworkView(QTableView):
     def __init__(self):
@@ -28,7 +29,7 @@ class BeadworkView(QTableView):
         self.setBeadSize()
 
     def setBeadSize(self):
-        for i in range(self.source.rowCount(None)):
+        for i in range(self.source.rowCount(QModelIndex())):
             self.setRowHeight(i, self.bead_height)
-        for i in range(self.source.columnCount(None)):
+        for i in range(self.source.columnCount(QModelIndex())):
             self.setColumnWidth(i, self.bead_width)
