@@ -47,6 +47,7 @@ from ColorList import BeadworkToColorListProxyModel, ColorList
 base_dir = os.path.dirname(os.path.abspath(__file__))
 bin_dir = os.path.join(base_dir, "bin")
 icons_dir = os.path.join(bin_dir, "icons")
+qss_dir = os.path.join(bin_dir, "qss")
 
 class MainWindow(QMainWindow):
     def __init__(self, debug=False):
@@ -173,6 +174,7 @@ class MainWindow(QMainWindow):
         mainWidget = QWidget()
         mainWidget.setLayout(mainLayout)
 
+        self.setStyleSheet(open(os.path.join(qss_dir, "style.qss")).read())
         self.setCentralWidget(mainWidget)
         self.setMinimumSize(1200, 600)   
         self.setWindowTitle('Beadwork Designer')
