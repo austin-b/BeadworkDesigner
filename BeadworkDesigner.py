@@ -28,6 +28,7 @@ from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import (
     QApplication,
     QColorDialog,
+    QComboBox,
     QPushButton,
     QHBoxLayout,
     QLabel,
@@ -59,10 +60,10 @@ class MainWindow(QMainWindow):
 
         ### SETUP BEADWORK VIEW
         self.beadworkView = BeadworkView()
-        origModel = BeadworkModel(debug=debug)
-        self.model = BeadworkModel(debug=debug)
+        self.origModel = BeadworkModel(debug=debug)
+        self.model = self.origModel
         self.transposeModel = BeadworkTransposeModel() # TODO: create method/way to change orientation (use BeadworkView.changeOrientation()) and switch models
-        self.transposeModel.setSourceModel(origModel)
+        self.transposeModel.setSourceModel(self.origModel)
         self.delegate = BeadDelegate()
         self.beadworkView.setModel(self.model)
         self.beadworkView.setItemDelegate(self.delegate)
@@ -89,6 +90,21 @@ class MainWindow(QMainWindow):
         widthXHeightLayout.addWidget(self.heightSpinBox)
         widthXHeightWidget = QWidget()
         widthXHeightWidget.setLayout(widthXHeightLayout)
+
+        ### SETUP ORIENTATION OPTIONS
+        self.orientationOptions = ["Vertical", "Horizontal"]
+        self.currentOrientation = "Vertical" # TODO: make this default changeable via settings
+        orientationLabel = QLabel("Orientation:")
+        orientationComboBox = QComboBox()
+        orientationComboBox.addItems(self.orientationOptions)
+        orientationComboBox.setCurrentText(self.currentOrientation)
+        orientationComboBox.setEditable(False)
+        orientationComboBox.currentTextChanged.connect(self.changeOrientation)
+        orientationLayout = QHBoxLayout()
+        orientationLayout.addWidget(orientationLabel)
+        orientationLayout.addWidget(orientationComboBox)
+        orientationWidget = QWidget()
+        orientationWidget.setLayout(orientationLayout)
 
         ### SETUP COLOR DIALOG
         colorDialog = QWidget()
@@ -162,9 +178,10 @@ class MainWindow(QMainWindow):
         # self.proxyModel.setSourceModel(self.model)
         colorList.setModel(self.model)
 
-        ### SETUP COLOR SIDEBAR
+        ### SETUP SIDEBAR
         sidebarLayout = QVBoxLayout()
         sidebarLayout.addWidget(widthXHeightWidget)
+        sidebarLayout.addWidget(orientationWidget)
         sidebarLayout.addWidget(colorDialog)
         sidebarLayout.addWidget(QLabel('Colors in use:'))
         sidebarLayout.addWidget(colorList)
@@ -249,6 +266,30 @@ class MainWindow(QMainWindow):
             self.colorMode.setChecked(False)
         else:
             self.selectionMode.setChecked(True)
+
+    # TODO: changing from horizontal and back to vertical does not work -- fix
+    def changeOrientation(self, orientation):
+        if orientation == "Horizontal":
+            self.currentOrientation = "Horizontal"
+            self.model = self.transposeModel
+            self.delegate.changeBeadDimensions(20, 10)
+            self.beadworkView.setModel(self.model)
+            self.beadworkView.changeOrientation()
+            self.widthLabel.setText("Height:")
+            self.widthSpinBox.setValue(self.model.columnCount(QModelIndex()))
+            self.heightLabel.setText("Width:")
+            self.heightSpinBox.setValue(self.model.rowCount(QModelIndex()))
+        elif orientation == "Vertical":
+            self.currentOrientation = "Vertical"
+            self.model = self.origModel
+            self.delegate.changeBeadDimensions(10, 20)
+            self.beadworkView.setModel(self.model)
+            self.beadworkView.changeOrientation()
+            self.widthLabel.setText("Width:")
+            self.widthSpinBox.setValue(self.model.columnCount(QModelIndex()))
+            self.heightLabel.setText("Height:")
+            self.heightSpinBox.setValue(self.model.rowCount(QModelIndex()))
+
 
 app = QApplication(sys.argv)
 window = MainWindow(debug=("--debug" in sys.argv))  # check if debug flag is set

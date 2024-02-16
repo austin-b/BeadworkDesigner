@@ -6,9 +6,12 @@ class BeadDelegate(QItemDelegate):
     
     def __init__(self):
         super().__init__()
+
+        self.beadWidth = 10
+        self.beadHeight = 20
      
     def paint(self, painter, option, index): 
-        print(f"painting: {index.data()}")
+        # print(f"painting: {index.data()}")
 
         # draw outside black rectangle if selected
         if bool(option.state & QStyle.StateFlag.State_Selected):
@@ -19,8 +22,12 @@ class BeadDelegate(QItemDelegate):
         option.rect.translate(1, 1)
 
         # resize
-        option.rect.setSize(QSize(10, 20))
+        option.rect.setSize(QSize(self.beadWidth, self.beadHeight))
         
         # draw a rectangle
         background_color = index.data(role = Qt.ItemDataRole.BackgroundRole)
         painter.fillRect(option.rect, background_color)
+
+    def changeBeadDimensions(self, width, height):
+        self.beadWidth = width
+        self.beadHeight = height
