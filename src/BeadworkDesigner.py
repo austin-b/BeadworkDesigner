@@ -4,6 +4,8 @@ Icons are provided by https://p.yusukekamiyamane.com/. They are licensed under a
 
 #####################
 #
+# TODO: write tests for models and other logic, non-display code (pytest)
+# TODO: are there tests for GUI code?
 # TODO: create/make stylesheet
 # TODO: add save and load options to file menu
 # TODO: add a way to change the size of the beads
@@ -45,7 +47,7 @@ from BeadDelegate import BeadDelegate
 from BeadworkView import BeadworkView
 from ColorList import BeadworkToColorListProxyModel, ColorList
 
-base_dir = os.path.dirname(os.path.abspath(__file__))
+base_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 bin_dir = os.path.join(base_dir, "bin")
 icons_dir = os.path.join(bin_dir, "icons")
 qss_dir = os.path.join(bin_dir, "qss")
