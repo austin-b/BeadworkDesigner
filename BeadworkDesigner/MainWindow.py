@@ -42,10 +42,10 @@ from PySide6.QtWidgets import (
     QVBoxLayout
 )
 
-from BeadworkModel import BeadworkModel, BeadworkTransposeModel
-from BeadDelegate import BeadDelegate
-from BeadworkView import BeadworkView
-from ColorList import BeadworkToColorListProxyModel, ColorList
+from BeadworkDesigner.BeadworkModel import BeadworkModel, BeadworkTransposeModel
+from BeadworkDesigner.BeadDelegate import BeadDelegate
+from BeadworkDesigner.BeadworkView import BeadworkView
+from BeadworkDesigner.ColorList import BeadworkToColorListProxyModel, ColorList
 
 base_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 bin_dir = os.path.join(base_dir, "bin")
@@ -291,10 +291,3 @@ class MainWindow(QMainWindow):
             self.widthSpinBox.setValue(self.model.columnCount(QModelIndex()))
             self.heightLabel.setText("Height:")
             self.heightSpinBox.setValue(self.model.rowCount(QModelIndex()))
-
-
-app = QApplication(sys.argv)
-window = MainWindow(debug=("--debug" in sys.argv))  # check if debug flag is set
-window.show()
-
-app.exec()
