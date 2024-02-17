@@ -67,11 +67,13 @@ class BeadworkModel(QtCore.QAbstractTableModel):
             self._data[row].insert(index.column()+1, color(random=self._debug))
         self.endInsertColumns()
     
+    # TODO: implement ability to give index like insertRow
     def removeRow(self, row, index):
         self.beginRemoveRows(QtCore.QModelIndex(), row, row)
         del self._data[row]
         self.endRemoveRows()
     
+    # TODO: implement ability to give index like insertColumn
     def removeColumn(self, column, index):
         self.beginRemoveColumns(QtCore.QModelIndex(), column, column)
         for row in range(self.rowCount(index)):
