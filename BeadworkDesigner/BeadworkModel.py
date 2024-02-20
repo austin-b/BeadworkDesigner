@@ -51,6 +51,7 @@ class BeadworkModel(QtCore.QAbstractTableModel):
         
     def setData(self, index, value, role):
         if role == Qt.ItemDataRole.EditRole:
+            logging.debug(f"setting data: {value} at {index.row()}, {index.column()}")
             self._data[index.row()][index.column()] = value
             self.dataChanged.emit(index, index)
             return True
@@ -68,18 +69,21 @@ class BeadworkModel(QtCore.QAbstractTableModel):
         self.beginInsertRows(QtCore.QModelIndex(), row, row)
         self._data.insert(index.row()+1, [color(random=self._debug) for _ in range(self.columnCount(index))])
         self.endInsertRows()
+        logging.debug(f"inserted row at {index.row()+1}")
     
     def insertColumn(self, column, index):
         self.beginInsertColumns(QtCore.QModelIndex(), column, column)
         for row in range(self.rowCount(index)):
             self._data[row].insert(index.column()+1, color(random=self._debug))
         self.endInsertColumns()
+        logging.debug(f"inserted column at {index.column()+1}")
     
     # TODO: implement ability to give index like insertRow
     def removeRow(self, row, index):
         self.beginRemoveRows(QtCore.QModelIndex(), row, row)
         del self._data[row]
         self.endRemoveRows()
+        logging.debug(f"removed row at {row}")
     
     # TODO: implement ability to give index like insertColumn
     def removeColumn(self, column, index):
@@ -87,6 +91,7 @@ class BeadworkModel(QtCore.QAbstractTableModel):
         for row in range(self.rowCount(index)):
             del self._data[row][column]
         self.endRemoveColumns()
+        logging.debug(f"removed column at {column}")
 
 class BeadworkTransposeModel(QTransposeProxyModel):
     def __init__(self, parent=None):
@@ -100,16 +105,12 @@ class BeadworkTransposeModel(QTransposeProxyModel):
     
     def insertRow(self, row, index):
         self.sourceModel().insertColumn(row, index)
-        self.layoutChanged.emit()
 
     def insertColumn(self, column, index):
         self.sourceModel().insertRow(column, index)
-        self.layoutChanged.emit()
 
     def removeRow(self, row, index):
         self.sourceModel().removeColumn(row, index)
-        self.layoutChanged.emit()
     
     def removeColumn(self, column, index):
         self.sourceModel().removeRow(column, index)
-        self.layoutChanged.emit()
