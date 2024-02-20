@@ -1,3 +1,5 @@
+import logging
+
 from PySide6 import QtCore, QtGui
 from PySide6.QtCore import Qt, QTransposeProxyModel
 
@@ -18,6 +20,8 @@ def color(random=False):
     else:
         "#000000"
 #####################
+        
+logger = logging.getLogger(__name__)
 
 class BeadworkModel(QtCore.QAbstractTableModel):
     def __init__(self, data = None, debug=False):

@@ -1,3 +1,5 @@
+import logging
+
 from PySide6.QtCore import QAbstractItemModel, QAbstractProxyModel, QModelIndex, QPersistentModelIndex, Qt
 from PySide6.QtWidgets import QListView
 
@@ -8,6 +10,8 @@ from PySide6.QtWidgets import QListView
 #
 #   IDEA: Have the ProxyModel give a 1-1 mapping of the source model sorted by color,
 #   then have the ColorList only display the unique colors
+
+logger = logging.getLogger(__name__)
 
 class BeadworkToColorListProxyModel(QAbstractProxyModel):
     def __init__(self, parent = None):

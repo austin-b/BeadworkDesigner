@@ -22,13 +22,12 @@ Icons are provided by https://p.yusukekamiyamane.com/. They are licensed under a
 #
 #####################
 
-import sys
+import logging
 import os
 
 from PySide6.QtCore import QModelIndex, Qt, QTransposeProxyModel
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import (
-    QApplication,
     QColorDialog,
     QComboBox,
     QPushButton,
@@ -46,6 +45,8 @@ from BeadworkDesigner.BeadworkModel import BeadworkModel, BeadworkTransposeModel
 from BeadworkDesigner.BeadDelegate import BeadDelegate
 from BeadworkDesigner.BeadworkView import BeadworkView
 from BeadworkDesigner.ColorList import BeadworkToColorListProxyModel, ColorList
+
+logger = logging.getLogger(__name__)
 
 base_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 bin_dir = os.path.join(base_dir, "bin")

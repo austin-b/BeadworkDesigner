@@ -1,5 +1,9 @@
+import logging
+
 from PySide6.QtCore import QModelIndex
 from PySide6.QtWidgets import QTableView
+
+logger = logging.getLogger(__name__)
 
 class BeadworkView(QTableView):
     def __init__(self):

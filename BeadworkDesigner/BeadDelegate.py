@@ -1,6 +1,10 @@
+import logging
+
 from PySide6.QtWidgets import (QItemDelegate, QStyle)
 from PySide6.QtCore import (QSize, Qt)
 from PySide6.QtGui import (QColor)
+
+logger = logging.getLogger(__name__)
 
 class BeadDelegate(QItemDelegate):
     
