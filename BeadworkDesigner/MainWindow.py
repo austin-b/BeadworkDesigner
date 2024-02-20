@@ -5,12 +5,11 @@ Icons are provided by https://p.yusukekamiyamane.com/. They are licensed under a
 #####################
 #
 # TODO: write tests for models and other logic, non-display code (pytest)
-# TODO: are there tests for GUI code?
+# TODO: write unit tests for Qt (pytest-qt)
 # TODO: create/make stylesheet
 # TODO: add save and load options to file menu
 # TODO: add a way to change the size of the beads
 # TODO: add a way to zoom in and out
-# TODO: add a way to change orientation of the model
 # TODO: add a way to change the color of the background
 # TODO: add a "bucket fill" option/tool
 # TODO: implement undo and redo functionality
