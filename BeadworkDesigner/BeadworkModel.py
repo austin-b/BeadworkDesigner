@@ -38,12 +38,15 @@ class BeadworkModel(QtCore.QAbstractTableModel):
 
     def data(self, index, role):
         if role == Qt.ItemDataRole.DisplayRole:
+            logging.debug(f"getting data: {self._data[index.row()][index.column()]} for role {role}")
             return self._data[index.row()][index.column()]
 
         if role == Qt.ItemDataRole.BackgroundRole:
+            logging.debug(f"getting data: {self._data[index.row()][index.column()]} for role {role}")
             return QtGui.QColor(self._data[index.row()][index.column()])
         
         if role == Qt.ItemDataRole.DecorationRole:
+            logging.debug(f"getting data: {self._data[index.row()][index.column()]} for role {role}")
             return QtGui.QColor(self._data[index.row()][index.column()])
         
     def setData(self, index, value, role):
@@ -94,3 +97,19 @@ class BeadworkTransposeModel(QTransposeProxyModel):
     
     def columnCount(self, parent):
         return self.sourceModel().rowCount(parent)
+    
+    def insertRow(self, row, index):
+        self.sourceModel().insertColumn(row, index)
+        self.layoutChanged.emit()
+
+    def insertColumn(self, column, index):
+        self.sourceModel().insertRow(column, index)
+        self.layoutChanged.emit()
+
+    def removeRow(self, row, index):
+        self.sourceModel().removeColumn(row, index)
+        self.layoutChanged.emit()
+    
+    def removeColumn(self, column, index):
+        self.sourceModel().removeRow(column, index)
+        self.layoutChanged.emit()

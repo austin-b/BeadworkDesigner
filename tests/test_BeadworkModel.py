@@ -12,6 +12,8 @@ from BeadworkDesigner.BeadworkModel import BeadworkModel, BeadworkTransposeModel
 def is_hex_color(s):
     return bool(re.fullmatch(r'#[0-9a-fA-F]{6}', s))
 
+### TESTING BEADWORKMODEL ###
+
 def test_BeadworkModel_init_nodata():
     testModel = BeadworkModel()
 
@@ -82,3 +84,72 @@ def test_BeadworkModel_removeColumn(testingModel, input_column):
     index = testingModel.index(0, input_column)
     testingModel.removeColumn(input_column, index)
     assert(testingModel.columnCount(None) == columnCountBefore - 1)
+
+### TESTING BEADWORKTRANSPOSEMODEL ###
+
+@pytest.fixture
+def testingTransposeModels():
+    testModel = BeadworkModel(debug=True)
+    testTransposeModel = BeadworkTransposeModel()
+    testTransposeModel.setSourceModel(testModel)
+    return (testModel, testTransposeModel)
+
+def test_BeadworkTransposeModel_init(testingTransposeModels):
+    testModel, testTransposeModel = testingTransposeModels
+    assert(testTransposeModel.sourceModel() == testModel)
+
+def test_BeadworkTransposeModel_rowCount(testingTransposeModels):
+    testModel, testTransposeModel = testingTransposeModels
+    assert(testTransposeModel.rowCount(None) == testModel.columnCount(None))
+
+def test_BeadworkTransposeModel_columnCount(testingTransposeModels):
+    testModel, testTransposeModel = testingTransposeModels
+    assert(testTransposeModel.columnCount(None) == testModel.rowCount(None))
+
+def test_BeadworkTransposeModel_data(testingTransposeModels):
+    testModel, testTransposeModel = testingTransposeModels
+    for row in range(testModel.rowCount(None)):
+        for column in range(testModel.columnCount(None)):
+            assert(testTransposeModel.data(testTransposeModel.index(column, row), Qt.ItemDataRole.DisplayRole) == testModel.data(testModel.index(row, column), Qt.ItemDataRole.DisplayRole))
+            assert(testTransposeModel.data(testTransposeModel.index(column, row), Qt.ItemDataRole.BackgroundRole) == testModel.data(testModel.index(row, column), Qt.ItemDataRole.BackgroundRole))
+            assert(testTransposeModel.data(testTransposeModel.index(column, row), Qt.ItemDataRole.DecorationRole) == testModel.data(testModel.index(row, column), Qt.ItemDataRole.DecorationRole))
+
+def test_BeadworkTransposeModel_setData(testingTransposeModels):
+    testModel, testTransposeModel = testingTransposeModels
+    for row in range(testModel.rowCount(None)):
+        for column in range(testModel.columnCount(None)):
+            testTransposeModel.setData(testTransposeModel.index(column, row), "#000000", Qt.ItemDataRole.EditRole)
+            assert(testTransposeModel.data(testTransposeModel.index(column, row), Qt.ItemDataRole.DisplayRole) == "#000000")
+            assert(testModel.data(testModel.index(row, column), Qt.ItemDataRole.DisplayRole) == "#000000")
+
+def test_BeadworkTransposeModel_insertRow(testingTransposeModels):
+    testModel, testTransposeModel = testingTransposeModels
+    rowCountBefore = testTransposeModel.rowCount(None)
+    index = testTransposeModel.index(0, 0)
+    testTransposeModel.insertRow(rowCountBefore, index)
+    assert(testTransposeModel.rowCount(None) == rowCountBefore + 1)
+    assert(testModel.columnCount(None) == rowCountBefore + 1)
+
+def test_BeadworkTransposeModel_insertColumn(testingTransposeModels):
+    testModel, testTransposeModel = testingTransposeModels
+    columnCountBefore = testTransposeModel.columnCount(None)
+    index = testTransposeModel.index(0, 0)
+    testTransposeModel.insertColumn(columnCountBefore, index)
+    assert(testTransposeModel.columnCount(None) == columnCountBefore + 1)
+    assert(testModel.rowCount(None) == columnCountBefore + 1)
+
+def test_BeadworkTransposeModel_removeRow(testingTransposeModels):
+    testModel, testTransposeModel = testingTransposeModels
+    rowCountBefore = testTransposeModel.rowCount(None)
+    index = testTransposeModel.index(0, 0)
+    testTransposeModel.removeRow(0, index)
+    assert(testTransposeModel.rowCount(None) == rowCountBefore - 1)
+    assert(testModel.columnCount(None) == rowCountBefore - 1)
+
+def test_BeadworkTransposeModel_removeColumn(testingTransposeModels):
+    testModel, testTransposeModel = testingTransposeModels
+    columnCountBefore = testTransposeModel.columnCount(None)
+    index = testTransposeModel.index(0, 0)
+    testTransposeModel.removeColumn(0, index)
+    assert(testTransposeModel.columnCount(None) == columnCountBefore - 1)
+    assert(testModel.rowCount(None) == columnCountBefore - 1)
