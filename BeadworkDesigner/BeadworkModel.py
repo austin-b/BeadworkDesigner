@@ -15,8 +15,9 @@ def generate_random_color():
     return '#{:06x}'.format(random.randint(0, 0xFFFFFF))
 def color(random=False):
     if random:
-        return generate_random_color()
-        print("picking random color")
+        color = generate_random_color()
+        logger.debug(f"picked random color: {color}")
+        return color
     else:
         "#000000"
 #####################

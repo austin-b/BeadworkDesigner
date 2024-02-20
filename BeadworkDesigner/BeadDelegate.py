@@ -15,7 +15,7 @@ class BeadDelegate(QItemDelegate):
         self.beadHeight = 20
      
     def paint(self, painter, option, index): 
-        # print(f"painting: {index.data()}")
+        logging.debug(f"painting: {index.data()}")
 
         # draw outside black rectangle if selected
         if bool(option.state & QStyle.StateFlag.State_Selected):

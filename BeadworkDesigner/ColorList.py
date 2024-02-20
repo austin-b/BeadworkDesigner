@@ -46,7 +46,7 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
     def mapFromSource(self, sourceIndex):
         color = self.sourceModel().data(sourceIndex, Qt.ItemDataRole.DisplayRole)
 
-        print(f"color: {color}, index: {sourceIndex}")
+        logger.debug(f"color: {color}, index: {sourceIndex}")
         if color in self._colors:
             return self.createIndex(self._colors_index.index(color)[0], 0) # TODO: only returns the first index
         else:
@@ -75,7 +75,7 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
                     self._colors[color] = [(row, column)]
                 else:
                     self._colors[color].append((row, column))
-        print("self._colors", self._colors)
+        logging.debug("self._colors", self._colors)
         self._colors_index = list(self._colors)
         self._colors_index.sort()
         print("self._colors_index", self._colors_index)     # NOTE: this has a list of colors
