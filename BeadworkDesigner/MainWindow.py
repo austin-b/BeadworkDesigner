@@ -56,11 +56,15 @@ class MainWindow(QMainWindow):
     def __init__(self, debug=False):
         super().__init__()
 
+        logger.info("Initializing MainWindow.")
+
         ### SETUP MENU
+        logger.debug("Setting up menus.")
         menu = self.menuBar()
         fileMenu = menu.addMenu('File')
 
         ### SETUP BEADWORK VIEW
+        logger.debug("Setting up BeadworkView, BeadworkModel, BeadworkTransposeModel, and BeadDelegate.")
         self.beadworkView = BeadworkView()
         self.origModel = BeadworkModel(debug=debug)
         self.model = self.origModel
@@ -75,8 +79,10 @@ class MainWindow(QMainWindow):
         ### KEEP TRACK OF WIDTH x HEIGHT
         self.modelWidth = self.model.columnCount(QModelIndex())
         self.modelHeight = self.model.rowCount(QModelIndex())
+        logger.debug(f"Model width: {self.modelWidth}, Model height: {self.modelHeight}.")
 
         ### SETUP WIDTH x HEIGHT
+        logger.debug("Setting up widthXHeightWidget.")
         self.widthLabel = QLabel("Width:")
         self.widthSpinBox = QSpinBox()
         self.widthSpinBox.setValue(self.modelWidth)
@@ -94,6 +100,7 @@ class MainWindow(QMainWindow):
         widthXHeightWidget.setLayout(widthXHeightLayout)
 
         ### SETUP ORIENTATION OPTIONS
+        logger.debug("Setting up orientationWidget.")
         self.orientationOptions = ["Vertical", "Horizontal"]
         self.currentOrientation = "Vertical" # TODO: make this default changeable via settings
         orientationLabel = QLabel("Orientation:")
@@ -109,7 +116,8 @@ class MainWindow(QMainWindow):
         orientationWidget.setLayout(orientationLayout)
 
         ### SETUP COLOR DIALOG
-        colorDialog = QWidget()
+        logger.debug("Setting up colorDialogWidget.")
+        colorDialogWidget = QWidget()
         colorDialogLayout = QHBoxLayout()
         currentColorLabel = QLabel('Current Color: #')
         currentColorLabel.setObjectName("currentColorLabel")
@@ -117,7 +125,7 @@ class MainWindow(QMainWindow):
         currentColor.setFixedWidth(47)
         currentColor.setInputMask('HHHHHH')   # only allows hex color input
         currentColor.textChanged.connect(lambda c: self.model.setData(self.beadworkView.currentIndex(), f"#{c}", Qt.ItemDataRole.EditRole)) # TODO: this currently only changes the last one selected, multiple selections do not work
-        colorDialogWidget = QColorDialog()
+        colorDialog = QColorDialog()
         # colorDialogWidget.colorSelected.connect(lambda c: currentColor.setText(c.name().upper())) TODO: see below regarding .open()
         colorDialogButton = QPushButton()
         colorDialogButton.setFixedWidth(20)
@@ -127,9 +135,10 @@ class MainWindow(QMainWindow):
         colorDialogLayout.addWidget(currentColorLabel)
         colorDialogLayout.addWidget(currentColor)
         colorDialogLayout.addWidget(colorDialogButton)
-        colorDialog.setLayout(colorDialogLayout)
+        colorDialogWidget.setLayout(colorDialogLayout)
 
         ### SETUP ACTIONS
+        logger.debug("Setting up actions.")
         addColumnAction = QAction('Add Column', self)
         addColumnAction.triggered.connect(self.addColumn)
         addColumnAction.setIcon(QIcon(os.path.join(icons_dir, "table-insert-column.png")))
@@ -162,6 +171,7 @@ class MainWindow(QMainWindow):
         self.clearMode.setIcon(QIcon(os.path.join(icons_dir, "eraser.png")))
 
         ### SETUP TOOLBAR
+        logger.debug("Setting up toolbar.")
         toolbar = QToolBar()
         self.addToolBar(toolbar)
         toolbar.addAction(addColumnAction)
@@ -174,6 +184,7 @@ class MainWindow(QMainWindow):
         toolbar.addAction(self.clearMode)
 
         ### SETUP COLOR LIST
+        logger.debug("Setting up colorList.")
         colorList = ColorList()
         # TODO: proxyModel does not work -- fix
         # self.proxyModel = BeadworkToColorListProxyModel()
@@ -181,10 +192,11 @@ class MainWindow(QMainWindow):
         colorList.setModel(self.model)
 
         ### SETUP SIDEBAR
+        logger.debug("Setting up sidebar.")
         sidebarLayout = QVBoxLayout()
         sidebarLayout.addWidget(widthXHeightWidget)
         sidebarLayout.addWidget(orientationWidget)
-        sidebarLayout.addWidget(colorDialog)
+        sidebarLayout.addWidget(colorDialogWidget)
         sidebarLayout.addWidget(QLabel('Colors in use:'))
         sidebarLayout.addWidget(colorList)
         sidebar = QWidget()
@@ -192,6 +204,7 @@ class MainWindow(QMainWindow):
         sidebar.setMaximumWidth(200)
 
         ### SETUP MAIN LAYOUT & WIDGET
+        logger.debug("Setting up main layout and widget.")
         mainLayout = QHBoxLayout()
         mainLayout.addWidget(sidebar)
         mainLayout.addWidget(self.beadworkView)
@@ -204,41 +217,51 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(1200, 600)   
         self.setWindowTitle('Beadwork Designer')
 
+        logger.info("MainWindow initialized.")
+
     def addColumn(self):
+        logger.debug("Adding column.")
         self.model.insertColumn(self.model.columnCount(QModelIndex()), self.beadworkView.currentIndex())
         self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(QModelIndex()) - 1, self.model.columnCount(QModelIndex()) - 1), [Qt.ItemDataRole.BackgroundRole])
         self.modelWidth = self.model.columnCount(QModelIndex())
         self.widthSpinBox.setValue(self.modelWidth)
 
     def removeColumn(self):
+        logger.debug("Removing column.")
         self.model.removeColumn(self.model.columnCount(QModelIndex()) - 1, self.beadworkView.currentIndex())
         self.modelWidth = self.model.columnCount(QModelIndex())
         self.widthSpinBox.setValue(self.modelWidth)
 
     def addRow(self):
+        logger.debug("Adding row.")
         self.model.insertRow(self.model.rowCount(QModelIndex()), self.beadworkView.currentIndex())
         self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(QModelIndex()) - 1, self.model.columnCount(QModelIndex()) - 1), [Qt.ItemDataRole.BackgroundRole])
         self.modelHeight = self.model.rowCount(QModelIndex())
         self.heightSpinBox.setValue(self.modelHeight)
 
     def removeRow(self):
+        logger.debug("Removing row.")
         self.model.removeRow(self.model.rowCount(QModelIndex()) - 1, self.beadworkView.currentIndex())
         self.modelHeight = self.model.rowCount(QModelIndex())
         self.heightSpinBox.setValue(self.modelHeight)
 
     def widthChanged(self, value):
+        logger.debug(f"Width changed to {value}.")
         self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth - 1))
         if value > self.modelWidth:
             self.addColumn()
         else:
             self.removeColumn()
+        self.modelWidth = self.model.columnCount(QModelIndex())
 
     def heightChanged(self, value):
+        logger.debug(f"Height changed to {value}.")
         self.beadworkView.setCurrentIndex(self.model.index(self.modelHeight-1, 0))
         if value > self.modelHeight:
             self.addRow()
         else:
             self.removeRow()
+        self.modelHeight = self.model.rowCount(QModelIndex())
 
     # TODO: implement
     def inSelectionMode(self, checked):
@@ -271,23 +294,51 @@ class MainWindow(QMainWindow):
 
     # TODO: changing from horizontal and back to vertical does not work -- fix
     def changeOrientation(self, orientation):
+        logger.debug(f"Changing orientation to {orientation}.")
         if orientation == "Horizontal":
             self.currentOrientation = "Horizontal"
+
             self.model = self.transposeModel
+            logger.debug(f"self.model changed to {self.model}.")
+
             self.delegate.changeBeadDimensions(20, 10)
+
             self.beadworkView.setModel(self.model)
             self.beadworkView.changeOrientation()
+            logger.debug(f"self.beadworkView.model() changed to {self.model}.")
+
+            # temporarily disconnect signals to avoid crashes
+            self.widthSpinBox.valueChanged.disconnect(self.widthChanged)
+            self.heightSpinBox.valueChanged.disconnect(self.heightChanged)
             self.widthLabel.setText("Height:")
-            self.widthSpinBox.setValue(self.model.columnCount(QModelIndex()))
+            self.widthSpinBox.setValue(self.model.columnCount(None))
             self.heightLabel.setText("Width:")
-            self.heightSpinBox.setValue(self.model.rowCount(QModelIndex()))
+            self.heightSpinBox.setValue(self.model.rowCount(None))
+            # reconnect signals
+            self.widthSpinBox.valueChanged.connect(self.widthChanged)
+            self.heightSpinBox.valueChanged.connect(self.heightChanged)
+            logger.debug(f"widthLabel changed to {self.widthLabel.text()}, widthSpinBox changed to {self.widthSpinBox.value()}, heightLabel changed to {self.heightLabel.text()}, heightSpinBox changed to {self.heightSpinBox.value()}.")
         elif orientation == "Vertical":
             self.currentOrientation = "Vertical"
+
             self.model = self.origModel
+            logger.debug(f"self.model changed to {self.model}.")
+
             self.delegate.changeBeadDimensions(10, 20)
+
             self.beadworkView.setModel(self.model)
             self.beadworkView.changeOrientation()
+            logger.debug(f"self.beadworkView.model() changed to {self.model}.")
+
+            # temporarily disconnect signals to avoid crashes
+            self.widthSpinBox.valueChanged.disconnect(self.widthChanged)
+            self.heightSpinBox.valueChanged.disconnect(self.heightChanged)
             self.widthLabel.setText("Width:")
-            self.widthSpinBox.setValue(self.model.columnCount(QModelIndex()))
+            self.widthSpinBox.setValue(self.model.columnCount(None))
             self.heightLabel.setText("Height:")
-            self.heightSpinBox.setValue(self.model.rowCount(QModelIndex()))
+            self.heightSpinBox.setValue(self.model.rowCount(None))
+            # reconnect signals
+            self.widthSpinBox.valueChanged.connect(self.widthChanged)
+            self.heightSpinBox.valueChanged.connect(self.heightChanged)
+            logger.debug(f"widthLabel changed to {self.widthLabel.text()}, widthSpinBox changed to {self.widthSpinBox.value()}, heightLabel changed to {self.heightLabel.text()}, heightSpinBox changed to {self.heightSpinBox.value()}.")
+        logger.debug(f"Orientation changed to {orientation}.")

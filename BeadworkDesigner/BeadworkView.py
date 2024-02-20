@@ -17,7 +17,11 @@ class BeadworkView(QTableView):
         
         self.setShowGrid(False)
 
+        logger.info("BeadworkView initialized.")
+
     def setModel(self, model):
+        logger.debug(f"Setting model to {model}.")
+
         super().setModel(model)
 
         self.source = model
@@ -27,7 +31,10 @@ class BeadworkView(QTableView):
 
         self.setBeadSize()
 
+        logger.debug(f"Model set to {model}.")
+
     def dataChanged(self, topLeft, bottomRight, roles):
+        logger.debug(f"Data changed: {topLeft}, {bottomRight}, {roles}.")
         super().dataChanged(topLeft, bottomRight, roles)
 
         self.setBeadSize()
@@ -38,6 +45,9 @@ class BeadworkView(QTableView):
         for i in range(self.source.columnCount(QModelIndex())):
             self.setColumnWidth(i, self.bead_width)
 
+        logger.debug(f"Bead size set to {self.bead_width}, {self.bead_height}.")
+
     def changeOrientation(self):
         self.bead_height, self.bead_width = self.bead_width, self.bead_height
         self.setBeadSize()
+        logger.debug(f"Orientation changed to {self.bead_width}, {self.bead_height}.")

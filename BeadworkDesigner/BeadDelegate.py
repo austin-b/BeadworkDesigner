@@ -13,12 +13,15 @@ class BeadDelegate(QItemDelegate):
 
         self.beadWidth = 10
         self.beadHeight = 20
+
+        logger.info("BeadDelegate initialized.")
      
     def paint(self, painter, option, index): 
-        logging.debug(f"painting: {index.data()}")
+        logger.debug(f"painting: {index.data()} at {index.row()}, {index.column()}.")
 
         # draw outside black rectangle if selected
         if bool(option.state & QStyle.StateFlag.State_Selected):
+            logger.debug(f"painting selected: {index.data()} at {index.row()}, {index.column()}.")
             painter.setPen(QColor("#000000"))
             painter.drawRect(option.rect)
 
@@ -33,5 +36,6 @@ class BeadDelegate(QItemDelegate):
         painter.fillRect(option.rect, background_color)
 
     def changeBeadDimensions(self, width, height):
+        logger.debug(f"Changing bead dimensions to {width}, {height}.")
         self.beadWidth = width
         self.beadHeight = height
