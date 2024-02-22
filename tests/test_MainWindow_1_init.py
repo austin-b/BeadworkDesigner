@@ -49,6 +49,9 @@ def test_MainWindow_init_allItemsVisible(mainWindow):
     assert(mainWindow.colorList.isVisible())
     assert(mainWindow.toolbar.isVisible())
 
+def test_MainWindow_init_menu(mainWindow):
+    assert(mainWindow.menu.actions()[0] == mainWindow.fileMenu.menuAction()) # sub-menus are a special type of action, so we see if the Menu action is what's associated with .fileMenu
+
 def test_MainWindow_init_widthXHeightValues(mainWindow):
     assert(mainWindow.modelWidth == mainWindow.model.columnCount(None))
     assert(mainWindow.modelHeight == mainWindow.model.rowCount(None))
