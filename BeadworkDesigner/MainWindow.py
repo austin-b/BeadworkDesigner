@@ -143,7 +143,7 @@ class MainWindow(QMainWindow):
     def setupOrientationWidget(self):
         logger.debug("Setting up orientationWidget.")
         self.orientationOptions = ["Vertical", "Horizontal"]
-        self.currentOrientation = "Vertical" # TODO: make this default changeable via settings
+        self.currentOrientation = "Vertical" # TODO: make this default changeable via settings (don't forget to change the unit test)
         self.orientationLabel = QLabel("Orientation:")
         self.orientationComboBox = QComboBox()
         self.orientationComboBox.addItems(self.orientationOptions)
@@ -218,8 +218,8 @@ class MainWindow(QMainWindow):
         self.toolbar = QToolBar()
         self.addToolBar(self.toolbar)
         self.toolbar.addAction(self.addColumnAction)
-        self.toolbar.addAction(self.removeColumnAction)
         self.toolbar.addAction(self.addRowAction)
+        self.toolbar.addAction(self.removeColumnAction)
         self.toolbar.addAction(self.removeRowAction)
         self.toolbar.addSeparator()
         self.toolbar.addAction(self.selectionMode)

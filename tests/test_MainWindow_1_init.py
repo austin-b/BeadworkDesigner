@@ -48,3 +48,33 @@ def test_MainWindow_init_allItemsVisible(mainWindow):
     assert(not mainWindow.colorDialog.isVisible()) # this should be hidden until the button is clicked
     assert(mainWindow.colorList.isVisible())
     assert(mainWindow.toolbar.isVisible())
+
+def test_MainWindow_init_widthXHeightValues(mainWindow):
+    assert(mainWindow.modelWidth == mainWindow.model.columnCount(None))
+    assert(mainWindow.modelHeight == mainWindow.model.rowCount(None))
+    assert(mainWindow.widthSpinBox.value() == mainWindow.modelWidth)
+    assert(mainWindow.heightSpinBox.value() == mainWindow.modelHeight)
+
+def test_MainWindow_init_orientationValues(mainWindow):
+    assert(mainWindow.currentOrientation == "Vertical")
+    assert(mainWindow.orientationComboBox.currentText() == mainWindow.currentOrientation)
+
+def test_MainWindow_init_colorDialogWidget(mainWindow):
+    assert(mainWindow.currentColor.text() == "")
+
+def test_MainWindow_init_colorList(mainWindow):
+    pass # TODO: implement test_MainWindow_init_colorList
+
+def test_MainWindow_init_toolbar(mainWindow):
+    assert(mainWindow.toolbar.actions()[0] == mainWindow.addColumnAction)
+    assert(mainWindow.toolbar.actions()[1] == mainWindow.addRowAction)
+    assert(mainWindow.toolbar.actions()[2] == mainWindow.removeColumnAction)
+    assert(mainWindow.toolbar.actions()[3] == mainWindow.removeRowAction)
+    # [4] is a separator
+    assert(mainWindow.toolbar.actions()[5] == mainWindow.selectionMode)
+    assert(mainWindow.toolbar.actions()[6] == mainWindow.colorMode)
+    assert(mainWindow.toolbar.actions()[7] == mainWindow.clearMode)
+
+def test_MainWindow_close(mainWindow):
+    mainWindow.close()
+    assert(not mainWindow.isVisible())
