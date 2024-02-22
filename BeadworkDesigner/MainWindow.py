@@ -55,32 +55,73 @@ class MainWindow(QMainWindow):
     def __init__(self, debug=False):
         super().__init__()
 
+        self.debug = debug
+
         logger.info("Initializing MainWindow.")
 
-        ### SETUP MENU
-        logger.debug("Setting up menus.")
-        menu = self.menuBar()
-        fileMenu = menu.addMenu('File')
+        ### SETUP MODELS AND CONFIGURE VIEW
+        self.setupModels()
+        self.setupView()
 
-        ### SETUP BEADWORK VIEW
-        logger.debug("Setting up BeadworkView, BeadworkModel, BeadworkTransposeModel, and BeadDelegate.")
-        self.beadworkView = BeadworkView()
-        self.origModel = BeadworkModel(debug=debug)
-        self.model = self.origModel
-        self.transposeModel = BeadworkTransposeModel() # TODO: create method/way to change orientation (use BeadworkView.changeOrientation()) and switch models
-        self.transposeModel.setSourceModel(self.origModel)
-        self.delegate = BeadDelegate()
-        self.beadworkView.setModel(self.model)
-        self.beadworkView.setItemDelegate(self.delegate)
-        self.beadworkView.clicked.connect(lambda c: currentColor.setText((self.model.data(c, Qt.ItemDataRole.DisplayRole)).upper()))
-        self.beadworkView.setObjectName("beadworkView")
-
-        ### KEEP TRACK OF WIDTH x HEIGHT
+        ### KEEP TRACK OF INITIAL WIDTH x HEIGHT
         self.modelWidth = self.model.columnCount(QModelIndex())
         self.modelHeight = self.model.rowCount(QModelIndex())
         logger.debug(f"Model width: {self.modelWidth}, Model height: {self.modelHeight}.")
 
-        ### SETUP WIDTH x HEIGHT
+        ### SETUP OTHER GUI ELEMENTS
+        self.setupMenu()
+        self.setupWidthXHeightWidget()
+        self.setupOrientationWidget()
+        self.setupColorDialogWidget()
+        self.setupColorList()
+        self.setupSidebar()
+        self.setupActions()
+        self.setupToolbar()    
+
+        ### SETUP MAIN LAYOUT & WIDGET
+        logger.debug("Setting up main layout and widget.")
+        mainLayout = QHBoxLayout()
+        mainLayout.addWidget(self.sidebar)
+        mainLayout.addWidget(self.beadworkView)
+
+        mainWidget = QWidget()
+        mainWidget.setLayout(mainLayout)
+
+        ### MAIN WINDOW CONFIGS
+        self.setStyleSheet(open(os.path.join(qss_dir, "style.qss")).read())
+        self.setCentralWidget(mainWidget)
+        self.setMinimumSize(1200, 600)   
+        self.setWindowTitle('Beadwork Designer')
+
+        logger.info("MainWindow initialized.")
+
+    ########################################
+    # SETUP METHODS
+    ########################################
+
+    def setupMenu(self):
+        logger.debug("Setting up menus.")
+        self.menu = self.menuBar()
+        self.fileMenu = self.menu.addMenu('File')
+
+    def setupModels(self):
+        logger.debug("Setting up BeadworkModel and BeadworkTransposeModel.")
+        self.origModel = BeadworkModel(debug=self.debug)
+        self.transposeModel = BeadworkTransposeModel()
+        self.transposeModel.setSourceModel(self.origModel)
+
+        self.model = self.origModel     # beginning model will be the original model
+
+    def setupView(self):
+        logger.debug("Setting up BeadworkView and BeadDelegate.")
+        self.beadworkView = BeadworkView()
+        self.delegate = BeadDelegate()
+        self.beadworkView.setModel(self.model)
+        self.beadworkView.setItemDelegate(self.delegate)
+        self.beadworkView.clicked.connect(lambda c: self.currentColor.setText((self.model.data(c, Qt.ItemDataRole.DisplayRole)).upper()))
+        self.beadworkView.setObjectName("beadworkView")
+
+    def setupWidthXHeightWidget(self):
         logger.debug("Setting up widthXHeightWidget.")
         self.widthLabel = QLabel("Width:")
         self.widthSpinBox = QSpinBox()
@@ -95,35 +136,36 @@ class MainWindow(QMainWindow):
         widthXHeightLayout.addWidget(self.widthSpinBox)
         widthXHeightLayout.addWidget(self.heightLabel)
         widthXHeightLayout.addWidget(self.heightSpinBox)
-        widthXHeightWidget = QWidget()
-        widthXHeightWidget.setLayout(widthXHeightLayout)
 
-        ### SETUP ORIENTATION OPTIONS
+        self.widthXHeightWidget = QWidget()
+        self.widthXHeightWidget.setLayout(widthXHeightLayout)
+
+    def setupOrientationWidget(self):
         logger.debug("Setting up orientationWidget.")
         self.orientationOptions = ["Vertical", "Horizontal"]
         self.currentOrientation = "Vertical" # TODO: make this default changeable via settings
         orientationLabel = QLabel("Orientation:")
-        orientationComboBox = QComboBox()
-        orientationComboBox.addItems(self.orientationOptions)
-        orientationComboBox.setCurrentText(self.currentOrientation)
-        orientationComboBox.setEditable(False)
-        orientationComboBox.currentTextChanged.connect(self.changeOrientation)
+        self.orientationComboBox = QComboBox()
+        self.orientationComboBox.addItems(self.orientationOptions)
+        self.orientationComboBox.setCurrentText(self.currentOrientation)
+        self.orientationComboBox.setEditable(False)
+        self.orientationComboBox.currentTextChanged.connect(self.changeOrientation)
         orientationLayout = QHBoxLayout()
         orientationLayout.addWidget(orientationLabel)
-        orientationLayout.addWidget(orientationComboBox)
-        orientationWidget = QWidget()
-        orientationWidget.setLayout(orientationLayout)
+        orientationLayout.addWidget(self.orientationComboBox)
 
-        ### SETUP COLOR DIALOG
+        self.orientationWidget = QWidget()
+        self.orientationWidget.setLayout(orientationLayout)
+
+    def setupColorDialogWidget(self):
         logger.debug("Setting up colorDialogWidget.")
-        colorDialogWidget = QWidget()
         colorDialogLayout = QHBoxLayout()
         currentColorLabel = QLabel('Current Color: #')
         currentColorLabel.setObjectName("currentColorLabel")
-        currentColor = QLineEdit()
-        currentColor.setFixedWidth(47)
-        currentColor.setInputMask('HHHHHH')   # only allows hex color input
-        currentColor.textChanged.connect(lambda c: self.model.setData(self.beadworkView.currentIndex(), f"#{c}", Qt.ItemDataRole.EditRole)) # TODO: this currently only changes the last one selected, multiple selections do not work
+        self.currentColor = QLineEdit()
+        self.currentColor.setFixedWidth(47)
+        self.currentColor.setInputMask('HHHHHH')   # only allows hex color input
+        self.currentColor.textChanged.connect(lambda c: self.model.setData(self.beadworkView.currentIndex(), f"#{c}", Qt.ItemDataRole.EditRole)) # TODO: this currently only changes the last one selected, multiple selections do not work
         colorDialog = QColorDialog()
         # colorDialogWidget.colorSelected.connect(lambda c: currentColor.setText(c.name().upper())) TODO: see below regarding .open()
         colorDialogButton = QPushButton()
@@ -132,27 +174,29 @@ class MainWindow(QMainWindow):
         # colorDialogButton.clicked.connect(colorDialogWidget.open) TODO: use .open()
         colorDialogLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
         colorDialogLayout.addWidget(currentColorLabel)
-        colorDialogLayout.addWidget(currentColor)
+        colorDialogLayout.addWidget(self.currentColor)
         colorDialogLayout.addWidget(colorDialogButton)
-        colorDialogWidget.setLayout(colorDialogLayout)
 
-        ### SETUP ACTIONS
+        self.colorDialogWidget = QWidget()
+        self.colorDialogWidget.setLayout(colorDialogLayout)
+
+    def setupActions(self):
         logger.debug("Setting up actions.")
-        addColumnAction = QAction('Add Column', self)
-        addColumnAction.triggered.connect(self.addColumn)
-        addColumnAction.setIcon(QIcon(os.path.join(icons_dir, "table-insert-column.png")))
+        self.addColumnAction = QAction('Add Column', self)
+        self.addColumnAction.triggered.connect(self.addColumn)
+        self.addColumnAction.setIcon(QIcon(os.path.join(icons_dir, "table-insert-column.png")))
 
-        removeColumnAction = QAction('Remove Column', self)
-        removeColumnAction.triggered.connect(self.removeColumn)
-        removeColumnAction.setIcon(QIcon(os.path.join(icons_dir, "table-delete-column.png")))
+        self.removeColumnAction = QAction('Remove Column', self)
+        self.removeColumnAction.triggered.connect(self.removeColumn)
+        self.removeColumnAction.setIcon(QIcon(os.path.join(icons_dir, "table-delete-column.png")))
 
-        addRowAction = QAction('Add Row', self)
-        addRowAction.triggered.connect(self.addRow)
-        addRowAction.setIcon(QIcon(os.path.join(icons_dir, "table-insert-row.png")))
+        self.addRowAction = QAction('Add Row', self)
+        self.addRowAction.triggered.connect(self.addRow)
+        self.addRowAction.setIcon(QIcon(os.path.join(icons_dir, "table-insert-row.png")))
 
-        removeRowAction = QAction('Remove Row', self)
-        removeRowAction.triggered.connect(self.removeRow)
-        removeRowAction.setIcon(QIcon(os.path.join(icons_dir, "table-delete-row.png")))
+        self.removeRowAction = QAction('Remove Row', self)
+        self.removeRowAction.triggered.connect(self.removeRow)
+        self.removeRowAction.setIcon(QIcon(os.path.join(icons_dir, "table-delete-row.png")))
 
         self.selectionMode = QAction('Selection Mode', self)
         self.selectionMode.setCheckable(True)
@@ -169,54 +213,43 @@ class MainWindow(QMainWindow):
         self.clearMode.triggered.connect(self.inClearMode)
         self.clearMode.setIcon(QIcon(os.path.join(icons_dir, "eraser.png")))
 
-        ### SETUP TOOLBAR
-        logger.debug("Setting up toolbar.")
-        toolbar = QToolBar()
-        self.addToolBar(toolbar)
-        toolbar.addAction(addColumnAction)
-        toolbar.addAction(removeColumnAction)
-        toolbar.addAction(addRowAction)
-        toolbar.addAction(removeRowAction)
-        toolbar.addSeparator()
-        toolbar.addAction(self.selectionMode)
-        toolbar.addAction(self.colorMode)
-        toolbar.addAction(self.clearMode)
+    def setupToolbar(self):
+        logger.debug("Setting up self.toolbar.")
+        self.toolbar = QToolBar()
+        self.addToolBar(self.toolbar)
+        self.toolbar.addAction(self.addColumnAction)
+        self.toolbar.addAction(self.removeColumnAction)
+        self.toolbar.addAction(self.addRowAction)
+        self.toolbar.addAction(self.removeRowAction)
+        self.toolbar.addSeparator()
+        self.toolbar.addAction(self.selectionMode)
+        self.toolbar.addAction(self.colorMode)
+        self.toolbar.addAction(self.clearMode)
 
-        ### SETUP COLOR LIST
+    # TODO: finish implementing 
+    def setupColorList(self):
         logger.debug("Setting up colorList.")
-        colorList = ColorList()
+        self.colorList = ColorList()
         # TODO: proxyModel does not work -- fix
         # self.proxyModel = BeadworkToColorListProxyModel()
         # self.proxyModel.setSourceModel(self.model)
-        colorList.setModel(self.model)
+        self.colorList.setModel(self.model)
 
-        ### SETUP SIDEBAR
+    def setupSidebar(self):
         logger.debug("Setting up sidebar.")
         sidebarLayout = QVBoxLayout()
-        sidebarLayout.addWidget(widthXHeightWidget)
-        sidebarLayout.addWidget(orientationWidget)
-        sidebarLayout.addWidget(colorDialogWidget)
+        sidebarLayout.addWidget(self.widthXHeightWidget)
+        sidebarLayout.addWidget(self.orientationWidget)
+        sidebarLayout.addWidget(self.colorDialogWidget)
         sidebarLayout.addWidget(QLabel('Colors in use:'))
-        sidebarLayout.addWidget(colorList)
-        sidebar = QWidget()
-        sidebar.setLayout(sidebarLayout)
-        sidebar.setMaximumWidth(200)
+        sidebarLayout.addWidget(self.colorList)
+        self.sidebar = QWidget()
+        self.sidebar.setLayout(sidebarLayout)
+        self.sidebar.setMaximumWidth(200)
 
-        ### SETUP MAIN LAYOUT & WIDGET
-        logger.debug("Setting up main layout and widget.")
-        mainLayout = QHBoxLayout()
-        mainLayout.addWidget(sidebar)
-        mainLayout.addWidget(self.beadworkView)
-
-        mainWidget = QWidget()
-        mainWidget.setLayout(mainLayout)
-
-        self.setStyleSheet(open(os.path.join(qss_dir, "style.qss")).read())
-        self.setCentralWidget(mainWidget)
-        self.setMinimumSize(1200, 600)   
-        self.setWindowTitle('Beadwork Designer')
-
-        logger.info("MainWindow initialized.")
+    ########################################
+    # SLOTS
+    ########################################
 
     def addColumn(self):
         logger.debug("Adding column.")
