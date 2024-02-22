@@ -144,14 +144,14 @@ class MainWindow(QMainWindow):
         logger.debug("Setting up orientationWidget.")
         self.orientationOptions = ["Vertical", "Horizontal"]
         self.currentOrientation = "Vertical" # TODO: make this default changeable via settings
-        orientationLabel = QLabel("Orientation:")
+        self.orientationLabel = QLabel("Orientation:")
         self.orientationComboBox = QComboBox()
         self.orientationComboBox.addItems(self.orientationOptions)
         self.orientationComboBox.setCurrentText(self.currentOrientation)
         self.orientationComboBox.setEditable(False)
         self.orientationComboBox.currentTextChanged.connect(self.changeOrientation)
         orientationLayout = QHBoxLayout()
-        orientationLayout.addWidget(orientationLabel)
+        orientationLayout.addWidget(self.orientationLabel)
         orientationLayout.addWidget(self.orientationComboBox)
 
         self.orientationWidget = QWidget()
@@ -160,22 +160,22 @@ class MainWindow(QMainWindow):
     def setupColorDialogWidget(self):
         logger.debug("Setting up colorDialogWidget.")
         colorDialogLayout = QHBoxLayout()
-        currentColorLabel = QLabel('Current Color: #')
-        currentColorLabel.setObjectName("currentColorLabel")
+        self.currentColorLabel = QLabel('Current Color: #')
+        self.currentColorLabel.setObjectName("currentColorLabel")
         self.currentColor = QLineEdit()
         self.currentColor.setFixedWidth(47)
         self.currentColor.setInputMask('HHHHHH')   # only allows hex color input
         self.currentColor.textChanged.connect(lambda c: self.model.setData(self.beadworkView.currentIndex(), f"#{c}", Qt.ItemDataRole.EditRole)) # TODO: this currently only changes the last one selected, multiple selections do not work
-        colorDialog = QColorDialog()
+        self.colorDialog = QColorDialog()
         # colorDialogWidget.colorSelected.connect(lambda c: currentColor.setText(c.name().upper())) TODO: see below regarding .open()
-        colorDialogButton = QPushButton()
-        colorDialogButton.setFixedWidth(20)
-        colorDialogButton.setIcon(QIcon(os.path.join(icons_dir, "palette.png")))
+        self.colorDialogButton = QPushButton()
+        self.colorDialogButton.setFixedWidth(20)
+        self.colorDialogButton.setIcon(QIcon(os.path.join(icons_dir, "palette.png")))
         # colorDialogButton.clicked.connect(colorDialogWidget.open) TODO: use .open()
         colorDialogLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        colorDialogLayout.addWidget(currentColorLabel)
+        colorDialogLayout.addWidget(self.currentColorLabel)
         colorDialogLayout.addWidget(self.currentColor)
-        colorDialogLayout.addWidget(colorDialogButton)
+        colorDialogLayout.addWidget(self.colorDialogButton)
 
         self.colorDialogWidget = QWidget()
         self.colorDialogWidget.setLayout(colorDialogLayout)

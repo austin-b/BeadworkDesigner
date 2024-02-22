@@ -22,10 +22,29 @@ from BeadworkDesigner.MainWindow import MainWindow
 # - do the selection modes work as expected?
 # - does the statusbar work as expected?
 
-def test_MainWindow_test(qtbot):
+@pytest.fixture
+def mainWindow(qtbot):
     window = MainWindow(debug=True)
     qtbot.addWidget(window)
-    window.show()
-    assert(window.isVisible())
-    window.close()
-    assert(not window.isVisible())
+    return window
+
+def test_MainWindow_init_allItemsVisible(mainWindow):
+    mainWindow.show()
+    assert(mainWindow.isVisible())
+
+    # all of these widgets are created in MainWindow.__init__(),
+    # so all should be visible when the window is shown
+    assert(mainWindow.menu.isVisible())
+    assert(mainWindow.beadworkView.isVisible())
+    assert(mainWindow.widthLabel.isVisible())
+    assert(mainWindow.widthSpinBox.isVisible())
+    assert(mainWindow.heightLabel.isVisible())
+    assert(mainWindow.heightSpinBox.isVisible())
+    assert(mainWindow.orientationLabel.isVisible())
+    assert(mainWindow.orientationComboBox.isVisible())
+    assert(mainWindow.currentColorLabel.isVisible())
+    assert(mainWindow.currentColor.isVisible())
+    assert(mainWindow.colorDialogButton.isVisible())
+    assert(not mainWindow.colorDialog.isVisible()) # this should be hidden until the button is clicked
+    assert(mainWindow.colorList.isVisible())
+    assert(mainWindow.toolbar.isVisible())
