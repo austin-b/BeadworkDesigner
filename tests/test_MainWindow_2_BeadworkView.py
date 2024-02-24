@@ -42,6 +42,24 @@ def test_beadworkView_data(qtbot):
 
     assert(f"#{currentColorText}" == color)
 
+def test_beadworkView_changeBeadColorFromDialog(qtbot):
+    mainWindow = MainWindow(debug=True)
+    qtbot.addWidget(mainWindow)
+    mainWindow.show()
+    view = mainWindow.beadworkView
+
+    testRow, testColumn = 0, 0
+
+    view.setCurrentIndex(view.model().index(testRow, testColumn))
+
+    mainWindow.currentColor.setText("FF0000")
+
+    testColor = mainWindow.model.data(mainWindow.model.index(testRow, testColumn), Qt.ItemDataRole.DisplayRole)
+
+    currentColorText = mainWindow.currentColor.text()
+
+    assert(f"#{currentColorText}" == testColor)
+
 def test_beadworkView_setBeadSize(qtbot):
     mainWindow = MainWindow(debug=True)
     qtbot.addWidget(mainWindow)
@@ -102,22 +120,74 @@ def test_beadworkView_changeOrientationOTwice(qtbot):
     for i in range(view.model().columnCount(None)):
         assert(view.columnWidth(i) == view.bead_width)
 
-# TODO: implement test
-def test_beadworkView_changeBeadColorFromDialog(qtbot):
-    pass
+# TODO: test for direct input values of any kind, not just current+1
+def test_beadworkView_changeHeightFromSpinBox(qtbot):
+    mainWindow = MainWindow(debug=True)
+    qtbot.addWidget(mainWindow)
+    mainWindow.show()
+    view = mainWindow.beadworkView
 
-# TODO: implement test
-def test_beadworkView_changeHeight(qtbot):
-    pass
+    currentHeight = mainWindow.heightSpinBox.value()
+    mainWindow.heightSpinBox.setValue(currentHeight + 1)
 
-# TODO: implement test
-def test_beadworkView_changeWidth(qtbot):
-    pass
+    assert(view.model().rowCount(None) == currentHeight + 1)
 
-# TODO: implement test
+    currentHeight = mainWindow.heightSpinBox.value()
+    mainWindow.heightSpinBox.setValue(currentHeight - 1)
+
+    assert(view.model().rowCount(None) == currentHeight - 1)
+
+# TODO: test for direct input values of any kind, not just current+1
+def test_beadworkView_changeWidthFromSpinBox(qtbot):
+    mainWindow = MainWindow(debug=True)
+    qtbot.addWidget(mainWindow)
+    mainWindow.show()
+    view = mainWindow.beadworkView
+
+    currentWidth = mainWindow.widthSpinBox.value()
+    mainWindow.widthSpinBox.setValue(currentWidth + 1)
+
+    assert(view.model().columnCount(None) == currentWidth + 1)
+
+    currentWidth = mainWindow.widthSpinBox.value()
+    mainWindow.widthSpinBox.setValue(currentWidth - 1)
+
+    assert(view.model().columnCount(None) == currentWidth - 1)
+
+# TODO: test for direct input values of any kind, not just current+1
 def test_beadworkView_changeHeightAfterOrientation(qtbot):
-    pass
+    mainWindow = MainWindow(debug=True)
+    qtbot.addWidget(mainWindow)
+    mainWindow.show()
+    view = mainWindow.beadworkView
 
-# TODO: implement test
+    view.changeOrientation()
+
+    currentHeight = mainWindow.heightSpinBox.value()
+    mainWindow.heightSpinBox.setValue(currentHeight + 1)
+
+    assert(view.model().rowCount(None) == currentHeight + 1)
+
+    currentHeight = mainWindow.heightSpinBox.value()
+    mainWindow.heightSpinBox.setValue(currentHeight - 1)
+
+    assert(view.model().rowCount(None) == currentHeight - 1)
+
+# TODO: test for direct input values of any kind, not just current+1
 def test_beadworkView_changeWidthAfterOrientation(qtbot):
-    pass
+    mainWindow = MainWindow(debug=True)
+    qtbot.addWidget(mainWindow)
+    mainWindow.show()
+    view = mainWindow.beadworkView
+
+    view.changeOrientation()
+
+    currentWidth = mainWindow.widthSpinBox.value()
+    mainWindow.widthSpinBox.setValue(currentWidth + 1)
+
+    assert(view.model().columnCount(None) == currentWidth + 1)
+
+    currentWidth = mainWindow.widthSpinBox.value()
+    mainWindow.widthSpinBox.setValue(currentWidth - 1)
+
+    assert(view.model().columnCount(None) == currentWidth - 1)

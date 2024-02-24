@@ -125,11 +125,11 @@ class MainWindow(QMainWindow):
         self.widthLabel = QLabel("Width:")
         self.widthSpinBox = QSpinBox()
         self.widthSpinBox.setValue(self.modelWidth)
-        self.widthSpinBox.valueChanged.connect(self.widthChanged)
+        self.widthSpinBox.valueChanged.connect(self.widthChanged) # TODO: does not support direct input values, only using the up and down arrows
         self.heightLabel = QLabel("Height:")
         self.heightSpinBox = QSpinBox()
         self.heightSpinBox.setValue(self.modelHeight)
-        self.heightSpinBox.valueChanged.connect(self.heightChanged)
+        self.heightSpinBox.valueChanged.connect(self.heightChanged) # TODO: does not support direct input values, only using the up and down arrows
         widthXHeightLayout = QHBoxLayout()
         widthXHeightLayout.addWidget(self.widthLabel)
         widthXHeightLayout.addWidget(self.widthSpinBox)
