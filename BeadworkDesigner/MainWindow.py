@@ -166,11 +166,11 @@ class MainWindow(QMainWindow):
         self.currentColor.setInputMask('HHHHHH')   # only allows hex color input
         self.currentColor.textChanged.connect(lambda c: self.model.setData(self.beadworkView.currentIndex(), f"#{c}", Qt.ItemDataRole.EditRole)) # TODO: this currently only changes the last one selected, multiple selections do not work
         self.colorDialog = QColorDialog()
-        # colorDialogWidget.colorSelected.connect(lambda c: currentColor.setText(c.name().upper())) TODO: see below regarding .open()
+        self.colorDialog.colorSelected.connect(lambda c: self.currentColor.setText(c.name().upper()))
         self.colorDialogButton = QPushButton()
         self.colorDialogButton.setFixedWidth(20)
         self.colorDialogButton.setIcon(QIcon(os.path.join(icons_dir, "palette.png")))
-        # colorDialogButton.clicked.connect(colorDialogWidget.open) TODO: use .open()
+        self.colorDialogButton.clicked.connect(self.colorDialog.open)
         colorDialogLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
         colorDialogLayout.addWidget(self.currentColorLabel)
         colorDialogLayout.addWidget(self.currentColor)

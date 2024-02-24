@@ -1,6 +1,7 @@
 import pytest
 
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QColor
 
 from BeadworkDesigner.MainWindow import MainWindow
 
@@ -46,7 +47,6 @@ def test_beadworkView_changeBeadColorFromDialog(qtbot):
     view = mainWindow.beadworkView
 
     testRow, testColumn = 0, 0
-
     view.setCurrentIndex(view.model().index(testRow, testColumn))
 
     mainWindow.currentColor.setText("FF0000")
@@ -56,6 +56,12 @@ def test_beadworkView_changeBeadColorFromDialog(qtbot):
     currentColorText = mainWindow.currentColor.text()
 
     assert(f"#{currentColorText}" == testColor)
+
+    mainWindow.colorDialog.colorSelected.emit(QColor("#00FF00"))
+
+    testColor = mainWindow.model.data(mainWindow.model.index(testRow, testColumn), Qt.ItemDataRole.DisplayRole)
+
+    assert(testColor == "#00FF00")
 
 def test_beadworkView_setBeadSize(qtbot):
     mainWindow = MainWindow(debug=True)
