@@ -4,7 +4,6 @@ Icons are provided by https://p.yusukekamiyamane.com/. They are licensed under a
 
 #####################
 #
-# TODO: break MainWindow __init__ into smaller setup methods
 # TODO: write unit tests for Qt (pytest-qt)
 # TODO: add save and load options to file menu
 # TODO: add a way to change the size of the beads
@@ -333,7 +332,6 @@ class MainWindow(QMainWindow):
         else:
             self.selectionMode.setChecked(True)
 
-    # TODO: changing from horizontal and back to vertical does not work -- fix
     def changeOrientation(self, orientation):
         logger.debug(f"Changing orientation to {orientation}.")
         if orientation == "Horizontal":

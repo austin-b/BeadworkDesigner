@@ -92,3 +92,23 @@ def test_beadworkView_changeOrientationOTwice(mainWindow):
         assert(view.rowHeight(i) == view.bead_height)
     for i in range(view.model().columnCount(None)):
         assert(view.columnWidth(i) == view.bead_width)
+
+# TODO: implement test
+def test_beadworkView_changeBeadColorFromDialog(mainWindow):
+    pass
+
+# TODO: implement test
+def test_beadworkView_changeHeight(mainWindow):
+    pass
+
+# TODO: implement test
+def test_beadworkView_changeWidth(mainWindow):
+    pass
+
+# TODO: implement test
+def test_beadworkView_changeHeightAfterOrientation(mainWindow):
+    pass
+
+# TODO: implement test
+def test_beadworkView_changeWidthAfterOrientation(mainWindow):
+    pass
