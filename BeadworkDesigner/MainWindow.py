@@ -117,8 +117,7 @@ class MainWindow(QMainWindow):
         self.delegate = BeadDelegate()
         self.beadworkView.setItemDelegate(self.delegate)
         self.beadworkView.setModel(self.model)
-        self.beadworkView.repaint()
-        self.beadworkView.clicked.connect(lambda c: self.currentColor.setText((self.model.data(c, Qt.ItemDataRole.DisplayRole)).upper()))
+        self.beadworkView.clicked.connect(self.updateCurrentColorText)
         self.beadworkView.setObjectName("beadworkView")
 
     def setupWidthXHeightWidget(self):
@@ -258,6 +257,10 @@ class MainWindow(QMainWindow):
     ########################################
     # SLOTS
     ########################################
+        
+    def updateCurrentColorText(self, index):
+        logger.info(f"Updating current color text for index {index}.")
+        self.currentColor.setText((self.model.data(index, Qt.ItemDataRole.DisplayRole)).upper())
 
     def addColumn(self):
         logger.debug("Adding column.")

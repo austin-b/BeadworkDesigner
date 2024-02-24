@@ -12,7 +12,8 @@ from PySide6.QtCore import Qt, QTransposeProxyModel
 ### FOR DEBUGGING ###
 def generate_random_color():
     import random
-    return '#{:06x}'.format(random.randint(0, 0xFFFFFF))
+    colorString = '#{:06x}'.format(random.randint(0, 0xFFFFFF))
+    return colorString.upper()
 def color(random=False):
     if random:
         color = generate_random_color()

@@ -1,5 +1,9 @@
+import time
+import logging
+
 import pytest
 from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QApplication
 
 from BeadworkDesigner.MainWindow import MainWindow
 
@@ -7,13 +11,9 @@ from BeadworkDesigner.MainWindow import MainWindow
 # TODO: test SelectionMode
 ####################
 
-@pytest.fixture
-def mainWindow(qtbot):
-    window = MainWindow(debug=True)
-    qtbot.addWidget(window)
-    return window
-
-def test_beadworkView_init(mainWindow):
+def test_beadworkView_init(qtbot):
+    mainWindow = MainWindow(debug=True)
+    qtbot.addWidget(mainWindow)
     mainWindow.show()
     view = mainWindow.beadworkView
     assert(view.isVisible())
@@ -27,22 +27,25 @@ def test_beadworkView_init(mainWindow):
     assert(view.rowHeight(0) == view.bead_height)  # default value
     assert(view.columnWidth(0) == view.bead_width) # default value
 
-### TODO: work on finishing this test
-# def test_beadworkView_data(mainWindow):
-#     view = mainWindow.beadworkView
+def test_beadworkView_data(qtbot):
+    mainWindow = MainWindow(debug=True)
+    qtbot.addWidget(mainWindow)
+    mainWindow.show()
+    view = mainWindow.beadworkView
 
-#     # TODO: can I test if the data is being displayed properly?
-#     testRow, testColumn = 0, 0
-#     color = mainWindow.model.data(mainWindow.model.index(testRow, testColumn), Qt.ItemDataRole.DisplayRole)
+    testRow, testColumn = 0, 0
+    color = mainWindow.model.data(mainWindow.model.index(testRow, testColumn), Qt.ItemDataRole.DisplayRole)
 
-#     # TODO: can I simulate a click to make sure it works properly?
-#     view.clicked(view.model().index(testRow, testColumn)).emit()
+    view.clicked.emit(view.model().index(testRow, testColumn))
 
-#     currentColorText = mainWindow.currentColor.text()
+    currentColorText = mainWindow.currentColor.text()
 
-#     assert(currentColorText == color)
+    assert(f"#{currentColorText}" == color)
 
-def test_beadworkView_setBeadSize(mainWindow):
+def test_beadworkView_setBeadSize(qtbot):
+    mainWindow = MainWindow(debug=True)
+    qtbot.addWidget(mainWindow)
+    mainWindow.show()
     view = mainWindow.beadworkView
 
     # set row width and height to be something else than default
@@ -59,7 +62,10 @@ def test_beadworkView_setBeadSize(mainWindow):
     for i in range(view.model().columnCount(None)):
         assert(view.columnWidth(i) == view.bead_width)
 
-def test_beadworkView_changeOrientationOnce(mainWindow):
+def test_beadworkView_changeOrientationOnce(qtbot):
+    mainWindow = MainWindow(debug=True)
+    qtbot.addWidget(mainWindow)
+    mainWindow.show()
     view = mainWindow.beadworkView
     view.changeOrientation()
 
@@ -71,7 +77,10 @@ def test_beadworkView_changeOrientationOnce(mainWindow):
     for i in range(view.model().columnCount(None)):
         assert(view.columnWidth(i) == view.bead_width)
 
-def test_beadworkView_changeOrientationOTwice(mainWindow):
+def test_beadworkView_changeOrientationOTwice(qtbot):
+    mainWindow = MainWindow(debug=True)
+    qtbot.addWidget(mainWindow)
+    mainWindow.show()
     view = mainWindow.beadworkView
     view.changeOrientation()
 
@@ -94,21 +103,21 @@ def test_beadworkView_changeOrientationOTwice(mainWindow):
         assert(view.columnWidth(i) == view.bead_width)
 
 # TODO: implement test
-def test_beadworkView_changeBeadColorFromDialog(mainWindow):
+def test_beadworkView_changeBeadColorFromDialog(qtbot):
     pass
 
 # TODO: implement test
-def test_beadworkView_changeHeight(mainWindow):
+def test_beadworkView_changeHeight(qtbot):
     pass
 
 # TODO: implement test
-def test_beadworkView_changeWidth(mainWindow):
+def test_beadworkView_changeWidth(qtbot):
     pass
 
 # TODO: implement test
-def test_beadworkView_changeHeightAfterOrientation(mainWindow):
+def test_beadworkView_changeHeightAfterOrientation(qtbot):
     pass
 
 # TODO: implement test
-def test_beadworkView_changeWidthAfterOrientation(mainWindow):
+def test_beadworkView_changeWidthAfterOrientation(qtbot):
     pass
