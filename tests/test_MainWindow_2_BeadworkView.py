@@ -59,12 +59,34 @@ def test_beadworkView_setBeadSize(mainWindow):
     for i in range(view.model().columnCount(None)):
         assert(view.columnWidth(i) == view.bead_width)
 
-def test_beadworkView_changeOrientation(mainWindow):
+def test_beadworkView_changeOrientationOnce(mainWindow):
     view = mainWindow.beadworkView
     view.changeOrientation()
 
     assert(view.bead_height == 12)
     assert(view.bead_width == 22)
+
+    for i in range(view.model().rowCount(None)):
+        assert(view.rowHeight(i) == view.bead_height)
+    for i in range(view.model().columnCount(None)):
+        assert(view.columnWidth(i) == view.bead_width)
+
+def test_beadworkView_changeOrientationOTwice(mainWindow):
+    view = mainWindow.beadworkView
+    view.changeOrientation()
+
+    assert(view.bead_height == 12)
+    assert(view.bead_width == 22)
+
+    for i in range(view.model().rowCount(None)):
+        assert(view.rowHeight(i) == view.bead_height)
+    for i in range(view.model().columnCount(None)):
+        assert(view.columnWidth(i) == view.bead_width)
+
+    view.changeOrientation()
+
+    assert(view.bead_height == 22)
+    assert(view.bead_width == 12)
 
     for i in range(view.model().rowCount(None)):
         assert(view.rowHeight(i) == view.bead_height)
