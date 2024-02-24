@@ -29,9 +29,12 @@ class BeadworkView(QTableView):
         self.verticalHeader().setMinimumSectionSize(0)
         self.horizontalHeader().setMinimumSectionSize(0)
 
-        self.setBeadSize()
-
         logger.debug(f"Model set to {model}.")
+
+    def repaint(self):
+        logger.debug("Repainting.")
+        self.setBeadSize()
+        super().repaint()
 
     def dataChanged(self, topLeft, bottomRight, roles):
         logger.debug(f"Data changed: {topLeft}, {bottomRight}, {roles}.")
@@ -40,9 +43,9 @@ class BeadworkView(QTableView):
         self.setBeadSize()
 
     def setBeadSize(self):
-        for i in range(self.source.rowCount(QModelIndex())):
+        for i in range(self.source.rowCount(None)):
             self.setRowHeight(i, self.bead_height)
-        for i in range(self.source.columnCount(QModelIndex())):
+        for i in range(self.source.columnCount(None)):
             self.setColumnWidth(i, self.bead_width)
 
         logger.debug(f"Bead size set to {self.bead_width}, {self.bead_height}.")

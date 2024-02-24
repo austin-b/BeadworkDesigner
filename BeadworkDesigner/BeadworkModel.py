@@ -53,6 +53,11 @@ class BeadworkModel(QtCore.QAbstractTableModel):
             logger.debug(f"Getting data: {self._data[index.row()][index.column()]} for role {role}.")
             return QtGui.QColor(self._data[index.row()][index.column()])
         
+        # Size hint is passed but does not seem to affect the view.
+        if role == Qt.ItemDataRole.SizeHintRole:
+            logger.debug(f"Passing size hint.")
+            return QtCore.QSize(22, 12)
+        
     def setData(self, index, value, role):
         if role == Qt.ItemDataRole.EditRole:
             logger.debug(f"Setting data to {value} at {index.row()}, {index.column()}.")

@@ -116,8 +116,9 @@ class MainWindow(QMainWindow):
         logger.debug("Setting up BeadworkView and BeadDelegate.")
         self.beadworkView = BeadworkView()
         self.delegate = BeadDelegate()
-        self.beadworkView.setModel(self.model)
         self.beadworkView.setItemDelegate(self.delegate)
+        self.beadworkView.setModel(self.model)
+        self.beadworkView.repaint()
         self.beadworkView.clicked.connect(lambda c: self.currentColor.setText((self.model.data(c, Qt.ItemDataRole.DisplayRole)).upper()))
         self.beadworkView.setObjectName("beadworkView")
 
@@ -246,6 +247,14 @@ class MainWindow(QMainWindow):
         self.sidebar = QWidget()
         self.sidebar.setLayout(sidebarLayout)
         self.sidebar.setMaximumWidth(200)
+
+    # Override this function so that it repaints the beadworkView.
+    # This is currently the workaround as I cannot figure out how to
+    # get the rows and columns to size properly without explicitly
+    # calling repaint()
+    def show(self):
+        super().show()
+        self.beadworkView.repaint()
 
     ########################################
     # SLOTS
