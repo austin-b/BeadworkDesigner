@@ -180,19 +180,23 @@ class MainWindow(QMainWindow):
         self.colorDialogWidget.setLayout(colorDialogLayout)
 
     def setupActions(self):
+        # TODO: fix & add to tests
         logger.debug("Setting up actions.")
         self.addColumnAction = QAction('Add Column', self)
         self.addColumnAction.triggered.connect(self.addColumn)
         self.addColumnAction.setIcon(QIcon(os.path.join(icons_dir, "table-insert-column.png")))
 
+        # TODO: fix & add to tests
         self.removeColumnAction = QAction('Remove Column', self)
         self.removeColumnAction.triggered.connect(self.removeColumn)
         self.removeColumnAction.setIcon(QIcon(os.path.join(icons_dir, "table-delete-column.png")))
 
+        # TODO: fix & add to tests
         self.addRowAction = QAction('Add Row', self)
         self.addRowAction.triggered.connect(self.addRow)
         self.addRowAction.setIcon(QIcon(os.path.join(icons_dir, "table-insert-row.png")))
 
+        # TODO: fix & add to tests
         self.removeRowAction = QAction('Remove Row', self)
         self.removeRowAction.triggered.connect(self.removeRow)
         self.removeRowAction.setIcon(QIcon(os.path.join(icons_dir, "table-delete-row.png")))

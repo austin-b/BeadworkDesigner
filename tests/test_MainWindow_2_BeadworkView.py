@@ -1,9 +1,6 @@
-import time
-import logging
-
 import pytest
+
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QApplication
 
 from BeadworkDesigner.MainWindow import MainWindow
 
@@ -121,24 +118,26 @@ def test_beadworkView_changeOrientationOTwice(qtbot):
         assert(view.columnWidth(i) == view.bead_width)
 
 # TODO: test for direct input values of any kind, not just current+1
-def test_beadworkView_changeHeightFromSpinBox(qtbot):
+def test_beadworkView_changeHeight(qtbot):
     mainWindow = MainWindow(debug=True)
     qtbot.addWidget(mainWindow)
     mainWindow.show()
     view = mainWindow.beadworkView
 
+    # add a row from the spinbox
     currentHeight = mainWindow.heightSpinBox.value()
     mainWindow.heightSpinBox.setValue(currentHeight + 1)
 
     assert(view.model().rowCount(None) == currentHeight + 1)
 
+    # remove a row from the spinbox
     currentHeight = mainWindow.heightSpinBox.value()
     mainWindow.heightSpinBox.setValue(currentHeight - 1)
 
     assert(view.model().rowCount(None) == currentHeight - 1)
 
 # TODO: test for direct input values of any kind, not just current+1
-def test_beadworkView_changeWidthFromSpinBox(qtbot):
+def test_beadworkView_changeWidth(qtbot):
     mainWindow = MainWindow(debug=True)
     qtbot.addWidget(mainWindow)
     mainWindow.show()
