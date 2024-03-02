@@ -4,7 +4,9 @@ Icons are provided by https://p.yusukekamiyamane.com/. They are licensed under a
 
 #####################
 #
-# TODO: write unit tests for Qt (pytest-qt)
+# TODO: setup types
+# TODO: add docstrings
+# TODO: create a central location for beadWidth and beadHeight values
 # TODO: add save and load options to file menu
 # TODO: add a way to change the size of the beads
 # TODO: add a way to zoom in and out
