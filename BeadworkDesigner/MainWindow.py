@@ -141,10 +141,12 @@ class MainWindow(QMainWindow):
         self.widthSpinBox = QSpinBox()
         self.widthSpinBox.setValue(self.modelWidth)
         self.widthSpinBox.valueChanged.connect(self.widthChanged) # TODO: does not support direct input values, only using the up and down arrows
+        self.widthSpinBox.lineEdit().setEnabled(False)
         self.heightLabel = QLabel("Height:")
         self.heightSpinBox = QSpinBox()
         self.heightSpinBox.setValue(self.modelHeight)
         self.heightSpinBox.valueChanged.connect(self.heightChanged) # TODO: does not support direct input values, only using the up and down arrows
+        self.heightSpinBox.lineEdit().setEnabled(False)
         widthXHeightLayout = QHBoxLayout()
         widthXHeightLayout.addWidget(self.widthLabel)
         widthXHeightLayout.addWidget(self.widthSpinBox)
@@ -307,7 +309,7 @@ class MainWindow(QMainWindow):
 
     def widthChanged(self, value):
         logger.debug(f"Width changed to {value}.")
-        self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth - 1))
+        self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth - 1)) # TODO: allow for selecting index
         if value > self.modelWidth:
             self.addColumn()
         else:
@@ -316,7 +318,7 @@ class MainWindow(QMainWindow):
 
     def heightChanged(self, value):
         logger.debug(f"Height changed to {value}.")
-        self.beadworkView.setCurrentIndex(self.model.index(self.modelHeight-1, 0))
+        self.beadworkView.setCurrentIndex(self.model.index(self.modelHeight-1, 0)) # TODO: allow for selecting index
         if value > self.modelHeight:
             self.addRow()
         else:

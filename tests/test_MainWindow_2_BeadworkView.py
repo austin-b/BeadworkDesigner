@@ -144,6 +144,7 @@ def test_beadworkView_changeHeight(qtbot):
 
     assert(view.model().rowCount(None) == currentHeight - 1)
 
+
 # TODO: test for direct input values of any kind, not just current+1
 def test_beadworkView_changeWidth(qtbot):
     mainWindow = MainWindow(debug=True, configs=configs)

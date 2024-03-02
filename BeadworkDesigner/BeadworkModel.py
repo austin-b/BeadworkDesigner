@@ -84,6 +84,14 @@ class BeadworkModel(QtCore.QAbstractTableModel):
         self._data.insert(index.row()+1, [color(random=self._debug) for _ in range(self.columnCount(index))])
         self.endInsertRows()
         logger.debug(f"New row at {index.row()+1}.")
+
+    def insertRows(self, row, count, index):
+        logger.debug(f"Inserting row at {index.row()}.")
+        self.beginInsertRows(QtCore.QModelIndex(), row, row)
+        for _ in range(count):
+            self._data.insert(index.row()+1, [color(random=self._debug) for _ in range(self.columnCount(index))])
+        self.endInsertRows()
+        logger.debug(f"New row at {index.row()+1}.")
     
     def insertColumn(self, column, index):
         logger.debug(f"Inserting column at {index.column()}.")
