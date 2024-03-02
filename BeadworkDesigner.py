@@ -5,7 +5,7 @@ from PySide6.QtWidgets import QApplication
 
 from BeadworkDesigner.MainWindow import MainWindow
 
-debug = "--debug" in sys.argv
+debug = ("--debug" in sys.argv) or True
 
 # TODO: implement CLI argument for logging file
 # TODO: make default a log file

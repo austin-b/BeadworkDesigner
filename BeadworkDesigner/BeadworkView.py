@@ -36,6 +36,13 @@ class BeadworkView(QTableView):
 
         self.setBeadSize()
 
+    # overwritten to explicitly call setBeadSize
+    # this is necessary because the view does not seem to update the row and column sizes when the model initially loads
+    def repaint(self):
+        logger.debug("Repainting.")
+        self.setBeadSize()
+        super().repaint()
+
     def setBeadSize(self):
         for i in range(self.model().rowCount(None)):
             self.setRowHeight(i, self.bead_height)
