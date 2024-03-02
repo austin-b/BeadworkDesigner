@@ -140,12 +140,12 @@ class MainWindow(QMainWindow):
         self.widthLabel = QLabel("Width:")
         self.widthSpinBox = QSpinBox()
         self.widthSpinBox.setValue(self.modelWidth)
-        self.widthSpinBox.valueChanged.connect(self.widthChanged) # TODO: does not support direct input values, only using the up and down arrows
+        self.widthSpinBox.valueChanged.connect(self.widthChanged) # does not support direct input values, only using the up and down arrows
         self.widthSpinBox.lineEdit().setEnabled(False)
         self.heightLabel = QLabel("Height:")
         self.heightSpinBox = QSpinBox()
         self.heightSpinBox.setValue(self.modelHeight)
-        self.heightSpinBox.valueChanged.connect(self.heightChanged) # TODO: does not support direct input values, only using the up and down arrows
+        self.heightSpinBox.valueChanged.connect(self.heightChanged) # does not support direct input values, only using the up and down arrows
         self.heightSpinBox.lineEdit().setEnabled(False)
         widthXHeightLayout = QHBoxLayout()
         widthXHeightLayout.addWidget(self.widthLabel)
@@ -283,33 +283,52 @@ class MainWindow(QMainWindow):
 
     def addColumn(self):
         logger.debug("Adding column.")
+        self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth - 1)) # TODO: allow for selecting index
         self.model.insertColumn(self.model.columnCount(QModelIndex()), self.beadworkView.currentIndex())
         self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(QModelIndex()) - 1, self.model.columnCount(QModelIndex()) - 1), [Qt.ItemDataRole.BackgroundRole])
         self.modelWidth = self.model.columnCount(QModelIndex())
+
+        # temporarily disconnect signals to avoid crashes
+        self.widthSpinBox.valueChanged.disconnect(self.widthChanged)
         self.widthSpinBox.setValue(self.modelWidth)
+        self.widthSpinBox.valueChanged.connect(self.widthChanged)
 
     def removeColumn(self):
         logger.debug("Removing column.")
+        self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth - 1)) # TODO: allow for selecting index
         self.model.removeColumn(self.model.columnCount(QModelIndex()) - 1, self.beadworkView.currentIndex())
         self.modelWidth = self.model.columnCount(QModelIndex())
+
+        # temporarily disconnect signals to avoid crashes
+        self.widthSpinBox.valueChanged.disconnect(self.widthChanged)
         self.widthSpinBox.setValue(self.modelWidth)
+        self.widthSpinBox.valueChanged.connect(self.widthChanged)
 
     def addRow(self):
         logger.debug("Adding row.")
+        self.beadworkView.setCurrentIndex(self.model.index(self.modelHeight-1, 0)) # TODO: allow for selecting index
         self.model.insertRow(self.model.rowCount(QModelIndex()), self.beadworkView.currentIndex())
         self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(QModelIndex()) - 1, self.model.columnCount(QModelIndex()) - 1), [Qt.ItemDataRole.BackgroundRole])
         self.modelHeight = self.model.rowCount(QModelIndex())
+
+        # temporarily disconnect signals to avoid crashes
+        self.heightSpinBox.valueChanged.disconnect(self.heightChanged)
         self.heightSpinBox.setValue(self.modelHeight)
+        self.heightSpinBox.valueChanged.connect(self.heightChanged)
 
     def removeRow(self):
         logger.debug("Removing row.")
+        self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth - 1)) # TODO: allow for selecting index
         self.model.removeRow(self.model.rowCount(QModelIndex()) - 1, self.beadworkView.currentIndex())
         self.modelHeight = self.model.rowCount(QModelIndex())
+
+        # temporarily disconnect signals to avoid crashes
+        self.heightSpinBox.valueChanged.disconnect(self.heightChanged)
         self.heightSpinBox.setValue(self.modelHeight)
+        self.heightSpinBox.valueChanged.connect(self.heightChanged)
 
     def widthChanged(self, value):
         logger.debug(f"Width changed to {value}.")
-        self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth - 1)) # TODO: allow for selecting index
         if value > self.modelWidth:
             self.addColumn()
         else:
@@ -318,7 +337,6 @@ class MainWindow(QMainWindow):
 
     def heightChanged(self, value):
         logger.debug(f"Height changed to {value}.")
-        self.beadworkView.setCurrentIndex(self.model.index(self.modelHeight-1, 0)) # TODO: allow for selecting index
         if value > self.modelHeight:
             self.addRow()
         else:
