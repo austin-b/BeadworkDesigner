@@ -1,6 +1,7 @@
 import logging
 
-from PySide6.QtCore import QModelIndex
+from collections.abc import Sequence
+
 from PySide6.QtWidgets import QTableView
 
 logger = logging.getLogger(__name__)
@@ -28,11 +29,6 @@ class BeadworkView(QTableView):
         self.horizontalHeader().setMinimumSectionSize(0)
 
         logger.debug(f"Model set to {model}.")
-
-    def repaint(self):
-        logger.debug("Repainting.")
-        self.setBeadSize()
-        super().repaint()
 
     def dataChanged(self, topLeft, bottomRight, roles):
         logger.debug(f"Data changed: {topLeft}, {bottomRight}, {roles}.")

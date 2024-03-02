@@ -4,7 +4,6 @@ Icons are provided by https://p.yusukekamiyamane.com/. They are licensed under a
 
 #####################
 #
-# TODO: setup types
 # TODO: add docstrings
 # TODO: create a central location for beadWidth and beadHeight values
 # TODO: add save and load options to file menu
