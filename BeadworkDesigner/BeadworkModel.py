@@ -32,7 +32,7 @@ class BeadworkModel(QtCore.QAbstractTableModel):
         self._debug = debug
         
         if not data:
-            logging.info("No data given to BeadworkModel, loading initial project.")
+            logger.info("No data given to BeadworkModel, loading initial project.")
             if self._debug:
                 # generate random hex colors in array
                 logger.debug("Generating BeadworkModel with random colors.")

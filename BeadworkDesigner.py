@@ -7,7 +7,7 @@ from BeadworkDesigner.MainWindow import MainWindow
 
 from bin.config import configs  # import default config file
 
-debug = ("--debug" in sys.argv) or True
+debug = ("--debug" in sys.argv) or configs["debug"]  # check if debug flag is set
 
 # TODO: implement CLI argument for logging file
 # TODO: make default a log file
