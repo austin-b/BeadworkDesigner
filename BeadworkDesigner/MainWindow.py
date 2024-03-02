@@ -5,7 +5,6 @@ Icons are provided by https://p.yusukekamiyamane.com/. They are licensed under a
 #####################
 #
 # TODO: add docstrings
-# TODO: create a central location for beadWidth and beadHeight values
 # TODO: add save and load options to file menu
 # TODO: add a way to change the size of the beads
 # TODO: add a way to zoom in and out
@@ -107,7 +106,7 @@ class MainWindow(QMainWindow):
 
     def setupModels(self):
         logger.debug("Setting up BeadworkModel and BeadworkTransposeModel.")
-        self.origModel = BeadworkModel(debug=self.debug)
+        self.origModel = BeadworkModel(debug=self.debug, defaultHeight=self.configs["defaultHeight"], defaultWidth=self.configs["defaultWidth"])
         self.transposeModel = BeadworkTransposeModel()
         self.transposeModel.setSourceModel(self.origModel)
 

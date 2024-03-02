@@ -26,18 +26,20 @@ def color(random=False):
 logger = logging.getLogger(__name__)
 
 class BeadworkModel(QtCore.QAbstractTableModel):
-    def __init__(self, data = None, debug=False):
+    def __init__(self, data = None, debug=False, defaultHeight=7, defaultWidth=5):
         super().__init__()
 
         self._debug = debug
         
-        if self._debug:
-            # generate random hex colors in array
-            logger.debug("Generating BeadworkModel with random colors.")
-            self._data = [[generate_random_color() for _ in range(5)] for _ in range(7)]
-        else:
-            logger.debug("Generating BeadworkModel with blank fields.")
-            self._data = [['#FFFFFF' for _ in range(5)] for _ in range(7)]
+        if not data:
+            logging.info("No data given to BeadworkModel, loading initial project.")
+            if self._debug:
+                # generate random hex colors in array
+                logger.debug("Generating BeadworkModel with random colors.")
+                self._data = [[generate_random_color() for _ in range(defaultWidth)] for _ in range(defaultHeight)]
+            else:
+                logger.debug("Generating BeadworkModel with blank fields.")
+                self._data = [['#FFFFFF' for _ in range(defaultWidth)] for _ in range(defaultHeight)]
 
         logger.info(f"BeadworkModel {self} created.")
 
