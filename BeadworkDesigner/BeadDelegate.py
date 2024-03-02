@@ -42,3 +42,7 @@ class BeadDelegate(QItemDelegate):
         logger.debug(f"Changing bead dimensions to {width}, {height}.")
         self.beadWidth = width
         self.beadHeight = height
+
+    def changeOrientation(self):
+        logger.debug(f"Changing bead dimensions to {self.beadHeight}, {self.beadWidth}.")
+        self.beadWidth, self.beadHeight = self.beadHeight, self.beadWidth

@@ -1,6 +1,6 @@
 import pytest
 
-from BeadworkDesigner.MainWindow import MainWindow
+from BeadworkDesigner.MainWindow import MainWindow, BeadworkOrientation
 
 from bin.config import configs
 
@@ -56,8 +56,8 @@ def test_MainWindow_init_widthXHeightValues(mainWindow):
     assert(mainWindow.heightSpinBox.value() == mainWindow.modelHeight)
 
 def test_MainWindow_init_orientationValues(mainWindow):
-    assert(mainWindow.currentOrientation == "Vertical")
-    assert(mainWindow.orientationComboBox.currentText() == mainWindow.currentOrientation)
+    assert(mainWindow.currentOrientation == BeadworkOrientation.VERTICAL)
+    assert(mainWindow.orientationComboBox.currentText() == mainWindow.orientationOptions[mainWindow.currentOrientation])
 
 def test_MainWindow_init_colorDialogWidget(mainWindow):
     assert(mainWindow.currentColor.text() == "")

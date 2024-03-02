@@ -22,6 +22,8 @@ Icons are provided by https://p.yusukekamiyamane.com/. They are licensed under a
 import logging
 import os
 
+from enum import Enum
+
 from PySide6.QtCore import QModelIndex, Qt, QTransposeProxyModel
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import (
@@ -50,6 +52,10 @@ bin_dir = os.path.join(base_dir, "bin")
 icons_dir = os.path.join(bin_dir, "icons")
 qss_dir = os.path.join(bin_dir, "qss")
 
+class BeadworkOrientation(Enum):
+    VERTICAL = 0
+    HORIZONTAL = 1
+
 class MainWindow(QMainWindow):
     def __init__(self, debug=False, configs=None):
         super().__init__()
@@ -57,6 +63,12 @@ class MainWindow(QMainWindow):
         self.debug = debug
         self.configs = configs
 
+        self.orientationOptions = {BeadworkOrientation.HORIZONTAL: "Horizontal", BeadworkOrientation.VERTICAL: "Vertical"}
+        if self.configs["defaultOrientation"] == "Horizontal":
+            self.currentOrientation = BeadworkOrientation.HORIZONTAL
+        else:
+            self.currentOrientation = BeadworkOrientation.VERTICAL
+        
         logger.info("Initializing MainWindow.")
 
         ### SETUP MODELS AND CONFIGURE VIEW
@@ -114,8 +126,10 @@ class MainWindow(QMainWindow):
 
     def setupView(self):
         logger.debug("Setting up BeadworkView and BeadDelegate.")
-        self.beadworkView = BeadworkView(beadHeight=self.configs["beadHeight"], beadWidth=self.configs["beadWidth"])
-        self.delegate = BeadDelegate(beadHeight=self.configs["beadHeight"], beadWidth=self.configs["beadWidth"])
+        self.beadworkView = BeadworkView(beadHeight=self.configs["beadHeight"] if self.currentOrientation == BeadworkOrientation.VERTICAL else self.configs["beadWidth"], 
+                                         beadWidth=self.configs["beadWidth"] if self.currentOrientation == BeadworkOrientation.VERTICAL else self.configs["beadHeight"])
+        self.delegate = BeadDelegate(beadHeight=self.configs["beadHeight"] if self.currentOrientation == BeadworkOrientation.VERTICAL else self.configs["beadWidth"], 
+                                     beadWidth=self.configs["beadWidth"] if self.currentOrientation == BeadworkOrientation.VERTICAL else self.configs["beadHeight"])
         self.beadworkView.setItemDelegate(self.delegate)
         self.beadworkView.setModel(self.model)
         self.beadworkView.clicked.connect(self.updateCurrentColorText)
@@ -142,12 +156,10 @@ class MainWindow(QMainWindow):
 
     def setupOrientationWidget(self):
         logger.debug("Setting up orientationWidget.")
-        self.orientationOptions = ["Vertical", "Horizontal"]
-        self.currentOrientation = "Vertical" # TODO: make this default changeable via settings (don't forget to change the unit test)
         self.orientationLabel = QLabel("Orientation:")
         self.orientationComboBox = QComboBox()
-        self.orientationComboBox.addItems(self.orientationOptions)
-        self.orientationComboBox.setCurrentText(self.currentOrientation)
+        self.orientationComboBox.addItems([v for k,v in self.orientationOptions.items()])
+        self.orientationComboBox.setCurrentText(self.orientationOptions[self.currentOrientation])
         self.orientationComboBox.setEditable(False)
         self.orientationComboBox.currentTextChanged.connect(self.changeOrientation)
         orientationLayout = QHBoxLayout()
@@ -340,52 +352,38 @@ class MainWindow(QMainWindow):
         else:
             self.selectionMode.setChecked(True)
 
-    def changeOrientation(self, orientation):
-        logger.debug(f"Changing orientation to {orientation}.")
-        if orientation == "Horizontal":
-            self.currentOrientation = "Horizontal"
+    def changeOrientation(self, spinboxValue): # does not use spinboxValue yet, may implement later if there are more orientation options
+        logger.debug(f"Changing orientation to {self.orientationOptions[self.currentOrientation]}.")
 
+        self.currentOrientation = BeadworkOrientation.VERTICAL if self.currentOrientation == BeadworkOrientation.HORIZONTAL else BeadworkOrientation.HORIZONTAL
+
+        # swap models
+        if self.model == self.origModel:
             self.model = self.transposeModel
-            logger.debug(f"self.model changed to {self.model}.")
-
-            self.delegate.changeBeadDimensions(20, 10)
-
-            self.beadworkView.setModel(self.model)
-            self.beadworkView.changeOrientation()
-            logger.debug(f"self.beadworkView.model() changed to {self.model}.")
-
-            # temporarily disconnect signals to avoid crashes
-            self.widthSpinBox.valueChanged.disconnect(self.widthChanged)
-            self.heightSpinBox.valueChanged.disconnect(self.heightChanged)
-            self.widthLabel.setText("Height:")
-            self.widthSpinBox.setValue(self.model.columnCount(None))
-            self.heightLabel.setText("Width:")
-            self.heightSpinBox.setValue(self.model.rowCount(None))
-            # reconnect signals
-            self.widthSpinBox.valueChanged.connect(self.widthChanged)
-            self.heightSpinBox.valueChanged.connect(self.heightChanged)
-            logger.debug(f"widthLabel changed to {self.widthLabel.text()}, widthSpinBox changed to {self.widthSpinBox.value()}, heightLabel changed to {self.heightLabel.text()}, heightSpinBox changed to {self.heightSpinBox.value()}.")
-        elif orientation == "Vertical":
-            self.currentOrientation = "Vertical"
-
+        else:
             self.model = self.origModel
-            logger.debug(f"self.model changed to {self.model}.")
+        self.beadworkView.setModel(self.model)
 
-            self.delegate.changeBeadDimensions(10, 20)
+        # change internal orientations of delegate and view
+        self.delegate.changeOrientation()
+        self.beadworkView.changeOrientation()
+        logger.debug(f"self.beadworkView.model() changed to {self.model}.")
 
-            self.beadworkView.setModel(self.model)
-            self.beadworkView.changeOrientation()
-            logger.debug(f"self.beadworkView.model() changed to {self.model}.")
+        # get up to date model dimensions
+        self.modelWidth = self.model.columnCount(None)
+        self.modelHeight = self.model.rowCount(None)
 
-            # temporarily disconnect signals to avoid crashes
-            self.widthSpinBox.valueChanged.disconnect(self.widthChanged)
-            self.heightSpinBox.valueChanged.disconnect(self.heightChanged)
-            self.widthLabel.setText("Width:")
-            self.widthSpinBox.setValue(self.model.columnCount(None))
-            self.heightLabel.setText("Height:")
-            self.heightSpinBox.setValue(self.model.rowCount(None))
-            # reconnect signals
-            self.widthSpinBox.valueChanged.connect(self.widthChanged)
-            self.heightSpinBox.valueChanged.connect(self.heightChanged)
-            logger.debug(f"widthLabel changed to {self.widthLabel.text()}, widthSpinBox changed to {self.widthSpinBox.value()}, heightLabel changed to {self.heightLabel.text()}, heightSpinBox changed to {self.heightSpinBox.value()}.")
-        logger.debug(f"Orientation changed to {orientation}.")
+        # temporarily disconnect signals to avoid crashes
+        self.widthSpinBox.valueChanged.disconnect(self.widthChanged)
+        self.heightSpinBox.valueChanged.disconnect(self.heightChanged)
+
+        # change spinbox values
+        self.widthSpinBox.setValue(self.modelWidth)
+        self.heightSpinBox.setValue(self.modelHeight)
+
+        # reconnect signals
+        self.widthSpinBox.valueChanged.connect(self.widthChanged)
+        self.heightSpinBox.valueChanged.connect(self.heightChanged)
+        logger.debug(f"widthLabel changed to {self.widthLabel.text()}, widthSpinBox changed to {self.widthSpinBox.value()}, heightLabel changed to {self.heightLabel.text()}, heightSpinBox changed to {self.heightSpinBox.value()}.")
+
+        logger.info(f"Orientation changed to {self.orientationOptions[self.currentOrientation]}.")
