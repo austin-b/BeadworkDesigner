@@ -7,14 +7,14 @@ from PySide6.QtWidgets import QTableView
 logger = logging.getLogger(__name__)
 
 class BeadworkView(QTableView):
-    def __init__(self):
+    def __init__(self, beadHeight=22, beadWidth=12):
         super().__init__()
 
         self.verticalHeader().setVisible(False)
         self.horizontalHeader().setVisible(False)
 
-        self.bead_height = 22
-        self.bead_width = 12
+        self.beadHeight = beadHeight
+        self.beadWidth = beadWidth
         
         self.setShowGrid(False)
 
@@ -45,13 +45,13 @@ class BeadworkView(QTableView):
 
     def setBeadSize(self):
         for i in range(self.model().rowCount(None)):
-            self.setRowHeight(i, self.bead_height)
+            self.setRowHeight(i, self.beadHeight)
         for i in range(self.model().columnCount(None)):
-            self.setColumnWidth(i, self.bead_width)
+            self.setColumnWidth(i, self.beadWidth)
 
-        logger.debug(f"Bead size set to {self.bead_width}, {self.bead_height}.")
+        logger.debug(f"Bead size set to {self.beadWidth}, {self.beadHeight}.")
 
     def changeOrientation(self):
-        self.bead_height, self.bead_width = self.bead_width, self.bead_height
+        self.beadHeight, self.beadWidth = self.beadWidth, self.beadHeight
         self.setBeadSize()
-        logger.debug(f"Orientation changed to {self.bead_width}, {self.bead_height}.")
+        logger.debug(f"Orientation changed to {self.beadWidth}, {self.beadHeight}.")

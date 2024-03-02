@@ -8,11 +8,11 @@ logger = logging.getLogger(__name__)
 
 class BeadDelegate(QItemDelegate):
     
-    def __init__(self):
+    def __init__(self, beadWidth=12, beadHeight=22):
         super().__init__()
 
-        self.beadWidth = 10
-        self.beadHeight = 20
+        self.beadWidth = beadWidth-2    # subtract 2 to account for the 1 pixel border
+        self.beadHeight = beadHeight-2  # subtract 2 to account for the 1 pixel border
 
         logger.info("BeadDelegate initialized.")
      

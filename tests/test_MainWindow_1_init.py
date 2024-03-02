@@ -2,6 +2,8 @@ import pytest
 
 from BeadworkDesigner.MainWindow import MainWindow
 
+from bin.config import configs
+
 # What do I need to test?
 # - Are the proxy models working as expected?
 # - Is the delegate working as expected?
@@ -19,7 +21,7 @@ from BeadworkDesigner.MainWindow import MainWindow
 
 @pytest.fixture
 def mainWindow(qtbot):
-    window = MainWindow(debug=True)
+    window = MainWindow(debug=True, configs=configs)
     qtbot.addWidget(window)
     return window
 

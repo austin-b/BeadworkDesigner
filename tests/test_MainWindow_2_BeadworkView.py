@@ -5,12 +5,14 @@ from PySide6.QtGui import QColor
 
 from BeadworkDesigner.MainWindow import MainWindow
 
+from bin.config import configs
+
 ####################
 # TODO: test SelectionMode
 ####################
 
 def test_beadworkView_init(qtbot):
-    mainWindow = MainWindow(debug=True)
+    mainWindow = MainWindow(debug=True, configs=configs)
     qtbot.addWidget(mainWindow)
     mainWindow.show()
     view = mainWindow.beadworkView
@@ -20,13 +22,13 @@ def test_beadworkView_init(qtbot):
     assert(not view.verticalHeader().isVisible())
     assert(not view.horizontalHeader().isVisible())
     assert(view.showGrid() == False)
-    assert(view.bead_height == 22)  # default value
-    assert(view.bead_width == 12)   # default value
-    assert(view.rowHeight(0) == view.bead_height)  # default value
-    assert(view.columnWidth(0) == view.bead_width) # default value
+    assert(view.beadHeight == 22)  # default value
+    assert(view.beadWidth == 12)   # default value
+    assert(view.rowHeight(0) == view.beadHeight)  # default value
+    assert(view.columnWidth(0) == view.beadWidth) # default value
 
 def test_beadworkView_data(qtbot):
-    mainWindow = MainWindow(debug=True)
+    mainWindow = MainWindow(debug=True, configs=configs)
     qtbot.addWidget(mainWindow)
     mainWindow.show()
     view = mainWindow.beadworkView
@@ -41,7 +43,7 @@ def test_beadworkView_data(qtbot):
     assert(f"#{currentColorText}" == color)
 
 def test_beadworkView_changeBeadColorFromDialog(qtbot):
-    mainWindow = MainWindow(debug=True)
+    mainWindow = MainWindow(debug=True, configs=configs)
     qtbot.addWidget(mainWindow)
     mainWindow.show()
     view = mainWindow.beadworkView
@@ -64,7 +66,7 @@ def test_beadworkView_changeBeadColorFromDialog(qtbot):
     assert(testColor == "#00FF00")
 
 def test_beadworkView_setBeadSize(qtbot):
-    mainWindow = MainWindow(debug=True)
+    mainWindow = MainWindow(debug=True, configs=configs)
     qtbot.addWidget(mainWindow)
     mainWindow.show()
     view = mainWindow.beadworkView
@@ -79,53 +81,53 @@ def test_beadworkView_setBeadSize(qtbot):
     
     # ensure that they all get set back properly
     for i in range(view.model().rowCount(None)):
-        assert(view.rowHeight(i) == view.bead_height)
+        assert(view.rowHeight(i) == view.beadHeight)
     for i in range(view.model().columnCount(None)):
-        assert(view.columnWidth(i) == view.bead_width)
+        assert(view.columnWidth(i) == view.beadWidth)
 
 def test_beadworkView_changeOrientationOnce(qtbot):
-    mainWindow = MainWindow(debug=True)
+    mainWindow = MainWindow(debug=True, configs=configs)
     qtbot.addWidget(mainWindow)
     mainWindow.show()
     view = mainWindow.beadworkView
     view.changeOrientation()
 
-    assert(view.bead_height == 12)
-    assert(view.bead_width == 22)
+    assert(view.beadHeight == 12)
+    assert(view.beadWidth == 22)
 
     for i in range(view.model().rowCount(None)):
-        assert(view.rowHeight(i) == view.bead_height)
+        assert(view.rowHeight(i) == view.beadHeight)
     for i in range(view.model().columnCount(None)):
-        assert(view.columnWidth(i) == view.bead_width)
+        assert(view.columnWidth(i) == view.beadWidth)
 
 def test_beadworkView_changeOrientationOTwice(qtbot):
-    mainWindow = MainWindow(debug=True)
+    mainWindow = MainWindow(debug=True, configs=configs)
     qtbot.addWidget(mainWindow)
     mainWindow.show()
     view = mainWindow.beadworkView
     view.changeOrientation()
 
-    assert(view.bead_height == 12)
-    assert(view.bead_width == 22)
+    assert(view.beadHeight == 12)
+    assert(view.beadWidth == 22)
 
     for i in range(view.model().rowCount(None)):
-        assert(view.rowHeight(i) == view.bead_height)
+        assert(view.rowHeight(i) == view.beadHeight)
     for i in range(view.model().columnCount(None)):
-        assert(view.columnWidth(i) == view.bead_width)
+        assert(view.columnWidth(i) == view.beadWidth)
 
     view.changeOrientation()
 
-    assert(view.bead_height == 22)
-    assert(view.bead_width == 12)
+    assert(view.beadHeight == 22)
+    assert(view.beadWidth == 12)
 
     for i in range(view.model().rowCount(None)):
-        assert(view.rowHeight(i) == view.bead_height)
+        assert(view.rowHeight(i) == view.beadHeight)
     for i in range(view.model().columnCount(None)):
-        assert(view.columnWidth(i) == view.bead_width)
+        assert(view.columnWidth(i) == view.beadWidth)
 
 # TODO: test for direct input values of any kind, not just current+1
 def test_beadworkView_changeHeight(qtbot):
-    mainWindow = MainWindow(debug=True)
+    mainWindow = MainWindow(debug=True, configs=configs)
     qtbot.addWidget(mainWindow)
     mainWindow.show()
     view = mainWindow.beadworkView
@@ -144,7 +146,7 @@ def test_beadworkView_changeHeight(qtbot):
 
 # TODO: test for direct input values of any kind, not just current+1
 def test_beadworkView_changeWidth(qtbot):
-    mainWindow = MainWindow(debug=True)
+    mainWindow = MainWindow(debug=True, configs=configs)
     qtbot.addWidget(mainWindow)
     mainWindow.show()
     view = mainWindow.beadworkView
@@ -161,7 +163,7 @@ def test_beadworkView_changeWidth(qtbot):
 
 # TODO: test for direct input values of any kind, not just current+1
 def test_beadworkView_changeHeightAfterOrientation(qtbot):
-    mainWindow = MainWindow(debug=True)
+    mainWindow = MainWindow(debug=True, configs=configs)
     qtbot.addWidget(mainWindow)
     mainWindow.show()
     view = mainWindow.beadworkView
@@ -180,7 +182,7 @@ def test_beadworkView_changeHeightAfterOrientation(qtbot):
 
 # TODO: test for direct input values of any kind, not just current+1
 def test_beadworkView_changeWidthAfterOrientation(qtbot):
-    mainWindow = MainWindow(debug=True)
+    mainWindow = MainWindow(debug=True, configs=configs)
     qtbot.addWidget(mainWindow)
     mainWindow.show()
     view = mainWindow.beadworkView

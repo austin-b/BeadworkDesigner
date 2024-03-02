@@ -52,10 +52,11 @@ icons_dir = os.path.join(bin_dir, "icons")
 qss_dir = os.path.join(bin_dir, "qss")
 
 class MainWindow(QMainWindow):
-    def __init__(self, debug=False):
+    def __init__(self, debug=False, configs=None):
         super().__init__()
 
         self.debug = debug
+        self.configs = configs
 
         logger.info("Initializing MainWindow.")
 
@@ -114,8 +115,8 @@ class MainWindow(QMainWindow):
 
     def setupView(self):
         logger.debug("Setting up BeadworkView and BeadDelegate.")
-        self.beadworkView = BeadworkView()
-        self.delegate = BeadDelegate()
+        self.beadworkView = BeadworkView(beadHeight=self.configs["beadHeight"], beadWidth=self.configs["beadWidth"])
+        self.delegate = BeadDelegate(beadHeight=self.configs["beadHeight"], beadWidth=self.configs["beadWidth"])
         self.beadworkView.setItemDelegate(self.delegate)
         self.beadworkView.setModel(self.model)
         self.beadworkView.clicked.connect(self.updateCurrentColorText)
