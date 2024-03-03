@@ -35,6 +35,7 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QMainWindow,
     QSpinBox,
+    QStatusBar,
     QToolBar,
     QWidget,
     QVBoxLayout
@@ -63,6 +64,7 @@ class MainWindow(QMainWindow):
         self.debug = debug
         self.configs = configs
 
+        # set initial orientation
         self.orientationOptions = {BeadworkOrientation.HORIZONTAL: "Horizontal", BeadworkOrientation.VERTICAL: "Vertical"}
         if self.configs["defaultOrientation"] == "Horizontal":
             self.currentOrientation = BeadworkOrientation.HORIZONTAL
@@ -88,8 +90,9 @@ class MainWindow(QMainWindow):
         self.setupColorList()
         self.setupSidebar()
         self.setupActions()
-        self.setupToolbar()    
-
+        self.setupToolbar()  
+        self.setupStatusBar()
+  
         ### SETUP MAIN LAYOUT & WIDGET
         logger.debug("Setting up main layout and widget.")
         mainLayout = QHBoxLayout()
@@ -265,6 +268,34 @@ class MainWindow(QMainWindow):
         self.sidebar.setLayout(sidebarLayout)
         self.sidebar.setMaximumWidth(200)
 
+    def setupStatusBar(self):
+        logger.debug("Setting up statusBar.")
+        self.statusBar = QStatusBar()
+        self.statusBar.setStyleSheet("QStatusBar {text-align: left;}")
+
+        self.statusBarWidthLabel = QLabel(f"{self.modelWidth}")
+        self.statusBarHeightLabel = QLabel(f"{self.modelHeight}")
+
+        self.statusBarDimensionsLayout = QHBoxLayout()
+        self.statusBarDimensionsLayout.addWidget(QLabel("Size:"))
+        self.statusBarDimensionsLayout.addWidget(self.statusBarWidthLabel)
+        self.statusBarDimensionsLayout.addWidget(QLabel("x"))
+        self.statusBarDimensionsLayout.addWidget(self.statusBarHeightLabel)
+        # self.statusBarDimensionsLayout.addStretch(1)
+
+        # # prevents the widgets from stretching
+        # self.statusBarDimensionsLayout.setStretch(0, 0)
+        # self.statusBarDimensionsLayout.setStretch(1, 0)
+        # self.statusBarDimensionsLayout.setStretch(2, 0)
+        # self.statusBarDimensionsLayout.setStretch(3, 0)
+        
+        self.statusBarDimensionsWidget = QWidget()
+        self.statusBarDimensionsWidget.setLayout(self.statusBarDimensionsLayout)
+
+        self.statusBar.insertPermanentWidget(0, self.statusBarDimensionsWidget)
+
+        self.setStatusBar(self.statusBar)
+
     # Override this function so that it repaints the beadworkView.
     # This is currently the workaround as I cannot figure out how to
     # get the rows and columns to size properly without explicitly
@@ -293,6 +324,9 @@ class MainWindow(QMainWindow):
         self.widthSpinBox.setValue(self.modelWidth)
         self.widthSpinBox.valueChanged.connect(self.widthChanged)
 
+        self.statusBarWidthLabel.setText(f"{self.modelWidth}")
+        self.statusBarHeightLabel.setText(f"{self.modelHeight}")
+
     def removeColumn(self):
         logger.debug("Removing column.")
         self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth - 1)) # TODO: allow for selecting index
@@ -303,6 +337,9 @@ class MainWindow(QMainWindow):
         self.widthSpinBox.valueChanged.disconnect(self.widthChanged)
         self.widthSpinBox.setValue(self.modelWidth)
         self.widthSpinBox.valueChanged.connect(self.widthChanged)
+
+        self.statusBarWidthLabel.setText(f"{self.modelWidth}")
+        self.statusBarHeightLabel.setText(f"{self.modelHeight}")
 
     def addRow(self):
         logger.debug("Adding row.")
@@ -316,6 +353,9 @@ class MainWindow(QMainWindow):
         self.heightSpinBox.setValue(self.modelHeight)
         self.heightSpinBox.valueChanged.connect(self.heightChanged)
 
+        self.statusBarWidthLabel.setText(f"{self.modelWidth}")
+        self.statusBarHeightLabel.setText(f"{self.modelHeight}")
+
     def removeRow(self):
         logger.debug("Removing row.")
         self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth - 1)) # TODO: allow for selecting index
@@ -326,6 +366,9 @@ class MainWindow(QMainWindow):
         self.heightSpinBox.valueChanged.disconnect(self.heightChanged)
         self.heightSpinBox.setValue(self.modelHeight)
         self.heightSpinBox.valueChanged.connect(self.heightChanged)
+
+        self.statusBarWidthLabel.setText(f"{self.modelWidth}")
+        self.statusBarHeightLabel.setText(f"{self.modelHeight}")
 
     def widthChanged(self, value):
         logger.debug(f"Width changed to {value}.")
