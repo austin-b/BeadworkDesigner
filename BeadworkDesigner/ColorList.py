@@ -10,6 +10,9 @@ from PySide6.QtWidgets import QListView
 #
 #   IDEA: Have the ProxyModel give a 1-1 mapping of the source model sorted by color,
 #   then have the ColorList only display the unique colors
+#
+#   OTHER IDEA: Have the ProxyModel return the 1st index in the source model for each color,
+#   but for later editting provide a custom method for returning all indexes of a color
 
 logger = logging.getLogger(__name__)
 
@@ -38,20 +41,17 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
     def index(self, row, column, parent=QModelIndex()):
         return self.createIndex(row, column)
 
-    # TODO: implement and map from source to proxy
-    # - create a sorted dictionary in setSourceModel
-    # - for each sourceIndex, check if it's in the colors dictionary
-    # - if it is, return the index of the color in the list
-    # - if it isn't, add it to the list and return the index of the color in the list
     def mapFromSource(self, sourceIndex):
         color = self.sourceModel().data(sourceIndex, Qt.ItemDataRole.DisplayRole)
+        logger.debug(f"Mapping from source color: {color}, index: {sourceIndex}")
+        proxyIndex = self.createIndex(self._colors_index.index(color), 0) # returns the location in the colors_index list
+        logger.debug(f"Mapping to proxy index: {proxyIndex}")
+        return proxyIndex
 
-        logger.debug(f"color: {color}, index: {sourceIndex}")
-        if color in self._colors:
-            return self.createIndex(self._colors_index.index(color)[0], 0) # TODO: only returns the first index
-        else:
-            self.evaluateModelForUniqueColors()
-            return self.createIndex(self._colors_index.index(color), 0)
+        # if color in self._colors:
+        # else: TODO: why would a color from the model not already be in here -- provided we hook up the signals properly?
+        #     self.evaluateModelForUniqueColors()
+        #     return self.createIndex(self._colors_index.index(color), 0)
 
     # TODO: implement and map from proxy of all selected colors to source
     # TODO: does this have to be implemented before the proxy model can be used?
