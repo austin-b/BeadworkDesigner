@@ -39,15 +39,13 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
     
     # not sure why this is needed, but it is
     # I believe this behavior defines it as a list model -
-    # a signel parent index is returned for all rows
+    # a single parent index is returned for all rows
     def parent(self, index):
         return QModelIndex()
 
     def mapFromSource(self, sourceIndex):
         color = self.sourceModel().data(sourceIndex, Qt.ItemDataRole.DisplayRole)
         logger.debug(f"Mapping from source color: {color}, index: {sourceIndex}")
-        # if color not in self._colors_index:
-        #     self.evaluateModelForUniqueColors()
         proxyIndex = self.createIndex(self._colors_index.index(color), 0) # returns the location in the colors_index list
         logger.debug(f"Mapped to proxy index: {proxyIndex}")
         return proxyIndex
