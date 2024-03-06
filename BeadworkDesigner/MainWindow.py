@@ -183,7 +183,7 @@ class MainWindow(QMainWindow):
         self.currentColor = QLineEdit()
         self.currentColor.setFixedWidth(47)
         self.currentColor.setInputMask('HHHHHH')   # only allows hex color input
-        self.currentColor.textChanged.connect(lambda c: self.model.setData(self.beadworkView.currentIndex(), f"#{c}", Qt.ItemDataRole.EditRole)) # TODO: this currently only changes the last one selected, multiple selections do not work
+        self.currentColor.textChanged.connect(self.changeColor) 
         self.colorDialog = QColorDialog()
         self.colorDialog.colorSelected.connect(lambda c: self.currentColor.setText(c.name().upper()))
         self.colorDialogButton = QPushButton()
@@ -255,6 +255,8 @@ class MainWindow(QMainWindow):
         # TODO: proxyModel does not work -- fix
         self.proxyModel = BeadworkToColorListProxyModel()
         self.proxyModel.setSourceModel(self.origModel)
+        self.model.dataChanged.connect(self.proxyModel.updateList)
+        self.proxyModel.dataChanged.connect(self.colorList.dataChanged)
         self.colorList.setModel(self.proxyModel)
 
     def setupSidebar(self):
@@ -387,6 +389,10 @@ class MainWindow(QMainWindow):
             self.removeRow()
         self.modelHeight = self.model.rowCount(QModelIndex())
 
+    # TODO: this currently only changes the last one selected, multiple selections do not work
+    def changeColor(self, colorString):
+        self.model.setData(self.beadworkView.currentIndex(), f"#{colorString}", Qt.ItemDataRole.EditRole)
+        
     # TODO: implement
     def inSelectionMode(self, checked):
         if checked:

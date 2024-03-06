@@ -59,14 +59,11 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
     def mapFromSource(self, sourceIndex):
         color = self.sourceModel().data(sourceIndex, Qt.ItemDataRole.DisplayRole)
         logger.debug(f"Mapping from source color: {color}, index: {sourceIndex}")
+        # if color not in self._colors_index:
+        #     self.evaluateModelForUniqueColors()
         proxyIndex = self.createIndex(self._colors_index.index(color), 0) # returns the location in the colors_index list
         logger.debug(f"Mapped to proxy index: {proxyIndex}")
         return proxyIndex
-
-        # if color in self._colors:
-        # else: TODO: why would a color from the model not already be in here -- provided we hook up the signals properly?
-        #     self.evaluateModelForUniqueColors()
-        #     return self.createIndex(self._colors_index.index(color), 0)
 
     # TODO: implement and map from proxy of all selected colors to source
     def mapToSource(self, proxyIndex):
@@ -77,7 +74,7 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
         logger.debug(f"Mapped to source index: {sourceIndex}")
         return sourceIndex
 
-    # runs through model and recreates a dictionary of unique colors
+    # runs through model and creates a dictionary of unique colors
     def evaluateModelForUniqueColors(self):
         for row in range(self.sourceModel().rowCount(None)):
             for column in range(self.sourceModel().columnCount(None)):
@@ -86,17 +83,17 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
                     self._colors[color] = [(row, column)]
                 else:
                     self._colors[color].append((row, column))
-        logging.debug("self._colors", self._colors)
         self._colors_index = list(self._colors)
         self._colors_index.sort()
-        print("self._colors_index", self._colors_index)     # NOTE: this has a list of colors
-        self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(len(self._colors_index), 0))
+        # self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(len(self._colors_index)-1, 0))
+
+    ### SLOTS
+    def updateList(self, topLeft, bottomRight):
+        logger.debug(f"Data changed: {topLeft}, {bottomRight}.")
+        self.evaluateModelForUniqueColors()
+        self.dataChanged.emit(self.mapFromSource(topLeft), self.mapFromSource(bottomRight))
 
 # TODO: Implement this class
 class ColorList(QListView):
     def __init__(self):
         super().__init__()
-
-    # copied from BeadworkModel (replace self._data)
-    #def uniqueColors(self):
-    #    return list(set([color for row in self._data for color in row])).sort()
