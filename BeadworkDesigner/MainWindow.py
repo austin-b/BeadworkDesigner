@@ -4,6 +4,7 @@ Icons are provided by https://p.yusukekamiyamane.com/. They are licensed under a
 
 #####################
 #
+# TODO: change from RGB hex to HSV
 # TODO: add docstrings
 # TODO: add save and load options to file menu
 # TODO: add a way to change the size of the beads
