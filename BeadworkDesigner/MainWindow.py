@@ -33,6 +33,7 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QLineEdit,
+    QListView,
     QMainWindow,
     QSpinBox,
     QStatusBar,
@@ -250,11 +251,11 @@ class MainWindow(QMainWindow):
     # TODO: finish implementing 
     def setupColorList(self):
         logger.debug("Setting up colorList.")
-        self.colorList = ColorList()
+        self.colorList = QListView()
         # TODO: proxyModel does not work -- fix
-        # self.proxyModel = BeadworkToColorListProxyModel()
-        # self.proxyModel.setSourceModel(self.model)
-        self.colorList.setModel(self.model)
+        self.proxyModel = BeadworkToColorListProxyModel()
+        self.proxyModel.setSourceModel(self.origModel)
+        self.colorList.setModel(self.proxyModel)
 
     def setupSidebar(self):
         logger.debug("Setting up sidebar.")

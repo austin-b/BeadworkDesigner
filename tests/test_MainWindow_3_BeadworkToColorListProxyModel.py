@@ -47,7 +47,10 @@ def test_colorList_mapFromSource(testBeadworkModel, testProxyModel):
 
 
 def test_colorList_mapToSource(testBeadworkModel, testProxyModel):
-    pass
+    for r in range(testProxyModel.rowCount(None)):
+        color = testProxyModel.index(r, 0).data(Qt.ItemDataRole.DisplayRole)
+        index = testProxyModel.mapToSource(testProxyModel.index(r, 0)) # should return only the first index that matches the color
+        assert(testBeadworkModel.data(index, Qt.ItemDataRole.DisplayRole) == color)
 
 def test_colorList_data(qtbot):
     pass
