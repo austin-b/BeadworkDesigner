@@ -4,17 +4,6 @@ from PySide6.QtCore import QAbstractProxyModel, QModelIndex, Qt
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import QListView
 
-# TODO: This class does not work -- do not know why
-# last error given when trying to run:
-#   NotImplementedError: pure virtual method 'QAbstractProxyModel.parent' not implemented.
-#
-#
-#   IDEA: Have the ProxyModel give a 1-1 mapping of the source model sorted by color,
-#   then have the ColorList only display the unique colors
-#
-#   OTHER IDEA: Have the ProxyModel return the 1st index in the source model for each color,
-#   but for later editting provide a custom method for returning all indexes of a color
-
 logger = logging.getLogger(__name__)
 
 class BeadworkToColorListProxyModel(QAbstractProxyModel):
@@ -24,7 +13,6 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
         self._colors = {}
         self._colors_index = []
 
-    # TODO: implement and build the colors dictionary
     def setSourceModel(self, sourceModel):
         super().setSourceModel(sourceModel)  
 
@@ -40,7 +28,6 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
         else:
             return None
 
-    # TODO: these are both implemented, am I forgetting another method that needs to be implemented?
     def rowCount(self, parent):
         return len(self._colors_index)
     
@@ -65,7 +52,6 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
         logger.debug(f"Mapped to proxy index: {proxyIndex}")
         return proxyIndex
 
-    # TODO: implement and map from proxy of all selected colors to source
     def mapToSource(self, proxyIndex):
         color = self.data(proxyIndex, Qt.ItemDataRole.DisplayRole)
         logger.debug(f"Mapping to source color: {color}, index: {proxyIndex}")
@@ -73,6 +59,21 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
         sourceIndex = self.sourceModel().index(r, c) 
         logger.debug(f"Mapped to source index: {sourceIndex}")
         return sourceIndex
+    
+    def mapToAllSourceIndexes(self, proxyIndex):
+        color = self.data(proxyIndex, Qt.ItemDataRole.DisplayRole)
+        return self.allIndexesForColor(color, proxyIndex)
+    
+    def allIndexesForColor(self, color, proxyIndex):
+        try:
+            logger.debug(f"Mapping to source color: {color}, index: {proxyIndex}")
+            indexes = self._colors[color]
+            logger.debug(f"Mapped to source indexes: {indexes}")
+            sourceIndexes = map(lambda index: self.sourceModel().index(index[0], index[1]),
+                                indexes)
+            return list(sourceIndexes)
+        except KeyError:
+            return None   
 
     # runs through model and creates a dictionary of unique colors
     def evaluateModelForUniqueColors(self):

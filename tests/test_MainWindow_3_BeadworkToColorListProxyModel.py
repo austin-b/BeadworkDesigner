@@ -24,6 +24,7 @@ def testBeadworkModel():
 def testProxyModel(testBeadworkModel):
     testProxyModel = BeadworkToColorListProxyModel()
     testProxyModel.setSourceModel(testBeadworkModel)
+    testBeadworkModel.dataChanged.connect(testProxyModel.updateList)
     return testProxyModel
 
 def test_colorList_initModel(testBeadworkModel, testProxyModel):
@@ -62,7 +63,16 @@ def test_colorList_data(testProxyModel):
         assert(testProxyModel.data(testProxyModel.index(r, 0), Qt.ItemDataRole.DisplayRole) == color)
         assert(testProxyModel.data(testProxyModel.index(r, 0), Qt.ItemDataRole.BackgroundRole) == QColor(color))
 
-def test_colorList_changeData(qtbot):
+def test_colorList_returnAllInstancesOfColor(testBeadworkModel, testProxyModel):
+    # ensure at least two of the same color are present
+    testBeadworkModel.setData(testBeadworkModel.index(0,0), "#000000", Qt.ItemDataRole.EditRole)
+    testBeadworkModel.setData(testBeadworkModel.index(0,1), "#000000", Qt.ItemDataRole.EditRole)
+    proxModelIndex = testProxyModel.createIndex(testProxyModel._colors_index.index("#000000"), 0)
+    testIndexes = testProxyModel.mapToAllSourceIndexes(proxModelIndex)
+    assert(testBeadworkModel.index(0,0) in testIndexes)
+    assert(testBeadworkModel.index(0,1) in testIndexes)
+
+def test_colorList_changeDataFromColorDialog(qtbot):
     main = MainWindow(debug=False, configs=configs)
     qtbot.addWidget(main)
     main.show()
