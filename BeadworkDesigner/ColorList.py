@@ -72,7 +72,7 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
             sourceIndexes = map(lambda index: self.sourceModel().index(index[0], index[1]),
                                 indexes)
             return list(sourceIndexes)
-        except KeyError:
+        except KeyError:    # just in case the color is not valid
             return None   
 
     # runs through model and creates a dictionary of unique colors
@@ -86,7 +86,6 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
                     self._colors[color].append((row, column))
         self._colors_index = list(self._colors)
         self._colors_index.sort()
-        # self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(len(self._colors_index)-1, 0))
 
     ### SLOTS
     def updateList(self, topLeft, bottomRight):
