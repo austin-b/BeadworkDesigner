@@ -375,6 +375,12 @@ class MainWindow(QMainWindow):
         self.model.setData(self.beadworkView.currentIndex(), f"#{colorString}", Qt.ItemDataRole.EditRole)
         
     # TODO: implement
+    # NOTES:
+        # selectionMode is default
+        # in this mode, the user can select beads by clicking on them
+        # the user can also select multiple beads by clicking and dragging
+        # the currentColor dialog populates with the color of the selected bead(s)
+        # if checked, should disconnect the relevant methods from the other modes
     def inSelectionMode(self, checked):
         if checked:
             self.colorMode.setChecked(False)
@@ -388,6 +394,11 @@ class MainWindow(QMainWindow):
             # self.beadworkView.setSelectionMode(QListView.SelectionMode.SingleSelection)
 
     # TODO: implement
+    # NOTES:
+        # colorMode allows the user to change the color of multiple beads at once
+        # every bead the user clicks on will change to the color in the currentColor dialog
+        # if checked, should disconnect the relevant methods from the other modes
+        # and enable the currentColor dialog to change the color of the "painter"
     def inColorMode(self, checked):
         if checked:
             self.selectionMode.setChecked(False)
@@ -396,6 +407,11 @@ class MainWindow(QMainWindow):
             self.selectionMode.setChecked(True)
 
     # TODO: implement
+    # NOTES:
+        # clearMode allows the user to clear the color of multiple beads at once
+        # every bead clicked/selected will change to white/transparent
+        # if selecting multiple beads, hint to the user that they will all clear when finished selecting
+        # if checked, should disconnect the relevant methods from the other modes
     def inClearMode(self, checked):
         if checked:
             self.selectionMode.setChecked(False)
