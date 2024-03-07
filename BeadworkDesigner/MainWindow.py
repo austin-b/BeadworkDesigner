@@ -22,29 +22,17 @@ Icons are provided by https://p.yusukekamiyamane.com/. They are licensed under a
 
 import logging
 import os
-
 from enum import Enum
 
-from PySide6.QtCore import QModelIndex, Qt, QTransposeProxyModel
+from PySide6.QtCore import QModelIndex, Qt
 from PySide6.QtGui import QAction, QIcon
-from PySide6.QtWidgets import (
-    QColorDialog,
-    QComboBox,
-    QPushButton,
-    QHBoxLayout,
-    QLabel,
-    QLineEdit,
-    QListView,
-    QMainWindow,
-    QSpinBox,
-    QStatusBar,
-    QToolBar,
-    QWidget,
-    QVBoxLayout
-)
+from PySide6.QtWidgets import (QColorDialog, QComboBox, QHBoxLayout, QLabel,
+                               QLineEdit, QMainWindow, QPushButton, QSpinBox,
+                               QStatusBar, QToolBar, QVBoxLayout, QWidget)
 
-from BeadworkDesigner.BeadworkModel import BeadworkModel, BeadworkTransposeModel
 from BeadworkDesigner.BeadDelegate import BeadDelegate
+from BeadworkDesigner.BeadworkModel import (BeadworkModel,
+                                            BeadworkTransposeModel)
 from BeadworkDesigner.BeadworkView import BeadworkView
 from BeadworkDesigner.ColorList import BeadworkToColorListProxyModel, ColorList
 
@@ -249,11 +237,9 @@ class MainWindow(QMainWindow):
         self.toolbar.addAction(self.colorMode)
         self.toolbar.addAction(self.clearMode)
 
-    # TODO: finish implementing 
     def setupColorList(self):
         logger.debug("Setting up colorList.")
         self.colorList = ColorList()
-        # TODO: proxyModel does not work -- fix
         self.proxyModel = BeadworkToColorListProxyModel()
         self.proxyModel.setSourceModel(self.origModel)
         self.model.dataChanged.connect(self.proxyModel.updateList)
@@ -286,13 +272,6 @@ class MainWindow(QMainWindow):
         self.statusBarDimensionsLayout.addWidget(self.statusBarWidthLabel)
         self.statusBarDimensionsLayout.addWidget(QLabel("x"))
         self.statusBarDimensionsLayout.addWidget(self.statusBarHeightLabel)
-        # self.statusBarDimensionsLayout.addStretch(1)
-
-        # # prevents the widgets from stretching
-        # self.statusBarDimensionsLayout.setStretch(0, 0)
-        # self.statusBarDimensionsLayout.setStretch(1, 0)
-        # self.statusBarDimensionsLayout.setStretch(2, 0)
-        # self.statusBarDimensionsLayout.setStretch(3, 0)
         
         self.statusBarDimensionsWidget = QWidget()
         self.statusBarDimensionsWidget.setLayout(self.statusBarDimensionsLayout)

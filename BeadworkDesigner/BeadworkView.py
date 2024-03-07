@@ -1,7 +1,5 @@
 import logging
 
-from collections.abc import Sequence
-
 from PySide6.QtWidgets import QTableView
 
 logger = logging.getLogger(__name__)

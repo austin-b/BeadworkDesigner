@@ -1,6 +1,6 @@
 import pytest
 
-from BeadworkDesigner.MainWindow import MainWindow, BeadworkOrientation
+from BeadworkDesigner.MainWindow import BeadworkOrientation, MainWindow
 
 from bin.config import configs
 
