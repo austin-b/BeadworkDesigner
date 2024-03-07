@@ -85,14 +85,14 @@ def test_BeadworkModel_removeColumn(testingModel, input_column):
     testingModel.removeColumn(input_column, index)
     assert(testingModel.columnCount(None) == columnCountBefore - 1)
 
-def test_BeadworkModel_exportDict(testingModel):
-    testDict = testingModel.exportDict()
-    assert(testDict == {"project": testingModel._data})
+def test_BeadworkModel_exportData(testingModel):
+    testDict = testingModel.exportData()
+    assert(testDict == testingModel._data)
 
-def test_BeadworkModel_importDict(testingModel):
-    testDict = testingModel.exportDict()
+def test_BeadworkModel_importData(testingModel):
+    testDict = testingModel.exportData()
     testModel = BeadworkModel()
-    testModel.importDict(testDict)
+    testModel.importData(testDict)
     assert(testModel._data == testingModel._data)
 
 
