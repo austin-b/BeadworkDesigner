@@ -1,8 +1,8 @@
 import logging
 
 from PySide6.QtCore import QAbstractProxyModel, QModelIndex, Qt
-from PySide6.QtGui import QColor
-from PySide6.QtWidgets import QListView
+from PySide6.QtGui import QAction, QColor
+from PySide6.QtWidgets import QListView, QMenu
 
 logger = logging.getLogger(__name__)
 
@@ -91,7 +91,23 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
         self.evaluateModelForUniqueColors()
         self.dataChanged.emit(self.mapFromSource(topLeft), self.mapFromSource(bottomRight))
 
-# TODO: Implement this class
+# TODO: will need to create a new menu similar to https://forum.qt.io/topic/92366/how-to-use-right-click-instead-of-left-click-for-the-on_listview_clicked-slot-from-qlistview/2
+# then connect the self.customContextMenuRequested signal to the slot that creates and shows it
+# the signal sends a QPoint (relative to the widget itself), which can be used to get the index of the item that was clicked
+# will have to first set setContextMenuPolicy(Qt::CustomContextMenu)
 class ColorList(QListView):
     def __init__(self):
         super().__init__()
+
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.customContextMenu)
+
+    def customContextMenu(self, point):
+        index = self.indexAt(point)
+        logger.debug(f"Triggered ColorList custom context menu at {index}.")
+
+        if index.isValid():
+            menu = QMenu(self)
+            menu.addAction(QAction("Select All", self))
+            menu.addAction(QAction("Change All Occurrences", self))
+            menu.exec(self.mapToGlobal(point))

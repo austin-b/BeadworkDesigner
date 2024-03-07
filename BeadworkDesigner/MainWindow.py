@@ -252,7 +252,7 @@ class MainWindow(QMainWindow):
     # TODO: finish implementing 
     def setupColorList(self):
         logger.debug("Setting up colorList.")
-        self.colorList = QListView()
+        self.colorList = ColorList()
         # TODO: proxyModel does not work -- fix
         self.proxyModel = BeadworkToColorListProxyModel()
         self.proxyModel.setSourceModel(self.origModel)
