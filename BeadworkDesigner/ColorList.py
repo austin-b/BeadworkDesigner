@@ -2,7 +2,7 @@ import logging
 
 from PySide6.QtCore import QAbstractProxyModel, QModelIndex, Qt
 from PySide6.QtGui import QAction, QColor
-from PySide6.QtWidgets import QListView, QMenu
+from PySide6.QtWidgets import QColorDialog, QListView, QMenu
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +62,7 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
         color = self.data(proxyIndex, Qt.ItemDataRole.DisplayRole)
         return self.allIndexesForColor(color, proxyIndex)
     
-    def allIndexesForColor(self, color, proxyIndex):
+    def allIndexesForColor(self, color, proxyIndex=None):
         try:
             logger.debug(f"Mapping to source color: {color}, index: {proxyIndex}")
             indexes = self._colors[color]
@@ -72,9 +72,16 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
             return list(sourceIndexes)
         except KeyError:    # just in case the color is not valid
             return None   
+        
+    def changeAllInstancesOfColor(self, initColor, newColor):
+        indexes = self.allIndexesForColor(initColor)
+        logger.info(f"Changing all instances of {initColor} to {newColor}.")
+        for index in indexes:
+            self.sourceModel().setData(index, newColor, Qt.ItemDataRole.EditRole)
 
     # runs through model and creates a dictionary of unique colors
     def evaluateModelForUniqueColors(self):
+        self._colors = {} # reinitialize whenever we call this to prevent carryovers
         for row in range(self.sourceModel().rowCount(None)):
             for column in range(self.sourceModel().columnCount(None)):
                 color = self.sourceModel().data(self._sourceModel.index(row, column), Qt.ItemDataRole.DisplayRole)
@@ -99,15 +106,31 @@ class ColorList(QListView):
     def __init__(self):
         super().__init__()
 
+        self.triggeredIndex = None # index of the item that was right-clicked
+
+        self.colorDialog = QColorDialog() # used to select the new color
+        self.colorDialog.colorSelected.connect(lambda c: self.triggerChangeAll(c.name().upper()))
+
         self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.customContextMenuRequested.connect(self.customContextMenu)
 
-    def customContextMenu(self, point):
-        index = self.indexAt(point)
-        logger.debug(f"Triggered ColorList custom context menu at {index}.")
+        self.selectAllAction = QAction("Select All", self) # TODO: implement
 
-        if index.isValid():
+        self.changeAllAction = QAction("Change All Occurrences", self)
+        self.changeAllAction.triggered.connect(self.openColorDialog)
+
+    def customContextMenu(self, point):
+        self.triggeredIndex = self.indexAt(point)
+        logger.debug(f"Triggered ColorList custom context menu at {self.triggeredIndex}.")
+
+        if self.triggeredIndex.isValid():
             menu = QMenu(self)
-            menu.addAction(QAction("Select All", self))
-            menu.addAction(QAction("Change All Occurrences", self))
+            menu.addAction(self.selectAllAction)
+            menu.addAction(self.changeAllAction)
             menu.exec(self.mapToGlobal(point))
+
+    def openColorDialog(self):
+        self.colorDialog.show()
+
+    def triggerChangeAll(self, newColor):
+        self.model().changeAllInstancesOfColor(self.triggeredIndex.data(Qt.ItemDataRole.DisplayRole), newColor)

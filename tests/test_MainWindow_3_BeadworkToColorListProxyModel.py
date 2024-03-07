@@ -72,6 +72,17 @@ def test_colorList_returnAllInstancesOfColor(testBeadworkModel, testProxyModel):
     assert(testBeadworkModel.index(0,0) in testIndexes)
     assert(testBeadworkModel.index(0,1) in testIndexes)
 
+def test_colorList_changeAllInstancesOfColor(testBeadworkModel, testProxyModel):
+    # ensure at least two of the same color are present
+    testBeadworkModel.setData(testBeadworkModel.index(0,0), "#000000", Qt.ItemDataRole.EditRole)
+    testBeadworkModel.setData(testBeadworkModel.index(0,1), "#000000", Qt.ItemDataRole.EditRole)
+    testIndexes = testProxyModel.allIndexesForColor("#000000") # get all indexes for init color
+    
+    testProxyModel.changeAllInstancesOfColor("#000000", "#FFFFFF")
+
+    for index in testIndexes:
+        assert(testBeadworkModel.data(index, Qt.ItemDataRole.DisplayRole) == "#FFFFFF")
+
 def test_colorList_changeDataFromColorDialog(qtbot):
     main = MainWindow(debug=False, configs=configs)
     qtbot.addWidget(main)
@@ -79,6 +90,3 @@ def test_colorList_changeDataFromColorDialog(qtbot):
 
     main.currentColor.setText("000000")
     assert(main.proxyModel.data(main.proxyModel.index(0,0), Qt.ItemDataRole.DisplayRole) == "#000000")
-
-def test_colorList_changeAllInstancesOfColor(qtbot):
-    pass
