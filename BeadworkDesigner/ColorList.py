@@ -1,6 +1,6 @@
 import logging
 
-from PySide6.QtCore import QAbstractProxyModel, QModelIndex, Qt
+from PySide6.QtCore import QAbstractProxyModel, QModelIndex, QPersistentModelIndex, Qt
 from PySide6.QtGui import QAction, QColor
 from PySide6.QtWidgets import QColorDialog, QListView, QMenu
 
@@ -12,6 +12,8 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
 
         self._colors = {}
         self._colors_index = []
+
+        logger.info("BeadworkToColorListProxyModel initialized.")
 
     def setSourceModel(self, sourceModel):
         super().setSourceModel(sourceModel)  
@@ -119,6 +121,8 @@ class ColorList(QListView):
         self.changeAllAction = QAction("Change All Occurrences", self)
         self.changeAllAction.triggered.connect(self.openColorDialog)
 
+        logger.info("ColorList initialized.")
+
     def customContextMenu(self, point):
         self.triggeredIndex = self.indexAt(point)
         logger.debug(f"Triggered ColorList custom context menu at {self.triggeredIndex}.")
@@ -134,3 +138,8 @@ class ColorList(QListView):
 
     def triggerChangeAll(self, newColor):
         self.model().changeAllInstancesOfColor(self.triggeredIndex.data(Qt.ItemDataRole.DisplayRole), newColor)
+
+    def updateSelected(self, sourceIndex):
+        proxyIndex = self.model().mapFromSource(sourceIndex)
+        self.setCurrentIndex(proxyIndex)
+        self.scrollTo(proxyIndex)

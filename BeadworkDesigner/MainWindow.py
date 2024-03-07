@@ -258,6 +258,7 @@ class MainWindow(QMainWindow):
         self.proxyModel.setSourceModel(self.origModel)
         self.model.dataChanged.connect(self.proxyModel.updateList)
         self.proxyModel.dataChanged.connect(self.colorList.dataChanged)
+        self.beadworkView.clicked.connect(self.colorList.updateSelected) # update selected color in list when bead is selected
         self.colorList.setModel(self.proxyModel)
 
     def setupSidebar(self):
