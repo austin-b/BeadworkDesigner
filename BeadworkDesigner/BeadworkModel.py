@@ -116,6 +116,13 @@ class BeadworkModel(QtCore.QAbstractTableModel):
         self.endRemoveColumns()
         logger.debug(f"Removed column at {column}.")
 
+    def importDict(self, data):
+        self._data = data["project"]
+        self.dataChanged.emit(self.index(0, 0), self.index(self.rowCount(None), self.columnCount(None)))
+
+    def exportDict(self):
+        return {"project": self._data}
+
 class BeadworkTransposeModel(QTransposeProxyModel):
     def __init__(self, parent=None):
         super().__init__(parent)
