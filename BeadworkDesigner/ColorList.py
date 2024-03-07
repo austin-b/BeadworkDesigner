@@ -1,8 +1,8 @@
 import logging
 
-from PySide6.QtCore import QAbstractProxyModel, QModelIndex, QPersistentModelIndex, Qt
+from PySide6.QtCore import QAbstractProxyModel, QModelIndex, QSize, Qt
 from PySide6.QtGui import QAction, QColor
-from PySide6.QtWidgets import QColorDialog, QListView, QMenu
+from PySide6.QtWidgets import QColorDialog, QListView, QMenu, QStyle, QItemDelegate
 
 logger = logging.getLogger(__name__)
 
@@ -121,6 +121,8 @@ class ColorList(QListView):
         self.changeAllAction = QAction("Change All Occurrences", self)
         self.changeAllAction.triggered.connect(self.openColorDialog)
 
+        # self.setItemDelegate(ColorListDelegate())
+
         logger.info("ColorList initialized.")
 
     def customContextMenu(self, point):
@@ -143,3 +145,28 @@ class ColorList(QListView):
         proxyIndex = self.model().mapFromSource(sourceIndex)
         self.setCurrentIndex(proxyIndex)
         self.scrollTo(proxyIndex)
+
+# TODO: implement properly -- selection is not working
+        # maybe using https://doc.qt.io/qtforpython-6/PySide6/QtWidgets/QStylePainter.html?
+# class ColorListDelegate(QItemDelegate):
+    
+#     def __init__(self):
+#         super().__init__()
+
+#     def paint(self, painter, option, index):
+#         if bool(option.state & QStyle.StateFlag.State_Selected):
+#             painter.setPen(QColor("#000000"))
+#             painter.drawRect(option.rect)
+#         else:
+#             painter.setPen(QColor("#FFFFFF"))
+#             painter.drawRect(option.rect)
+
+#         # translate
+#         option.rect.translate(2, 2)
+
+#         # resize
+#         option.rect.setSize(QSize(option.rect.width()-2, option.rect.height()-6))
+        
+#         # draw a rectangle
+#         background_color = index.data(role = Qt.ItemDataRole.BackgroundRole)
+#         painter.fillRect(option.rect, background_color)
