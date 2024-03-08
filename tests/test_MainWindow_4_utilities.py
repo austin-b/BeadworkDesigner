@@ -34,8 +34,7 @@ def test_mainWindow_saveProject(mainWindow):
     mainWindow.exportProject("tests/test.json")
     assert(loadProject("tests/test.json") == {
         "info": {
-            "version": 0.1,
-            "title": "Example Project"
+            "version": 0.1
         },
         "configs": mainWindow.configs,
         "project": mainWindow.origModel._data

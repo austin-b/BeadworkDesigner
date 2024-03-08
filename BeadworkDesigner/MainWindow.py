@@ -492,14 +492,15 @@ class MainWindow(QMainWindow):
     ########################################
         
     def exportProject(self, filename):
+        self.setWindowTitle(f'Beadwork Designer - {filename}')
+
         # ensure that the configs are up to date
         self.configs["width"] = self.modelWidth     
         self.configs["height"] = self.modelHeight
         self.configs["defaultOrientation"] = self.orientationOptions[self.currentOrientation]
         project = {
             "info": {
-                        "version": 0.1, # TODO: version checking?
-                        "title": "Example Project" # TODO: add filename/title
+                        "version": 0.1 # TODO: version checking?
                     },
             "configs": self.configs,    # TODO: do I pull current configs from variables or reassign directly to configs?
             "project": self.origModel.exportData()
@@ -509,6 +510,8 @@ class MainWindow(QMainWindow):
     # TODO: this is a bit of a mess, but it works for now
     # TODO: create tests specifically for this method
     def importProject(self, filename):
+        self.setWindowTitle(f'Beadwork Designer - {filename}')
+
         json = utils.loadProject(filename)
         for key in json['configs'].keys():
             if key != "defaultOrientation":

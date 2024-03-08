@@ -1,7 +1,6 @@
 {
     "info": {
-        "version": 0.1,
-        "title": "Example Project"
+        "version": 0.1
     },
     "configs": {
         "debug": false,
