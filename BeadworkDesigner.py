@@ -7,7 +7,8 @@ from PySide6.QtWidgets import QApplication
 from BeadworkDesigner.MainWindow import MainWindow
 from BeadworkDesigner.utils import loadProject
 
-from bin.config import configs  # import default config file
+# TODO: add capability to return config to default_config.py
+from bin.config import configs  # import config file
 
 # TODO: provide better description for argparser
 parser = argparse.ArgumentParser(description="Beadwork Designer")
@@ -35,8 +36,6 @@ if args.load:
     json = loadProject(args.load)
     for key in json['configs'].keys():
         configs[key] = json['configs'][key]                 # replace any config with the loaded one
-    configs['defaultWidth'] = json['configs']['width']      # override default width
-    configs['defaultHeight'] = json['configs']['height']    # override default height
 
 window = MainWindow(debug=debug, configs=configs)  # check if debug flag is set
 

@@ -111,7 +111,7 @@ class MainWindow(QMainWindow):
 
     def setupModels(self):
         logger.debug("Setting up BeadworkModel and BeadworkTransposeModel.")
-        self.origModel = BeadworkModel(debug=self.debug, defaultHeight=self.configs["defaultHeight"], defaultWidth=self.configs["defaultWidth"])
+        self.origModel = BeadworkModel(debug=self.debug, defaultHeight=self.configs["height"], defaultWidth=self.configs["width"])
         self.transposeModel = BeadworkTransposeModel()
         self.transposeModel.setSourceModel(self.origModel)
 
