@@ -14,7 +14,7 @@ def color(random=False):
         logger.debug(f"picked random color: {color}")
         return color
     else:
-        "#FFFFFF"
+        return "#FFFFFF"
 #####################
         
 logger = logging.getLogger(__name__)

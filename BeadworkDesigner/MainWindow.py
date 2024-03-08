@@ -248,7 +248,7 @@ class MainWindow(QMainWindow):
         logger.debug("Setting up colorList.")
         self.colorList = ColorList()
         self.proxyModel = BeadworkToColorListProxyModel()
-        self.proxyModel.setSourceModel(self.origModel)
+        self.proxyModel.setSourceModel(self.model)
         self.model.dataChanged.connect(self.proxyModel.updateList)
         self.proxyModel.dataChanged.connect(self.colorList.dataChanged)
         self.beadworkView.clicked.connect(self.colorList.updateSelected) # update selected color in list when bead is selected
