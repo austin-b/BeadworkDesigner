@@ -477,4 +477,21 @@ class MainWindow(QMainWindow):
         utils.saveProject(project, filename)
 
     def importProject(self, filename):
-        pass
+        json = utils.loadProject(filename)
+        for key in json['configs'].keys():
+            self.configs[key] = json['configs'][key]                 # replace any config with the loaded one
+        
+        self.setupReloadableElements(self.configs, json['project'])
+        
+        # temporarily disconnect signals to avoid crashes
+        self.widthSpinBox.valueChanged.disconnect(self.widthChanged)
+        self.heightSpinBox.valueChanged.disconnect(self.heightChanged)
+
+        # change spinbox values
+        self.widthSpinBox.setValue(self.modelWidth)
+        self.heightSpinBox.setValue(self.modelHeight)
+
+        # reconnect signals
+        self.widthSpinBox.valueChanged.connect(self.widthChanged)
+        self.heightSpinBox.valueChanged.connect(self.heightChanged)
+        logger.debug(f"widthLabel changed to {self.widthLabel.text()}, widthSpinBox changed to {self.widthSpinBox.value()}, heightLabel changed to {self.heightLabel.text()}, heightSpinBox changed to {self.heightSpinBox.value()}.")

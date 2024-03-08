@@ -40,6 +40,9 @@ class BeadworkModel(QtCore.QAbstractTableModel):
             else:
                 logger.debug("Generating BeadworkModel with blank fields.")
                 self._data = [['#FFFFFF' for _ in range(defaultWidth)] for _ in range(defaultHeight)]
+        else:
+            logger.info("Data given to BeadworkModel, loading given project.")
+            self._data = data
 
         logger.info(f"BeadworkModel {self} created.")
 
