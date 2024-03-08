@@ -1,7 +1,7 @@
 # TODO: add provide None if no config is available, and log it to prevent errors
 
 configs = {
-    "debug": True,
+    "debug": False,
 
     # defaults
     "beadHeight": 22,

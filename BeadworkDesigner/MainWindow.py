@@ -26,16 +26,17 @@ from enum import Enum
 
 from PySide6.QtCore import QModelIndex, Qt
 from PySide6.QtGui import QAction, QIcon
-from PySide6.QtWidgets import (QColorDialog, QComboBox, QHBoxLayout, QLabel,
-                               QLineEdit, QMainWindow, QPushButton, QSpinBox,
-                               QStatusBar, QToolBar, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QColorDialog, QComboBox, QFileDialog,
+                               QHBoxLayout, QLabel, QLineEdit, QMainWindow,
+                               QPushButton, QSpinBox, QStatusBar, QToolBar,
+                               QVBoxLayout, QWidget)
 
+import BeadworkDesigner.utils as utils
 from BeadworkDesigner.BeadDelegate import BeadDelegate
 from BeadworkDesigner.BeadworkModel import (BeadworkModel,
                                             BeadworkTransposeModel)
 from BeadworkDesigner.BeadworkView import BeadworkView
 from BeadworkDesigner.ColorList import BeadworkToColorListProxyModel, ColorList
-import BeadworkDesigner.utils as utils
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +65,6 @@ class MainWindow(QMainWindow):
         self.setupReloadableElements(self.configs, modelData)
 
         ### SETUP OTHER GUI ELEMENTS
-        self.setupMenu()
         self.setupWidthXHeightWidget()
         self.setupOrientationWidget()
         self.setupColorDialogWidget()
@@ -73,6 +73,7 @@ class MainWindow(QMainWindow):
         self.setupActions()
         self.setupToolbar()  
         self.setupStatusBar()
+        self.setupMenu()
   
         ### SETUP MAIN LAYOUT & WIDGET
         logger.debug("Setting up main layout and widget.")
@@ -109,11 +110,6 @@ class MainWindow(QMainWindow):
         self.modelWidth = self.model.columnCount(QModelIndex())
         self.modelHeight = self.model.rowCount(QModelIndex())
         logger.debug(f"Model width: {self.modelWidth}, Model height: {self.modelHeight}.")
-
-    def setupMenu(self):
-        logger.debug("Setting up menus.")
-        self.menu = self.menuBar()
-        self.fileMenu = self.menu.addMenu('File')
 
     def setupModels(self, height, width, modelData):
         logger.debug("Setting up BeadworkModel and BeadworkTransposeModel.")
@@ -230,6 +226,9 @@ class MainWindow(QMainWindow):
         self.clearMode.triggered.connect(self.inClearMode)
         self.clearMode.setIcon(QIcon(os.path.join(icons_dir, "eraser.png")))
 
+        self.saveAction = QAction('Save', self)
+        self.saveAction.triggered.connect(self.saveDialog)
+
     def setupToolbar(self):
         logger.debug("Setting up self.toolbar.")
         self.toolbar = QToolBar()
@@ -285,6 +284,12 @@ class MainWindow(QMainWindow):
         self.statusBar.insertPermanentWidget(0, self.statusBarDimensionsWidget)
 
         self.setStatusBar(self.statusBar)
+
+    def setupMenu(self):
+        logger.debug("Setting up menus.")
+        self.menu = self.menuBar()
+        self.fileMenu = self.menu.addMenu('File')
+        self.fileMenu.addAction(self.saveAction)
 
     # Override this function so that it repaints the beadworkView.
     # This is currently the workaround as I cannot figure out how to
@@ -461,8 +466,16 @@ class MainWindow(QMainWindow):
 
         logger.info(f"Orientation changed to {self.orientationOptions[self.currentOrientation]}.")
 
+    def saveDialog(self):
+        logger.info("Saving project.")
+        filename = QFileDialog.getOpenFileName(self, 'Save Project', os.path.expanduser("~"), 'Beadwork Designer Project (*.json)')[0]
+        logger.debug(f"Selected filename: {filename}.")
+        if filename:
+            self.exportProject(filename)
+        # TODO: update status bar with save status
+
     ########################################
-    # SETUP METHODS
+    # OTHER METHODS
     ########################################
         
     def exportProject(self, filename):
