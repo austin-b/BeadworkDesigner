@@ -469,6 +469,9 @@ class MainWindow(QMainWindow):
         self.heightSpinBox.valueChanged.connect(self.heightChanged)
         logger.debug(f"widthLabel changed to {self.widthLabel.text()}, widthSpinBox changed to {self.widthSpinBox.value()}, heightLabel changed to {self.heightLabel.text()}, heightSpinBox changed to {self.heightSpinBox.value()}.")
 
+        self.statusBarWidthLabel.setText(f"{self.modelWidth}")
+        self.statusBarHeightLabel.setText(f"{self.modelHeight}")
+
         logger.info(f"Orientation changed to {self.orientationOptions[self.currentOrientation]}.")
 
     def saveDialog(self):
@@ -544,3 +547,6 @@ class MainWindow(QMainWindow):
             self.widthSpinBox.valueChanged.connect(self.widthChanged)
             self.heightSpinBox.valueChanged.connect(self.heightChanged)
             logger.debug(f"widthLabel changed to {self.widthLabel.text()}, widthSpinBox changed to {self.widthSpinBox.value()}, heightLabel changed to {self.heightLabel.text()}, heightSpinBox changed to {self.heightSpinBox.value()}.")
+
+            self.statusBarWidthLabel.setText(f"{self.modelWidth}")
+            self.statusBarHeightLabel.setText(f"{self.modelHeight}")
