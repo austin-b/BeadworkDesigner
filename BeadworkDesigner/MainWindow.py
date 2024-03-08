@@ -35,6 +35,7 @@ from BeadworkDesigner.BeadworkModel import (BeadworkModel,
                                             BeadworkTransposeModel)
 from BeadworkDesigner.BeadworkView import BeadworkView
 from BeadworkDesigner.ColorList import BeadworkToColorListProxyModel, ColorList
+import BeadworkDesigner.utils as utils
 
 logger = logging.getLogger(__name__)
 
@@ -48,29 +49,19 @@ class BeadworkOrientation(Enum):
     HORIZONTAL = 1
 
 class MainWindow(QMainWindow):
-    def __init__(self, debug=False, configs=None):
+    def __init__(self, debug=False, configs=None, modelData=None):
         super().__init__()
 
         self.debug = debug
         self.configs = configs
 
-        # set initial orientation
+        # set initial orientation dict as we need nice string representations
         self.orientationOptions = {BeadworkOrientation.HORIZONTAL: "Horizontal", BeadworkOrientation.VERTICAL: "Vertical"}
-        if self.configs["defaultOrientation"] == "Horizontal":
-            self.currentOrientation = BeadworkOrientation.HORIZONTAL
-        else:
-            self.currentOrientation = BeadworkOrientation.VERTICAL
         
         logger.info("Initializing MainWindow.")
 
-        ### SETUP MODELS AND CONFIGURE VIEW
-        self.setupModels()
-        self.setupView()
-
-        ### KEEP TRACK OF INITIAL WIDTH x HEIGHT
-        self.modelWidth = self.model.columnCount(QModelIndex())
-        self.modelHeight = self.model.rowCount(QModelIndex())
-        logger.debug(f"Model width: {self.modelWidth}, Model height: {self.modelHeight}.")
+        ### SETUP RELOADABLE ELEMENTS (models, views)
+        self.setupReloadableElements(self.configs, modelData)
 
         ### SETUP OTHER GUI ELEMENTS
         self.setupMenu()
@@ -103,26 +94,41 @@ class MainWindow(QMainWindow):
     ########################################
     # SETUP METHODS
     ########################################
+        
+    def setupReloadableElements(self, configs, modelData=None):
+        ### TRACK INITIAL ORIENTATION
+        if configs["defaultOrientation"] == "Horizontal":
+            self.currentOrientation = BeadworkOrientation.HORIZONTAL
+        else:
+            self.currentOrientation = BeadworkOrientation.VERTICAL
+        
+        self.setupModels(configs["height"], configs["width"], modelData)
+        self.setupView(configs["beadHeight"], configs["beadWidth"])
+
+        ### KEEP TRACK OF INITIAL WIDTH x HEIGHT
+        self.modelWidth = self.model.columnCount(QModelIndex())
+        self.modelHeight = self.model.rowCount(QModelIndex())
+        logger.debug(f"Model width: {self.modelWidth}, Model height: {self.modelHeight}.")
 
     def setupMenu(self):
         logger.debug("Setting up menus.")
         self.menu = self.menuBar()
         self.fileMenu = self.menu.addMenu('File')
 
-    def setupModels(self):
+    def setupModels(self, height, width, modelData):
         logger.debug("Setting up BeadworkModel and BeadworkTransposeModel.")
-        self.origModel = BeadworkModel(debug=self.debug, defaultHeight=self.configs["height"], defaultWidth=self.configs["width"])
+        self.origModel = BeadworkModel(debug=self.debug, defaultHeight=height, defaultWidth=width, data=modelData)
         self.transposeModel = BeadworkTransposeModel()
         self.transposeModel.setSourceModel(self.origModel)
 
         self.model = self.origModel     # beginning model will be the original model
 
-    def setupView(self):
+    def setupView(self, beadHeight, beadWidth):
         logger.debug("Setting up BeadworkView and BeadDelegate.")
-        self.beadworkView = BeadworkView(beadHeight=self.configs["beadHeight"] if self.currentOrientation == BeadworkOrientation.VERTICAL else self.configs["beadWidth"], 
-                                         beadWidth=self.configs["beadWidth"] if self.currentOrientation == BeadworkOrientation.VERTICAL else self.configs["beadHeight"])
-        self.delegate = BeadDelegate(beadHeight=self.configs["beadHeight"] if self.currentOrientation == BeadworkOrientation.VERTICAL else self.configs["beadWidth"], 
-                                     beadWidth=self.configs["beadWidth"] if self.currentOrientation == BeadworkOrientation.VERTICAL else self.configs["beadHeight"])
+        self.beadworkView = BeadworkView(beadHeight=beadHeight if self.currentOrientation == BeadworkOrientation.VERTICAL else beadWidth, 
+                                         beadWidth=beadWidth if self.currentOrientation == BeadworkOrientation.VERTICAL else beadHeight)
+        self.delegate = BeadDelegate(beadHeight=beadHeight if self.currentOrientation == BeadworkOrientation.VERTICAL else beadWidth, 
+                                     beadWidth=beadWidth if self.currentOrientation == BeadworkOrientation.VERTICAL else beadHeight)
         self.beadworkView.setItemDelegate(self.delegate)
         self.beadworkView.setModel(self.model)
         self.beadworkView.clicked.connect(self.updateCurrentColorText)
@@ -454,3 +460,21 @@ class MainWindow(QMainWindow):
         logger.debug(f"widthLabel changed to {self.widthLabel.text()}, widthSpinBox changed to {self.widthSpinBox.value()}, heightLabel changed to {self.heightLabel.text()}, heightSpinBox changed to {self.heightSpinBox.value()}.")
 
         logger.info(f"Orientation changed to {self.orientationOptions[self.currentOrientation]}.")
+
+    ########################################
+    # SETUP METHODS
+    ########################################
+        
+    def exportProject(self, filename):
+        project = {
+            "info": {
+                        "version": 0.1,
+                        "title": "Example Project"
+                    },
+            "configs": self.configs,    # TODO: do I pull current configs from variables or reassign directly to configs?
+            "project": self.origModel.exportData()
+        }
+        utils.saveProject(project, filename)
+
+    def importProject(self, filename):
+        pass

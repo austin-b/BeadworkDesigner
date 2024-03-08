@@ -4,10 +4,12 @@
         "title": "Example Project"
     },
     "configs": {
+        "debug": false,
         "beadHeight": 22,
         "beadWidth": 1,
         "width": 5,
-        "height": 7
+        "height": 7,
+        "defaultOrientation": "Vertical"
     },
     "project": [
         [
