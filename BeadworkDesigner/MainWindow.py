@@ -4,6 +4,7 @@ Icons are provided by https://p.yusukekamiyamane.com/. They are licensed under a
 
 #####################
 #
+# TODO: add "New Project" option to menu
 # TODO: change from RGB hex to HSV
 # TODO: add docstrings
 # TODO: add a way to change the size of the beads
@@ -56,11 +57,14 @@ class MainWindow(QMainWindow):
         self.configs = configs
 
         # set initial orientation dict as we need nice string representations
+        # TODO: is this needed if I replace the width x label spinbox?
+        # TODO: or do I replace Enum with a StrEnum which has a nice string representation?
         self.orientationOptions = {BeadworkOrientation.HORIZONTAL: "Horizontal", BeadworkOrientation.VERTICAL: "Vertical"}
         
         logger.info("Initializing MainWindow.")
 
         ### SETUP RELOADABLE ELEMENTS (models, views)
+        # TODO: should this still be a separate method?
         self.setupConfigurableElements(self.configs, modelData)
 
         ### SETUP OTHER GUI ELEMENTS
@@ -491,6 +495,7 @@ class MainWindow(QMainWindow):
 
     ########################################
     # OTHER METHODS
+    # TODO: create method for updating width and height in all locations -- too much duplicate code
     ########################################
         
     def exportProject(self, filename):
