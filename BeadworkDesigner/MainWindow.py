@@ -62,7 +62,7 @@ class MainWindow(QMainWindow):
         logger.info("Initializing MainWindow.")
 
         ### SETUP RELOADABLE ELEMENTS (models, views)
-        self.setupReloadableElements(self.configs, modelData)
+        self.setupConfigurableElements(self.configs, modelData)
 
         ### SETUP OTHER GUI ELEMENTS
         self.setupWidthXHeightWidget()
@@ -96,7 +96,7 @@ class MainWindow(QMainWindow):
     # SETUP METHODS
     ########################################
         
-    def setupReloadableElements(self, configs, modelData=None):
+    def setupConfigurableElements(self, configs, modelData=None):
         ### TRACK INITIAL ORIENTATION
         if configs["defaultOrientation"] == "Horizontal":
             self.currentOrientation = BeadworkOrientation.HORIZONTAL
@@ -229,6 +229,9 @@ class MainWindow(QMainWindow):
         self.saveAction = QAction('Save', self)
         self.saveAction.triggered.connect(self.saveDialog)
 
+        self.openAction = QAction('Open', self)
+        self.openAction.triggered.connect(self.openDialog)
+
     def setupToolbar(self):
         logger.debug("Setting up self.toolbar.")
         self.toolbar = QToolBar()
@@ -289,6 +292,8 @@ class MainWindow(QMainWindow):
         logger.debug("Setting up menus.")
         self.menu = self.menuBar()
         self.fileMenu = self.menu.addMenu('File')
+        self.fileMenu.addAction(self.openAction)
+        self.fileMenu.addSeparator()
         self.fileMenu.addAction(self.saveAction)
 
     # Override this function so that it repaints the beadworkView.
@@ -441,6 +446,7 @@ class MainWindow(QMainWindow):
         else:
             self.model = self.origModel
         self.beadworkView.setModel(self.model)
+        self.proxyModel.setSourceModel(self.model)
 
         # change internal orientations of delegate and view
         self.delegate.changeOrientation()
@@ -473,38 +479,66 @@ class MainWindow(QMainWindow):
         if filename:
             self.exportProject(filename)
         # TODO: update status bar with save status
+            
+    def openDialog(self):
+        logger.info("Opening project.")
+        filename = QFileDialog.getOpenFileName(self, 'Open Project', os.path.expanduser("~"), 'Beadwork Designer Project (*.json)')[0]
+        logger.debug(f"Selected filename: {filename}.")
+        if filename:
+            self.importProject(filename)
 
     ########################################
     # OTHER METHODS
     ########################################
         
     def exportProject(self, filename):
+        # ensure that the configs are up to date
+        self.configs["width"] = self.modelWidth     
+        self.configs["height"] = self.modelHeight
+        self.configs["defaultOrientation"] = self.orientationOptions[self.currentOrientation]
         project = {
             "info": {
-                        "version": 0.1,
-                        "title": "Example Project"
+                        "version": 0.1, # TODO: version checking?
+                        "title": "Example Project" # TODO: add filename/title
                     },
             "configs": self.configs,    # TODO: do I pull current configs from variables or reassign directly to configs?
             "project": self.origModel.exportData()
         }
         utils.saveProject(project, filename)
 
+    # TODO: this is a bit of a mess, but it works for now
+    # TODO: create tests specifically for this method
     def importProject(self, filename):
         json = utils.loadProject(filename)
         for key in json['configs'].keys():
-            self.configs[key] = json['configs'][key]                 # replace any config with the loaded one
+            if key != "defaultOrientation":
+                self.configs[key] = json['configs'][key]           # replace any config with the loaded one
         
-        self.setupReloadableElements(self.configs, json['project'])
-        
-        # temporarily disconnect signals to avoid crashes
-        self.widthSpinBox.valueChanged.disconnect(self.widthChanged)
-        self.heightSpinBox.valueChanged.disconnect(self.heightChanged)
+        self.currentOrientation = BeadworkOrientation.VERTICAL     # if this does not match the config, it will be changed in the if statement
 
-        # change spinbox values
-        self.widthSpinBox.setValue(self.modelWidth)
-        self.heightSpinBox.setValue(self.modelHeight)
+        ### LOAD DATA
+        self.origModel.importData(json['project'], debug=self.configs['debug'])
 
-        # reconnect signals
-        self.widthSpinBox.valueChanged.connect(self.widthChanged)
-        self.heightSpinBox.valueChanged.connect(self.heightChanged)
-        logger.debug(f"widthLabel changed to {self.widthLabel.text()}, widthSpinBox changed to {self.widthSpinBox.value()}, heightLabel changed to {self.heightLabel.text()}, heightSpinBox changed to {self.heightSpinBox.value()}.")
+        ### UPDATE ELEMENTS & CHANGE ORIENTATION IF NECESSARY
+        if json['configs']["defaultOrientation"] == "Horizontal":
+            self.changeOrientation("Horizontal")
+
+            self.orientationComboBox.currentTextChanged.disconnect(self.changeOrientation)  # temporarily disconnect signal  
+            self.orientationComboBox.setCurrentText("Horizontal")                           # to avoid switching back to Vertical on this set
+            self.orientationComboBox.currentTextChanged.connect(self.changeOrientation)     # reconnect signal
+        else:
+            self.modelWidth = self.origModel.rowCount(QModelIndex())
+            self.modelHeight = self.origModel.columnCount(QModelIndex())
+
+            # temporarily disconnect signals to avoid crashes
+            self.widthSpinBox.valueChanged.disconnect(self.widthChanged)
+            self.heightSpinBox.valueChanged.disconnect(self.heightChanged)
+
+            # change spinbox values
+            self.widthSpinBox.setValue(self.modelWidth)
+            self.heightSpinBox.setValue(self.modelHeight)
+
+            # reconnect signals
+            self.widthSpinBox.valueChanged.connect(self.widthChanged)
+            self.heightSpinBox.valueChanged.connect(self.heightChanged)
+            logger.debug(f"widthLabel changed to {self.widthLabel.text()}, widthSpinBox changed to {self.widthSpinBox.value()}, heightLabel changed to {self.heightLabel.text()}, heightSpinBox changed to {self.heightSpinBox.value()}.")

@@ -20,7 +20,7 @@ def color(random=False):
         logger.debug(f"picked random color: {color}")
         return color
     else:
-        "#000000"
+        "#FFFFFF"
 #####################
         
 logger = logging.getLogger(__name__)
@@ -119,11 +119,14 @@ class BeadworkModel(QtCore.QAbstractTableModel):
         self.endRemoveColumns()
         logger.debug(f"Removed column at {column}.")
 
-    def importData(self, data):
+    def importData(self, data, debug=False):    # debug flag will fix issues importing data from a debug model to a non-debug existing model
         self._data = data
+        self._debug = debug
         self.dataChanged.emit(self.index(0, 0), self.index(self.rowCount(None), self.columnCount(None)))
+        logger.debug(f"Data imported to BeadworkModel.")
 
     def exportData(self):
+        logger.debug(f"Data exported from BeadworkModel.")
         return self._data
 
 class BeadworkTransposeModel(QTransposeProxyModel):
