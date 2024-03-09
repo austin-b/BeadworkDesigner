@@ -221,6 +221,9 @@ class MainWindow(QMainWindow):
         self.clearMode.triggered.connect(self.inClearMode)
         self.clearMode.setIcon(QIcon(os.path.join(icons_dir, "eraser.png")))
 
+        self.newAction = QAction('New', self)
+        self.newAction.triggered.connect(self.loadNewProject)
+
         self.saveAction = QAction('Save', self)
         self.saveAction.triggered.connect(self.saveDialog)
 
@@ -287,6 +290,8 @@ class MainWindow(QMainWindow):
         logger.debug("Setting up menus.")
         self.menu = self.menuBar()
         self.fileMenu = self.menu.addMenu('File')
+        self.fileMenu.addAction(self.newAction)
+        self.fileMenu.addSeparator()
         self.fileMenu.addAction(self.openAction)
         self.fileMenu.addSeparator()
         self.fileMenu.addAction(self.saveAction)
@@ -418,9 +423,16 @@ class MainWindow(QMainWindow):
 
         logger.info(f"Orientation changed to {self.orientationOptions[self.currentOrientation]}.")
 
+    # TODO: currently shows the default_project.json filename -- refactor this to just pull 
+        # default config and a blank project data before implementing a single "SAVE" action
+        # without a file dialog
+    def loadNewProject(self):
+        logger.info("Loading new project")
+        self.importProject(bin_dir + "/default_project.json")
+
     def saveDialog(self):
         logger.info("Saving project.")
-        filename = QFileDialog.getOpenFileName(self, 'Save Project', os.path.expanduser("~"), 'Beadwork Designer Project (*.json)')[0]
+        filename = QFileDialog.getSaveFileName(self, 'Save Project', os.path.expanduser("~"), 'Beadwork Designer Project (*.json)')[0]
         logger.debug(f"Selected filename: {filename}.")
         if filename:
             self.exportProject(filename)
