@@ -5,10 +5,10 @@
     "configs": {
         "debug": false,
         "beadHeight": 22,
-        "beadWidth": 1,
+        "beadWidth": 12,
         "width": 5,
         "height": 7,
-        "defaultOrientation": "Vertical"
+        "defaultOrientation": "Horizontal"
     },
     "project": [
         [

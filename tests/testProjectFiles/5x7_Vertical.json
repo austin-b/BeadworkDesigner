@@ -1,0 +1,36 @@
+{
+    "info": {
+        "version": 0.1
+    },
+    "configs": {
+        "debug": false,
+        "beadHeight": 22,
+        "beadWidth": 12,
+        "width": 5,
+        "height": 7,
+        "defaultOrientation": "Vertical"
+    },
+    "project": [
+        [
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF"
+        ],
+        [
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF"
+        ],
+        [
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF"
+        ],
+        [
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF"
+        ],
+        [
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF"
+        ],
+        [
+            "#FFFFFF", "#FFFFFF", "#CCCCCC", "#FFFFFF", "#FFFFFF"
+        ],
+        [
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF"
+        ]
+    ]
+}

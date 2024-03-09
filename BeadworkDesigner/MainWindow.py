@@ -320,22 +320,26 @@ class MainWindow(QMainWindow):
         self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth - 1)) # TODO: allow for selecting index
         self.model.insertColumn(self.model.columnCount(QModelIndex()), self.beadworkView.currentIndex())
         self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(QModelIndex()) - 1, self.model.columnCount(QModelIndex()) - 1), [Qt.ItemDataRole.BackgroundRole])
+        self.updateWidthXHeight()
 
     def removeColumn(self):
         logger.debug("Removing column.")
         self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth - 1)) # TODO: allow for selecting index
         self.model.removeColumn(self.model.columnCount(QModelIndex()) - 1, self.beadworkView.currentIndex())
+        self.updateWidthXHeight()
 
     def addRow(self):
         logger.debug("Adding row.")
         self.beadworkView.setCurrentIndex(self.model.index(self.modelHeight-1, 0)) # TODO: allow for selecting index
         self.model.insertRow(self.model.rowCount(QModelIndex()), self.beadworkView.currentIndex())
         self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(QModelIndex()) - 1, self.model.columnCount(QModelIndex()) - 1), [Qt.ItemDataRole.BackgroundRole])
+        self.updateWidthXHeight()
 
     def removeRow(self):
         logger.debug("Removing row.")
         self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth - 1)) # TODO: allow for selecting index
         self.model.removeRow(self.model.rowCount(QModelIndex()) - 1, self.beadworkView.currentIndex())
+        self.updateWidthXHeight()
 
     def widthChanged(self, value):
         logger.debug(f"Width changed to {value}.")
@@ -343,7 +347,6 @@ class MainWindow(QMainWindow):
             self.addColumn()
         else:
             self.removeColumn()
-        self.updateWidthXHeight()
 
     def heightChanged(self, value):
         logger.debug(f"Height changed to {value}.")
@@ -351,7 +354,6 @@ class MainWindow(QMainWindow):
             self.addRow()
         else:
             self.removeRow()
-        self.updateWidthXHeight()
 
     # TODO: this currently only changes the last one selected, multiple selections do not work
     def changeColor(self, colorString):
@@ -467,10 +469,13 @@ class MainWindow(QMainWindow):
     def exportProject(self, filename):
         self.setWindowTitle(f'Beadwork Designer - {filename}')
 
-        # ensure that the configs are up to date
-        self.configs["width"] = self.modelWidth     
-        self.configs["height"] = self.modelHeight
+        # these ifs are necessary as a horizontal model is only changing the orientation,
+        # not the underlying structure
+        self.configs["width"] = self.modelWidth if self.currentOrientation == BeadworkOrientation.VERTICAL else self.modelHeight    
+        self.configs["height"] = self.modelHeight if self.currentOrientation == BeadworkOrientation.VERTICAL else self.modelWidth
+
         self.configs["defaultOrientation"] = self.orientationOptions[self.currentOrientation]
+        
         project = {
             "info": {
                         "version": 0.1 # TODO: version checking?
@@ -481,14 +486,13 @@ class MainWindow(QMainWindow):
         utils.saveProject(project, filename)
 
     # TODO: this is a bit of a mess, but it works for now
-    # TODO: create tests specifically for this method
+    # TODO: handle failure to load project
     def importProject(self, filename):
         self.setWindowTitle(f'Beadwork Designer - {filename}')
 
         json = utils.loadProject(filename)
         for key in json['configs'].keys():
-            if key != "defaultOrientation":
-                self.configs[key] = json['configs'][key]           # replace any config with the loaded one
+            self.configs[key] = json['configs'][key]           # replace any config with the loaded one
         
         self.currentOrientation = BeadworkOrientation.VERTICAL     # if this does not match the config, it will be changed in the if statement
 
