@@ -63,9 +63,20 @@ class MainWindow(QMainWindow):
         
         logger.info("Initializing MainWindow.")
 
-        ### SETUP RELOADABLE ELEMENTS (models, views)
-        # TODO: should this still be a separate method?
-        self.setupConfigurableElements(self.configs, modelData)
+        ### TRACK INITIAL ORIENTATION
+        if self.configs["defaultOrientation"] == "Horizontal":
+            self.currentOrientation = BeadworkOrientation.HORIZONTAL
+        else:
+            self.currentOrientation = BeadworkOrientation.VERTICAL
+        
+        ### SETUP MODELS & VIEW
+        self.setupModels(self.configs["height"], self.configs["width"], modelData)
+        self.setupView(self.configs["beadHeight"], self.configs["beadWidth"])
+
+        ### KEEP TRACK OF INITIAL WIDTH x HEIGHT
+        self.modelWidth = self.model.columnCount(QModelIndex())
+        self.modelHeight = self.model.rowCount(QModelIndex())
+        logger.debug(f"Model width: {self.modelWidth}, Model height: {self.modelHeight}.")
 
         ### SETUP OTHER GUI ELEMENTS
         self.setupWidthXHeightWidget()
@@ -98,21 +109,6 @@ class MainWindow(QMainWindow):
     ########################################
     # SETUP METHODS
     ########################################
-        
-    def setupConfigurableElements(self, configs, modelData=None):
-        ### TRACK INITIAL ORIENTATION
-        if configs["defaultOrientation"] == "Horizontal":
-            self.currentOrientation = BeadworkOrientation.HORIZONTAL
-        else:
-            self.currentOrientation = BeadworkOrientation.VERTICAL
-        
-        self.setupModels(configs["height"], configs["width"], modelData)
-        self.setupView(configs["beadHeight"], configs["beadWidth"])
-
-        ### KEEP TRACK OF INITIAL WIDTH x HEIGHT
-        self.modelWidth = self.model.columnCount(QModelIndex())
-        self.modelHeight = self.model.rowCount(QModelIndex())
-        logger.debug(f"Model width: {self.modelWidth}, Model height: {self.modelHeight}.")
 
     def setupModels(self, height, width, modelData):
         logger.debug("Setting up BeadworkModel and BeadworkTransposeModel.")
@@ -475,7 +471,7 @@ class MainWindow(QMainWindow):
         self.configs["height"] = self.modelHeight if self.currentOrientation == BeadworkOrientation.VERTICAL else self.modelWidth
 
         self.configs["defaultOrientation"] = self.orientationOptions[self.currentOrientation]
-        
+
         project = {
             "info": {
                         "version": 0.1 # TODO: version checking?
