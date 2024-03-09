@@ -1,9 +1,0 @@
-{
-    "python.testing.pytestArgs": [
-        "-o log_cli=1",
-        "--log-cli-level=DEBUG",
-        "."
-    ],
-    "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
-}
