@@ -39,7 +39,7 @@ if args.load:
 
 window = MainWindow(debug=debug, configs=configs)  # check if debug flag is set
 
-if args.load: window.origModel.importData(json['project'])  # TODO: dirty, replace with a MainWindow method
+if args.load: window.origModel.importData(json['project'])
 
 window.show()
 

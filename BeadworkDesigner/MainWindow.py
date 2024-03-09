@@ -58,7 +58,7 @@ class MainWindow(QMainWindow):
 
         # set initial orientation dict as we need nice string representations
         # TODO: is this needed if I replace the width x label spinbox?
-        # TODO: or do I replace Enum with a StrEnum which has a nice string representation?
+        # TODO: or do I replace Enum with a StrEnum which has a nice string representation? https://docs.python.org/3/library/enum.html#enum.StrEnum
         self.orientationOptions = {BeadworkOrientation.HORIZONTAL: "Horizontal", BeadworkOrientation.VERTICAL: "Vertical"}
         
         logger.info("Initializing MainWindow.")
@@ -320,58 +320,22 @@ class MainWindow(QMainWindow):
         self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth - 1)) # TODO: allow for selecting index
         self.model.insertColumn(self.model.columnCount(QModelIndex()), self.beadworkView.currentIndex())
         self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(QModelIndex()) - 1, self.model.columnCount(QModelIndex()) - 1), [Qt.ItemDataRole.BackgroundRole])
-        self.modelWidth = self.model.columnCount(QModelIndex())
-
-        # temporarily disconnect signals to avoid crashes
-        self.widthSpinBox.valueChanged.disconnect(self.widthChanged)
-        self.widthSpinBox.setValue(self.modelWidth)
-        self.widthSpinBox.valueChanged.connect(self.widthChanged)
-
-        self.statusBarWidthLabel.setText(f"{self.modelWidth}")
-        self.statusBarHeightLabel.setText(f"{self.modelHeight}")
 
     def removeColumn(self):
         logger.debug("Removing column.")
         self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth - 1)) # TODO: allow for selecting index
         self.model.removeColumn(self.model.columnCount(QModelIndex()) - 1, self.beadworkView.currentIndex())
-        self.modelWidth = self.model.columnCount(QModelIndex())
-
-        # temporarily disconnect signals to avoid crashes
-        self.widthSpinBox.valueChanged.disconnect(self.widthChanged)
-        self.widthSpinBox.setValue(self.modelWidth)
-        self.widthSpinBox.valueChanged.connect(self.widthChanged)
-
-        self.statusBarWidthLabel.setText(f"{self.modelWidth}")
-        self.statusBarHeightLabel.setText(f"{self.modelHeight}")
 
     def addRow(self):
         logger.debug("Adding row.")
         self.beadworkView.setCurrentIndex(self.model.index(self.modelHeight-1, 0)) # TODO: allow for selecting index
         self.model.insertRow(self.model.rowCount(QModelIndex()), self.beadworkView.currentIndex())
         self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(QModelIndex()) - 1, self.model.columnCount(QModelIndex()) - 1), [Qt.ItemDataRole.BackgroundRole])
-        self.modelHeight = self.model.rowCount(QModelIndex())
-
-        # temporarily disconnect signals to avoid crashes
-        self.heightSpinBox.valueChanged.disconnect(self.heightChanged)
-        self.heightSpinBox.setValue(self.modelHeight)
-        self.heightSpinBox.valueChanged.connect(self.heightChanged)
-
-        self.statusBarWidthLabel.setText(f"{self.modelWidth}")
-        self.statusBarHeightLabel.setText(f"{self.modelHeight}")
 
     def removeRow(self):
         logger.debug("Removing row.")
         self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth - 1)) # TODO: allow for selecting index
         self.model.removeRow(self.model.rowCount(QModelIndex()) - 1, self.beadworkView.currentIndex())
-        self.modelHeight = self.model.rowCount(QModelIndex())
-
-        # temporarily disconnect signals to avoid crashes
-        self.heightSpinBox.valueChanged.disconnect(self.heightChanged)
-        self.heightSpinBox.setValue(self.modelHeight)
-        self.heightSpinBox.valueChanged.connect(self.heightChanged)
-
-        self.statusBarWidthLabel.setText(f"{self.modelWidth}")
-        self.statusBarHeightLabel.setText(f"{self.modelHeight}")
 
     def widthChanged(self, value):
         logger.debug(f"Width changed to {value}.")
@@ -379,7 +343,7 @@ class MainWindow(QMainWindow):
             self.addColumn()
         else:
             self.removeColumn()
-        self.modelWidth = self.model.columnCount(QModelIndex())
+        self.updateWidthXHeight()
 
     def heightChanged(self, value):
         logger.debug(f"Height changed to {value}.")
@@ -387,7 +351,7 @@ class MainWindow(QMainWindow):
             self.addRow()
         else:
             self.removeRow()
-        self.modelHeight = self.model.rowCount(QModelIndex())
+        self.updateWidthXHeight()
 
     # TODO: this currently only changes the last one selected, multiple selections do not work
     def changeColor(self, colorString):
@@ -456,25 +420,7 @@ class MainWindow(QMainWindow):
         self.beadworkView.changeOrientation()
         logger.debug(f"self.beadworkView.model() changed to {self.model}.")
 
-        # get up to date model dimensions
-        self.modelWidth = self.model.columnCount(None)
-        self.modelHeight = self.model.rowCount(None)
-
-        # temporarily disconnect signals to avoid crashes
-        self.widthSpinBox.valueChanged.disconnect(self.widthChanged)
-        self.heightSpinBox.valueChanged.disconnect(self.heightChanged)
-
-        # change spinbox values
-        self.widthSpinBox.setValue(self.modelWidth)
-        self.heightSpinBox.setValue(self.modelHeight)
-
-        # reconnect signals
-        self.widthSpinBox.valueChanged.connect(self.widthChanged)
-        self.heightSpinBox.valueChanged.connect(self.heightChanged)
-        logger.debug(f"widthLabel changed to {self.widthLabel.text()}, widthSpinBox changed to {self.widthSpinBox.value()}, heightLabel changed to {self.heightLabel.text()}, heightSpinBox changed to {self.heightSpinBox.value()}.")
-
-        self.statusBarWidthLabel.setText(f"{self.modelWidth}")
-        self.statusBarHeightLabel.setText(f"{self.modelHeight}")
+        self.updateWidthXHeight()
 
         logger.info(f"Orientation changed to {self.orientationOptions[self.currentOrientation]}.")
 
@@ -494,9 +440,29 @@ class MainWindow(QMainWindow):
             self.importProject(filename)
 
     ########################################
-    # OTHER METHODS
-    # TODO: create method for updating width and height in all locations -- too much duplicate code
+    # UTILITY METHODS
     ########################################
+
+    def updateWidthXHeight(self):
+        # get up to date model dimensions
+        self.modelWidth = self.model.columnCount(None)
+        self.modelHeight = self.model.rowCount(None)
+
+        # temporarily disconnect signals to avoid crashes
+        self.widthSpinBox.valueChanged.disconnect(self.widthChanged)
+        self.heightSpinBox.valueChanged.disconnect(self.heightChanged)
+
+        # change spinbox values
+        self.widthSpinBox.setValue(self.modelWidth)
+        self.heightSpinBox.setValue(self.modelHeight)
+
+        # reconnect signals
+        self.widthSpinBox.valueChanged.connect(self.widthChanged)
+        self.heightSpinBox.valueChanged.connect(self.heightChanged)
+        logger.debug(f"widthLabel changed to {self.widthLabel.text()}, widthSpinBox changed to {self.widthSpinBox.value()}, heightLabel changed to {self.heightLabel.text()}, heightSpinBox changed to {self.heightSpinBox.value()}.")
+
+        self.statusBarWidthLabel.setText(f"{self.modelWidth}")
+        self.statusBarHeightLabel.setText(f"{self.modelHeight}")
         
     def exportProject(self, filename):
         self.setWindowTitle(f'Beadwork Designer - {filename}')
@@ -537,21 +503,4 @@ class MainWindow(QMainWindow):
             self.orientationComboBox.setCurrentText("Horizontal")                           # to avoid switching back to Vertical on this set
             self.orientationComboBox.currentTextChanged.connect(self.changeOrientation)     # reconnect signal
         else:
-            self.modelWidth = self.origModel.rowCount(QModelIndex())
-            self.modelHeight = self.origModel.columnCount(QModelIndex())
-
-            # temporarily disconnect signals to avoid crashes
-            self.widthSpinBox.valueChanged.disconnect(self.widthChanged)
-            self.heightSpinBox.valueChanged.disconnect(self.heightChanged)
-
-            # change spinbox values
-            self.widthSpinBox.setValue(self.modelWidth)
-            self.heightSpinBox.setValue(self.modelHeight)
-
-            # reconnect signals
-            self.widthSpinBox.valueChanged.connect(self.widthChanged)
-            self.heightSpinBox.valueChanged.connect(self.heightChanged)
-            logger.debug(f"widthLabel changed to {self.widthLabel.text()}, widthSpinBox changed to {self.widthSpinBox.value()}, heightLabel changed to {self.heightLabel.text()}, heightSpinBox changed to {self.heightSpinBox.value()}.")
-
-            self.statusBarWidthLabel.setText(f"{self.modelWidth}")
-            self.statusBarHeightLabel.setText(f"{self.modelHeight}")
+            self.updateWidthXHeight()
