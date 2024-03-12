@@ -79,7 +79,7 @@ class MainWindow(QMainWindow):
         logger.debug(f"Model width: {self.modelWidth}, Model height: {self.modelHeight}.")
 
         ### SETUP OTHER GUI ELEMENTS
-        self.setupWidthXHeightWidget()
+        # self.setupWidthXHeightWidget()
         self.setupOrientationWidget()
         self.setupColorDialogWidget()
         self.setupColorList()
@@ -129,26 +129,27 @@ class MainWindow(QMainWindow):
         self.beadworkView.clicked.connect(self.updateCurrentColorText)
         self.beadworkView.setObjectName("beadworkView")
 
-    def setupWidthXHeightWidget(self):
-        logger.debug("Setting up widthXHeightWidget.")
-        self.widthLabel = QLabel("Width:")
-        self.widthSpinBox = QSpinBox()
-        self.widthSpinBox.setValue(self.modelWidth)
-        self.widthSpinBox.valueChanged.connect(self.widthChanged) # does not support direct input values, only using the up and down arrows
-        self.widthSpinBox.lineEdit().setEnabled(False)
-        self.heightLabel = QLabel("Height:")
-        self.heightSpinBox = QSpinBox()
-        self.heightSpinBox.setValue(self.modelHeight)
-        self.heightSpinBox.valueChanged.connect(self.heightChanged) # does not support direct input values, only using the up and down arrows
-        self.heightSpinBox.lineEdit().setEnabled(False)
-        widthXHeightLayout = QHBoxLayout()
-        widthXHeightLayout.addWidget(self.widthLabel)
-        widthXHeightLayout.addWidget(self.widthSpinBox)
-        widthXHeightLayout.addWidget(self.heightLabel)
-        widthXHeightLayout.addWidget(self.heightSpinBox)
+    # TODO: temporarily commenting this out as I don't know if I want to keep it
+    # def setupWidthXHeightWidget(self):
+    #     logger.debug("Setting up widthXHeightWidget.")
+    #     self.widthLabel = QLabel("Width:")
+    #     self.widthSpinBox = QSpinBox()
+    #     self.widthSpinBox.setValue(self.modelWidth)
+    #     self.widthSpinBox.valueChanged.connect(self.widthChanged) # does not support direct input values, only using the up and down arrows
+    #     self.widthSpinBox.lineEdit().setEnabled(False)
+    #     self.heightLabel = QLabel("Height:")
+    #     self.heightSpinBox = QSpinBox()
+    #     self.heightSpinBox.setValue(self.modelHeight)
+    #     self.heightSpinBox.valueChanged.connect(self.heightChanged) # does not support direct input values, only using the up and down arrows
+    #     self.heightSpinBox.lineEdit().setEnabled(False)
+    #     widthXHeightLayout = QHBoxLayout()
+    #     widthXHeightLayout.addWidget(self.widthLabel)
+    #     widthXHeightLayout.addWidget(self.widthSpinBox)
+    #     widthXHeightLayout.addWidget(self.heightLabel)
+    #     widthXHeightLayout.addWidget(self.heightSpinBox)
 
-        self.widthXHeightWidget = QWidget()
-        self.widthXHeightWidget.setLayout(widthXHeightLayout)
+    #     self.widthXHeightWidget = QWidget()
+    #     self.widthXHeightWidget.setLayout(widthXHeightLayout)
 
     def setupOrientationWidget(self):
         logger.debug("Setting up orientationWidget.")
@@ -258,7 +259,7 @@ class MainWindow(QMainWindow):
     def setupSidebar(self):
         logger.debug("Setting up sidebar.")
         sidebarLayout = QVBoxLayout()
-        sidebarLayout.addWidget(self.widthXHeightWidget)
+        # sidebarLayout.addWidget(self.widthXHeightWidget)
         sidebarLayout.addWidget(self.colorDialogWidget)
         sidebarLayout.addWidget(QLabel('Colors in use:'))
         sidebarLayout.addWidget(self.colorList)
@@ -455,18 +456,18 @@ class MainWindow(QMainWindow):
         self.modelWidth = self.model.columnCount(None)
         self.modelHeight = self.model.rowCount(None)
 
-        # temporarily disconnect signals to avoid crashes
-        self.widthSpinBox.valueChanged.disconnect(self.widthChanged)
-        self.heightSpinBox.valueChanged.disconnect(self.heightChanged)
+        # # temporarily disconnect signals to avoid crashes
+        # self.widthSpinBox.valueChanged.disconnect(self.widthChanged)
+        # self.heightSpinBox.valueChanged.disconnect(self.heightChanged)
 
-        # change spinbox values
-        self.widthSpinBox.setValue(self.modelWidth)
-        self.heightSpinBox.setValue(self.modelHeight)
+        # # change spinbox values
+        # self.widthSpinBox.setValue(self.modelWidth)
+        # self.heightSpinBox.setValue(self.modelHeight)
 
-        # reconnect signals
-        self.widthSpinBox.valueChanged.connect(self.widthChanged)
-        self.heightSpinBox.valueChanged.connect(self.heightChanged)
-        logger.debug(f"widthLabel changed to {self.widthLabel.text()}, widthSpinBox changed to {self.widthSpinBox.value()}, heightLabel changed to {self.heightLabel.text()}, heightSpinBox changed to {self.heightSpinBox.value()}.")
+        # # reconnect signals
+        # self.widthSpinBox.valueChanged.connect(self.widthChanged)
+        # self.heightSpinBox.valueChanged.connect(self.heightChanged)
+        # logger.debug(f"widthLabel changed to {self.widthLabel.text()}, widthSpinBox changed to {self.widthSpinBox.value()}, heightLabel changed to {self.heightLabel.text()}, heightSpinBox changed to {self.heightSpinBox.value()}.")
 
         self.statusBarWidthLabel.setText(f"{self.modelWidth}")
         self.statusBarHeightLabel.setText(f"{self.modelHeight}")
