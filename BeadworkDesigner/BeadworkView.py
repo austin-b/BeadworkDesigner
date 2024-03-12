@@ -1,6 +1,6 @@
 import logging
 
-from PySide6.QtWidgets import QTableView
+from PySide6.QtWidgets import QHeaderView, QTableView
 
 logger = logging.getLogger(__name__)
 
@@ -8,8 +8,9 @@ class BeadworkView(QTableView):
     def __init__(self, beadHeight=22, beadWidth=12):
         super().__init__()
 
-        self.verticalHeader().setVisible(False)
-        self.horizontalHeader().setVisible(False)
+        # TODO: can I remove the grey borders?
+        self.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
+        self.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
 
         self.beadHeight = beadHeight
         self.beadWidth = beadWidth

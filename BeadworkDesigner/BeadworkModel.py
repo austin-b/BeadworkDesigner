@@ -1,4 +1,5 @@
 import logging
+from math import ceil
 
 from PySide6 import QtCore, QtGui
 from PySide6.QtCore import Qt, QTransposeProxyModel
@@ -64,6 +65,20 @@ class BeadworkModel(QtCore.QAbstractTableModel):
             logger.debug(f"Data changed at {index.row()}, {index.column()}.")
             return True
         return False  
+    
+    def headerData(self, column, orientation, role):
+        if role == Qt.ItemDataRole.DisplayRole:
+            if orientation == Qt.Orientation.Horizontal:
+                if (self.columnCount(None) % 2 != 0) and (column == ceil(self.columnCount(None) / 2) - 1):
+                    return "||"
+                elif ((column + 1) % 5 == 0):
+                    return "|"
+
+            if orientation == Qt.Orientation.Vertical:
+                if (self.rowCount(None) % 2 != 0) and (column == ceil(self.rowCount(None) / 2) - 1):
+                    return "||"
+                elif ((column + 1) % 5 == 0):
+                    return "|"
         
     def rowCount(self, index):
         # length of outer list

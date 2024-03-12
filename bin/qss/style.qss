@@ -9,3 +9,7 @@ QSpinBox {
     color: black;
     border: none;
 }
+
+QHeaderView {
+    font-size: 8px;
+}
