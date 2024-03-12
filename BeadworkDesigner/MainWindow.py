@@ -340,6 +340,7 @@ class MainWindow(QMainWindow):
         self.model.removeRow(self.model.rowCount(QModelIndex()) - 1, self.beadworkView.currentIndex())
         self.updateWidthXHeight()
 
+    # delete or refactor if I delete the width x height widget
     def widthChanged(self, value):
         logger.debug(f"Width changed to {value}.")
         if value > self.modelWidth:
@@ -347,6 +348,7 @@ class MainWindow(QMainWindow):
         else:
             self.removeColumn()
 
+    # delete or refactor if I delete the width x height widget
     def heightChanged(self, value):
         logger.debug(f"Height changed to {value}.")
         if value > self.modelHeight:
