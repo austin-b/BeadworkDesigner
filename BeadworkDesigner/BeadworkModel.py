@@ -97,9 +97,9 @@ class BeadworkModel(QtCore.QAbstractTableModel):
 
     def insertRows(self, row, count, index):
         logger.debug(f"Inserting row at {index.row()}.")
-        self.beginInsertRows(QtCore.QModelIndex(), row, row)
-        for _ in range(count):
-            self._data.insert(index.row()+1, [color(random=self._debug) for _ in range(self.columnCount(index))])
+        self.beginInsertRows(QtCore.QModelIndex(), row, row+count)
+        for x in range(count):
+            self._data.insert(index.row()+x, [color(random=self._debug) for _ in range(self.columnCount(index))])
         self.endInsertRows()
         logger.debug(f"New row at {index.row()+1}.")
     
@@ -110,12 +110,29 @@ class BeadworkModel(QtCore.QAbstractTableModel):
             self._data[row].insert(index.column()+1, color(random=self._debug))
         self.endInsertColumns()
         logger.debug(f"New column at {index.column()+1}.")
+
+    def insertColumns(self, column, count, index):
+        logger.debug(f"Inserting column at {index.column()}.")
+        self.beginInsertColumns(QtCore.QModelIndex(), column, column+count)
+        for x in range(count):
+            for row in range(self.rowCount(index)):
+                self._data[row].insert(index.column()+x, color(random=self._debug))
+        self.endInsertColumns()
+        logger.debug(f"New column at {index.column()+1}.")
     
     # TODO: implement ability to give index like insertRow
     def removeRow(self, row, index):
         logger.debug(f"Removing row at {index.row()}.")
         self.beginRemoveRows(QtCore.QModelIndex(), row, row)
         del self._data[row]
+        self.endRemoveRows()
+        logger.debug(f"Removed row at {row}.")
+
+    def removeRows(self, row, count, index):
+        logger.debug(f"Removing row at {index.row()}.")
+        self.beginRemoveRows(QtCore.QModelIndex(), row, row-count)
+        for x in range(count):
+            del self._data[row-(x+1)]
         self.endRemoveRows()
         logger.debug(f"Removed row at {row}.")
     
@@ -125,6 +142,15 @@ class BeadworkModel(QtCore.QAbstractTableModel):
         self.beginRemoveColumns(QtCore.QModelIndex(), column, column)
         for row in range(self.rowCount(index)):
             del self._data[row][column]
+        self.endRemoveColumns()
+        logger.debug(f"Removed column at {column}.")
+
+    def removeColumns(self, column, count, index):
+        logger.debug(f"Removing column at {index.column()}.")
+        self.beginRemoveColumns(QtCore.QModelIndex(), column, column-count)
+        for x in range(count):
+            for row in range(self.rowCount(index)):
+                del self._data[row][column-(x+1)]
         self.endRemoveColumns()
         logger.debug(f"Removed column at {column}.")
 
@@ -154,14 +180,30 @@ class BeadworkTransposeModel(QTransposeProxyModel):
         logger.debug("Calling insertColumn from BeadworkTransposeModel.")
         self.sourceModel().insertColumn(row, index)
 
+    def insertRows(self, row, count, index):
+        logger.debug("Calling insertColumns from BeadworkTransposeModel.")
+        self.sourceModel().insertColumns(row, count, index)
+
     def insertColumn(self, column, index):
         logger.debug("Calling insertRow from BeadworkTransposeModel.")
         self.sourceModel().insertRow(column, index)
 
+    def insertColumns(self, column, count, index):
+        logger.debug("Calling insertRows from BeadworkTransposeModel.")
+        self.sourceModel().insertRows(column, count, index)
+
     def removeRow(self, row, index):
         logger.debug("Calling removeColumn from BeadworkTransposeModel.")
         self.sourceModel().removeColumn(row, index)
+
+    def removeRows(self, row, count, index):
+        logger.debug("Calling removeColumns from BeadworkTransposeModel.")
+        self.sourceModel().removeColumns(row, count, index)
     
     def removeColumn(self, column, index):
         logger.debug("Calling removeRow from BeadworkTransposeModel.")
         self.sourceModel().removeRow(column, index)
+
+    def removeColumns(self, column, count, index):
+        logger.debug("Calling removeRows from BeadworkTransposeModel.")
+        self.sourceModel().removeRows(column, count, index)

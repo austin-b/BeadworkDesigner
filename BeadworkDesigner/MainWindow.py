@@ -88,6 +88,7 @@ class MainWindow(QMainWindow):
         self.setupToolbar()  
         self.setupStatusBar()
         self.setupMenu()
+        self.setupDimensionsWindow()
   
         ### SETUP MAIN LAYOUT & WIDGET
         logger.debug("Setting up main layout and widget.")
@@ -218,7 +219,7 @@ class MainWindow(QMainWindow):
         ### EDIT MENU ACTIONS
 
         self.adjustDimensionsAction = QAction('Adjust Dimensions', self)
-        self.adjustDimensionsAction.triggered.connect(self.adjustDimensions)
+        self.adjustDimensionsAction.triggered.connect(lambda x: self.dimensionsWindow.show())
 
     def setupToolbar(self):
         logger.debug("Setting up self.toolbar.")
@@ -289,6 +290,40 @@ class MainWindow(QMainWindow):
         self.editMenu = self.menu.addMenu('Edit')
         self.editMenu.addAction(self.adjustDimensionsAction)
 
+    def setupDimensionsWindow(self):
+        logger.debug("Setting up dimensionsWindow.")
+        self.dimensionsWindow = QWidget()
+        self.dimensionsWindow.setWindowTitle("Adjust Dimensions")
+        self.dimensionsWindow.setFixedSize(300, 200)
+        self.dimensionsWindow.setWindowModality(Qt.ApplicationModal)
+        self.dimensionsWindowLayout = QVBoxLayout()
+        self.dimensionsWindow.setLayout(self.dimensionsWindowLayout)
+
+        self.widthEdit = QLineEdit()
+        self.widthEdit.setText(str(self.modelWidth))
+
+        widthLine = QHBoxLayout()
+        widthLine.addWidget(QLabel("Width:"))
+        widthLine.addWidget(self.widthEdit)
+        widthLineWidget = QWidget()
+        widthLineWidget.setLayout(widthLine)
+
+        self.heightEdit = QLineEdit()
+        self.heightEdit.setText(str(self.modelHeight))
+
+        heightLine = QHBoxLayout()
+        heightLine.addWidget(QLabel("Height:"))
+        heightLine.addWidget(self.heightEdit)
+        heightLineWidget = QWidget()
+        heightLineWidget.setLayout(heightLine)
+
+        self.changeDimensionsButton = QPushButton("Change")
+        self.changeDimensionsButton.clicked.connect(self.adjustDimensions)
+
+        self.dimensionsWindowLayout.addWidget(widthLineWidget)
+        self.dimensionsWindowLayout.addWidget(heightLineWidget)
+        self.dimensionsWindowLayout.addWidget(self.changeDimensionsButton)
+
     # Override this function so that it repaints the beadworkView.
     # This is currently the workaround as I cannot figure out how to
     # get the rows and columns to size properly without explicitly
@@ -316,6 +351,7 @@ class MainWindow(QMainWindow):
         logger.debug("Removing column.")
         self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth - 1)) # TODO: allow for selecting index
         self.model.removeColumn(self.model.columnCount(QModelIndex()) - 1, self.beadworkView.currentIndex())
+        self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(QModelIndex()) - 1, self.model.columnCount(QModelIndex()) - 1), [Qt.ItemDataRole.BackgroundRole])
         self.updateWidthXHeight()
 
     def addRow(self):
@@ -327,29 +363,46 @@ class MainWindow(QMainWindow):
 
     def removeRow(self):
         logger.debug("Removing row.")
-        self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth - 1)) # TODO: allow for selecting index
+        self.beadworkView.setCurrentIndex(self.model.index(self.modelHeight-1, 0)) # TODO: allow for selecting index
         self.model.removeRow(self.model.rowCount(QModelIndex()) - 1, self.beadworkView.currentIndex())
+        self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(QModelIndex()) - 1, self.model.columnCount(QModelIndex()) - 1), [Qt.ItemDataRole.BackgroundRole])
         self.updateWidthXHeight()
 
-    # delete or refactor if I delete the width x height widget
-    def widthChanged(self, value):
-        logger.debug(f"Width changed to {value}.")
+    def changeWidthTo(self, value):
+        logger.debug(f"Width changing to {value}.")
+        self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth-1))
         if value > self.modelWidth:
-            self.addColumn()
+            self.model.insertColumns(self.model.columnCount(QModelIndex()), value - self.modelWidth, self.beadworkView.currentIndex())
         else:
-            self.removeColumn()
+            self.model.removeColumns(self.model.columnCount(QModelIndex()), self.modelWidth - value, self.beadworkView.currentIndex())
 
-    # delete or refactor if I delete the width x height widget
-    def heightChanged(self, value):
-        logger.debug(f"Height changed to {value}.")
+    def changeHeightTo(self, value):
+        logger.debug(f"Height changing to {value}.")
+        self.beadworkView.setCurrentIndex(self.model.index(self.modelHeight-1, 0))
         if value > self.modelHeight:
-            self.addRow()
+            self.model.insertRows(self.model.rowCount(QModelIndex()), value - self.modelHeight, self.beadworkView.currentIndex())
         else:
-            self.removeRow()
+            self.model.removeRows(self.model.rowCount(QModelIndex()), self.modelHeight - value, self.beadworkView.currentIndex())
 
-    # TODO: implement
+    # TODO: unit tests
+    # TODO: this works but the headers do not update
+    # TODO: debug to make sure this works with changing orientation
     def adjustDimensions(self):
-        pass
+        self.dimensionsWindow.close()
+
+        logger.debug("Adjusting dimensions.")
+
+        newWidth = int(self.widthEdit.text())
+        newHeight = int(self.heightEdit.text())
+        logger.debug(f"New width: {newWidth}, New height: {newHeight}.")
+
+        if newWidth != self.modelWidth:
+            self.changeWidthTo(newWidth)
+
+        if newHeight != self.modelHeight:
+            self.changeHeightTo(newHeight)
+
+        self.updateWidthXHeight()
 
     # TODO: this currently only changes the last one selected, multiple selections do not work
     def changeColor(self, colorString):
@@ -457,6 +510,9 @@ class MainWindow(QMainWindow):
 
         self.statusBarWidthLabel.setText(f"{self.modelWidth}")
         self.statusBarHeightLabel.setText(f"{self.modelHeight}")
+
+        self.widthEdit.setText(str(self.modelWidth))
+        self.heightEdit.setText(str(self.modelHeight))
         
     def exportProject(self, filename):
         self.setWindowTitle(f'Beadwork Designer - {filename}')

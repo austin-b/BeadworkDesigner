@@ -35,7 +35,6 @@ class BeadworkView(QTableView):
     def dataChanged(self, topLeft, bottomRight, roles):
         logger.debug(f"Data changed: {topLeft}, {bottomRight}, {roles}.")
         super().dataChanged(topLeft, bottomRight, roles)
-
         self.setBeadSize()
 
     # overwritten to explicitly call setBeadSize
