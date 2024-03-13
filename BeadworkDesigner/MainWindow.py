@@ -130,28 +130,6 @@ class MainWindow(QMainWindow):
         self.beadworkView.clicked.connect(self.updateCurrentColorText)
         self.beadworkView.setObjectName("beadworkView")
 
-    # TODO: temporarily commenting this out as I don't know if I want to keep it
-    # def setupWidthXHeightWidget(self):
-    #     logger.debug("Setting up widthXHeightWidget.")
-    #     self.widthLabel = QLabel("Width:")
-    #     self.widthSpinBox = QSpinBox()
-    #     self.widthSpinBox.setValue(self.modelWidth)
-    #     self.widthSpinBox.valueChanged.connect(self.widthChanged) # does not support direct input values, only using the up and down arrows
-    #     self.widthSpinBox.lineEdit().setEnabled(False)
-    #     self.heightLabel = QLabel("Height:")
-    #     self.heightSpinBox = QSpinBox()
-    #     self.heightSpinBox.setValue(self.modelHeight)
-    #     self.heightSpinBox.valueChanged.connect(self.heightChanged) # does not support direct input values, only using the up and down arrows
-    #     self.heightSpinBox.lineEdit().setEnabled(False)
-    #     widthXHeightLayout = QHBoxLayout()
-    #     widthXHeightLayout.addWidget(self.widthLabel)
-    #     widthXHeightLayout.addWidget(self.widthSpinBox)
-    #     widthXHeightLayout.addWidget(self.heightLabel)
-    #     widthXHeightLayout.addWidget(self.heightSpinBox)
-
-    #     self.widthXHeightWidget = QWidget()
-    #     self.widthXHeightWidget.setLayout(widthXHeightLayout)
-
     def setupOrientationWidget(self):
         logger.debug("Setting up orientationWidget.")
         self.orientationLabel = QLabel("Orientation:")
@@ -192,6 +170,9 @@ class MainWindow(QMainWindow):
 
     def setupActions(self):
         logger.debug("Setting up actions.")
+
+        ### TOOLBAR ACTIONS
+
         self.addColumnAction = QAction('Add Column', self)
         self.addColumnAction.triggered.connect(self.addColumn)
         self.addColumnAction.setIcon(QIcon(os.path.join(icons_dir, "table-insert-column.png")))
@@ -223,6 +204,8 @@ class MainWindow(QMainWindow):
         self.clearMode.triggered.connect(self.inClearMode)
         self.clearMode.setIcon(QIcon(os.path.join(icons_dir, "eraser.png")))
 
+        ### FILE MENU ACTIONS
+
         self.newAction = QAction('New', self)
         self.newAction.triggered.connect(self.loadNewProject)
 
@@ -231,6 +214,11 @@ class MainWindow(QMainWindow):
 
         self.openAction = QAction('Open', self)
         self.openAction.triggered.connect(self.openDialog)
+
+        ### EDIT MENU ACTIONS
+
+        self.adjustDimensionsAction = QAction('Adjust Dimensions', self)
+        self.adjustDimensionsAction.triggered.connect(self.adjustDimensions)
 
     def setupToolbar(self):
         logger.debug("Setting up self.toolbar.")
@@ -260,7 +248,6 @@ class MainWindow(QMainWindow):
     def setupSidebar(self):
         logger.debug("Setting up sidebar.")
         sidebarLayout = QVBoxLayout()
-        # sidebarLayout.addWidget(self.widthXHeightWidget)
         sidebarLayout.addWidget(self.colorDialogWidget)
         sidebarLayout.addWidget(QLabel('Colors in use:'))
         sidebarLayout.addWidget(self.colorList)
@@ -298,6 +285,9 @@ class MainWindow(QMainWindow):
         self.fileMenu.addAction(self.openAction)
         self.fileMenu.addSeparator()
         self.fileMenu.addAction(self.saveAction)
+
+        self.editMenu = self.menu.addMenu('Edit')
+        self.editMenu.addAction(self.adjustDimensionsAction)
 
     # Override this function so that it repaints the beadworkView.
     # This is currently the workaround as I cannot figure out how to
@@ -356,6 +346,10 @@ class MainWindow(QMainWindow):
             self.addRow()
         else:
             self.removeRow()
+
+    # TODO: implement
+    def adjustDimensions(self):
+        pass
 
     # TODO: this currently only changes the last one selected, multiple selections do not work
     def changeColor(self, colorString):
@@ -460,19 +454,6 @@ class MainWindow(QMainWindow):
         # get up to date model dimensions
         self.modelWidth = self.model.columnCount(None)
         self.modelHeight = self.model.rowCount(None)
-
-        # # temporarily disconnect signals to avoid crashes
-        # self.widthSpinBox.valueChanged.disconnect(self.widthChanged)
-        # self.heightSpinBox.valueChanged.disconnect(self.heightChanged)
-
-        # # change spinbox values
-        # self.widthSpinBox.setValue(self.modelWidth)
-        # self.heightSpinBox.setValue(self.modelHeight)
-
-        # # reconnect signals
-        # self.widthSpinBox.valueChanged.connect(self.widthChanged)
-        # self.heightSpinBox.valueChanged.connect(self.heightChanged)
-        # logger.debug(f"widthLabel changed to {self.widthLabel.text()}, widthSpinBox changed to {self.widthSpinBox.value()}, heightLabel changed to {self.heightLabel.text()}, heightSpinBox changed to {self.heightSpinBox.value()}.")
 
         self.statusBarWidthLabel.setText(f"{self.modelWidth}")
         self.statusBarHeightLabel.setText(f"{self.modelHeight}")
