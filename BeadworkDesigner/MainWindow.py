@@ -96,6 +96,7 @@ class MainWindow(QMainWindow):
         mainLayout.addWidget(self.beadworkView)
 
         mainWidget = QWidget()
+        mainWidget.setObjectName("mainWidget")
         mainWidget.setLayout(mainLayout)
 
         ### MAIN WINDOW CONFIGS
@@ -424,6 +425,8 @@ class MainWindow(QMainWindow):
         logger.debug(f"self.beadworkView.model() changed to {self.model}.")
 
         self.updateWidthXHeight()
+
+        # TODO: switch addRow/addColumn actions to fit with the new orientation
 
         logger.info(f"Orientation changed to {self.orientationOptions[self.currentOrientation]}.")
 

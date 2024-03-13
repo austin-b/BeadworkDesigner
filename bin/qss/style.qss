@@ -1,7 +1,17 @@
+* {
+    background-color: #F0F0F0;
+}
+
+#mainWidget {
+    border-top: 1px solid #3b3a3a;
+    border-bottom: 1px solid #3b3a3a;
+}
+
 #beadworkView {
     /* TODO: fix why this padding messes up the initial render of the table */
     padding-left: 20px;
     padding-top: 20px;
+    border: 1px solid #3b3a3a;
     background-color: #FFFFFF;
 }
 
@@ -12,4 +22,5 @@ QSpinBox {
 
 QHeaderView {
     font-size: 8px;
+    background-color: #FFFFFF;
 }

@@ -20,11 +20,11 @@ class BeadDelegate(QItemDelegate):
         # draw outside black rectangle if selected
         # TODO: this sometimes leaves an artifact of the black rectangle, investigate
         if bool(option.state & QStyle.StateFlag.State_Selected):
-            logger.debug(f"painting selected: {index.data()} at {index.row()}, {index.column()}.")
+            # logger.debug(f"painting selected: {index.data()} at {index.row()}, {index.column()}.")
             painter.setPen(QColor("#000000"))
             painter.drawRect(option.rect)
         else:
-            logger.debug(f"painting unselected: {index.data()} at {index.row()}, {index.column()}.")
+            # logger.debug(f"painting unselected: {index.data()} at {index.row()}, {index.column()}.")
             painter.setPen(QColor("#FFFFFF"))
             painter.drawRect(option.rect)
 

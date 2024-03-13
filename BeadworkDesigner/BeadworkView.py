@@ -12,6 +12,9 @@ class BeadworkView(QTableView):
         self.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
         self.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
 
+        self.verticalScrollBar().setVisible(False)
+        self.horizontalScrollBar().setVisible(False)
+
         self.beadHeight = beadHeight
         self.beadWidth = beadWidth
         
