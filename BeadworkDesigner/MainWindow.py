@@ -374,7 +374,7 @@ class MainWindow(QMainWindow):
         if value > self.modelWidth:
             self.model.insertColumns(self.model.columnCount(QModelIndex()), value - self.modelWidth, self.beadworkView.currentIndex())
         else:
-            self.model.removeColumns(self.model.columnCount(QModelIndex()), self.modelWidth - value, self.beadworkView.currentIndex())
+            self.model.removeColumns(self.model.columnCount(QModelIndex()), self.modelWidth - value, self.beadworkView.currentIndex())  
 
     def changeHeightTo(self, value):
         logger.debug(f"Height changing to {value}.")
@@ -382,7 +382,7 @@ class MainWindow(QMainWindow):
         if value > self.modelHeight:
             self.model.insertRows(self.model.rowCount(QModelIndex()), value - self.modelHeight, self.beadworkView.currentIndex())
         else:
-            self.model.removeRows(self.model.rowCount(QModelIndex()), self.modelHeight - value, self.beadworkView.currentIndex())
+            self.model.removeRows(self.model.rowCount(QModelIndex()), self.modelHeight - value, self.beadworkView.currentIndex())  
 
     # TODO: unit tests
     # TODO: this works but the headers do not update
@@ -390,11 +390,9 @@ class MainWindow(QMainWindow):
     def adjustDimensions(self):
         self.dimensionsWindow.close()
 
-        logger.debug("Adjusting dimensions.")
-
         newWidth = int(self.widthEdit.text())
         newHeight = int(self.heightEdit.text())
-        logger.debug(f"New width: {newWidth}, New height: {newHeight}.")
+        logger.debug(f"Adjusting dimensions to {newWidth}, {newHeight}.")
 
         if newWidth != self.modelWidth:
             self.changeWidthTo(newWidth)
@@ -403,6 +401,8 @@ class MainWindow(QMainWindow):
             self.changeHeightTo(newHeight)
 
         self.updateWidthXHeight()
+
+        logger.info(f"New width: {newWidth}, New height: {newHeight}.")
 
     # TODO: this currently only changes the last one selected, multiple selections do not work
     def changeColor(self, colorString):

@@ -130,7 +130,7 @@ class BeadworkModel(QtCore.QAbstractTableModel):
 
     def removeRows(self, row, count, index):
         logger.debug(f"Removing row at {index.row()}.")
-        self.beginRemoveRows(QtCore.QModelIndex(), row, row-count)
+        self.beginRemoveRows(QtCore.QModelIndex(), row-count, row)
         for x in range(count):
             del self._data[row-(x+1)]
         self.endRemoveRows()
@@ -147,7 +147,7 @@ class BeadworkModel(QtCore.QAbstractTableModel):
 
     def removeColumns(self, column, count, index):
         logger.debug(f"Removing column at {index.column()}.")
-        self.beginRemoveColumns(QtCore.QModelIndex(), column, column-count)
+        self.beginRemoveColumns(QtCore.QModelIndex(), column-count, column)
         for x in range(count):
             for row in range(self.rowCount(index)):
                 del self._data[row][column-(x+1)]

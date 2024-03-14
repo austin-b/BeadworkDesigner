@@ -1,6 +1,7 @@
 import logging
 
 from PySide6.QtWidgets import QHeaderView, QTableView
+from PySide6.QtCore import Qt
 
 logger = logging.getLogger(__name__)
 
