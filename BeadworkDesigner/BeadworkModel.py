@@ -66,18 +66,19 @@ class BeadworkModel(QtCore.QAbstractTableModel):
             return True
         return False  
     
-    def headerData(self, column, orientation, role):
+    def headerData(self, section, orientation, role):
         if role == Qt.ItemDataRole.DisplayRole:
-            if orientation == Qt.Orientation.Horizontal:
-                if (self.columnCount(None) % 2 != 0) and (column == ceil(self.columnCount(None) / 2) - 1):
+            logger.debug(f"getting header data for {orientation} {section}")
+            if orientation == Qt.Orientation.Horizontal: 
+                if (self.columnCount(None) % 2 != 0) and (section == ceil(self.columnCount(None) / 2) - 1):
                     return "||"
-                elif ((column + 1) % 5 == 0):
+                elif ((section + 1) % 5 == 0):
                     return "|"
 
             if orientation == Qt.Orientation.Vertical:
-                if (self.rowCount(None) % 2 != 0) and (column == ceil(self.rowCount(None) / 2) - 1):
+                if (self.rowCount(None) % 2 != 0) and (section == ceil(self.rowCount(None) / 2) - 1):
                     return "||"
-                elif ((column + 1) % 5 == 0):
+                elif ((section + 1) % 5 == 0):
                     return "|"
         
     def rowCount(self, index):
@@ -122,23 +123,24 @@ class BeadworkModel(QtCore.QAbstractTableModel):
     
     # TODO: implement ability to give index like insertRow
     def removeRow(self, row, index):
-        logger.debug(f"Removing row at {index.row()}.")
+        logger.debug(f"Removing row at {row}.")
         self.beginRemoveRows(QtCore.QModelIndex(), row, row)
         del self._data[row]
         self.endRemoveRows()
         logger.debug(f"Removed row at {row}.")
 
     def removeRows(self, row, count, index):
-        logger.debug(f"Removing row at {index.row()}.")
+        logger.debug(f"Removing rows {row-count} to {row}.")
         self.beginRemoveRows(QtCore.QModelIndex(), row-count, row)
         for x in range(count):
             del self._data[row-(x+1)]
+            logger.debug(f"Removed row {row-(x+1)}.")
         self.endRemoveRows()
-        logger.debug(f"Removed row at {row}.")
+        logger.debug(f"Removed rows {row-count} to {row}.")
     
     # TODO: implement ability to give index like insertColumn
     def removeColumn(self, column, index):
-        logger.debug(f"Removing column at {index.column()}.")
+        logger.debug(f"Removing column at {column}.")
         self.beginRemoveColumns(QtCore.QModelIndex(), column, column)
         for row in range(self.rowCount(index)):
             del self._data[row][column]
@@ -146,13 +148,14 @@ class BeadworkModel(QtCore.QAbstractTableModel):
         logger.debug(f"Removed column at {column}.")
 
     def removeColumns(self, column, count, index):
-        logger.debug(f"Removing column at {index.column()}.")
+        logger.debug(f"Removing columns {column-count} to {column}.")
         self.beginRemoveColumns(QtCore.QModelIndex(), column-count, column)
         for x in range(count):
             for row in range(self.rowCount(index)):
                 del self._data[row][column-(x+1)]
+            logger.debug(f"Removed column {column-(x+1)}.")
         self.endRemoveColumns()
-        logger.debug(f"Removed column at {column}.")
+        logger.debug(f"Removed columns {column-count} to {column}.")
 
     def importData(self, data, debug=False):    # debug flag will fix issues importing data from a debug model to a non-debug existing model
         self._data = data

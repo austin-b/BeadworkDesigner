@@ -374,7 +374,7 @@ class MainWindow(QMainWindow):
         if value > self.modelWidth:
             self.model.insertColumns(self.model.columnCount(QModelIndex()), value - self.modelWidth, self.beadworkView.currentIndex())
         else:
-            self.model.removeColumns(self.model.columnCount(QModelIndex()), self.modelWidth - value, self.beadworkView.currentIndex())  
+            self.model.removeColumns(self.model.columnCount(QModelIndex())-1, self.modelWidth - value, self.beadworkView.currentIndex())  
 
     def changeHeightTo(self, value):
         logger.debug(f"Height changing to {value}.")
@@ -382,11 +382,9 @@ class MainWindow(QMainWindow):
         if value > self.modelHeight:
             self.model.insertRows(self.model.rowCount(QModelIndex()), value - self.modelHeight, self.beadworkView.currentIndex())
         else:
-            self.model.removeRows(self.model.rowCount(QModelIndex()), self.modelHeight - value, self.beadworkView.currentIndex())  
+            self.model.removeRows(self.model.rowCount(QModelIndex())-1, self.modelHeight - value, self.beadworkView.currentIndex())  
 
     # TODO: unit tests
-    # TODO: this works but the headers do not update
-    # TODO: debug to make sure this works with changing orientation
     def adjustDimensions(self):
         self.dimensionsWindow.close()
 
