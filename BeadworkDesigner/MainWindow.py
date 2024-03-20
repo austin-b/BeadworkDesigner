@@ -7,6 +7,8 @@ Icons are provided by https://p.yusukekamiyamane.com/. They are licensed under a
 # TODO: add "New Project" option to menu
 # TODO: change from RGB hex to HSV
 # TODO: add docstrings
+# TODO: add localization
+# TODO: font options
 # TODO: add a way to change the size of the beads
 # TODO: add a way to zoom in and out
 # TODO: add a way to change the color of the background
