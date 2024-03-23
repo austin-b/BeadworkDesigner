@@ -33,10 +33,6 @@ def test_MainWindow_init_allItemsVisible(mainWindow):
     # so all should be visible when the window is shown
     assert(mainWindow.menu.isVisible())
     assert(mainWindow.beadworkView.isVisible())
-    assert(mainWindow.widthLabel.isVisible())
-    assert(mainWindow.widthSpinBox.isVisible())
-    assert(mainWindow.heightLabel.isVisible())
-    assert(mainWindow.heightSpinBox.isVisible())
     assert(mainWindow.orientationLabel.isVisible())
     assert(mainWindow.orientationComboBox.isVisible())
     assert(mainWindow.currentColorLabel.isVisible())
@@ -45,6 +41,7 @@ def test_MainWindow_init_allItemsVisible(mainWindow):
     assert(not mainWindow.colorDialog.isVisible()) # this should be hidden until the button is clicked
     assert(mainWindow.colorList.isVisible())
     assert(mainWindow.toolbar.isVisible())
+    assert(mainWindow.statusBarDimensionsWidget.isVisible())
 
 def test_MainWindow_init_menu(mainWindow):
     assert(mainWindow.menu.actions()[0] == mainWindow.fileMenu.menuAction()) # sub-menus are a special type of action, so we see if the Menu action is what's associated with .fileMenu
@@ -52,8 +49,8 @@ def test_MainWindow_init_menu(mainWindow):
 def test_MainWindow_init_widthXHeightValues(mainWindow):
     assert(mainWindow.modelWidth == mainWindow.model.columnCount(None))
     assert(mainWindow.modelHeight == mainWindow.model.rowCount(None))
-    assert(mainWindow.widthSpinBox.value() == mainWindow.modelWidth)
-    assert(mainWindow.heightSpinBox.value() == mainWindow.modelHeight)
+    assert(mainWindow.statusBarWidthLabel.text() == str(mainWindow.modelWidth))
+    assert(mainWindow.statusBarHeightLabel.text() == str(mainWindow.modelHeight))
 
 def test_MainWindow_init_orientationValues(mainWindow):
     assert(mainWindow.currentOrientation == BeadworkOrientation.VERTICAL)
@@ -66,14 +63,16 @@ def test_MainWindow_init_colorList(mainWindow):
     pass # TODO: implement test_MainWindow_init_colorList
 
 def test_MainWindow_init_toolbar(mainWindow):
-    assert(mainWindow.toolbar.actions()[0] == mainWindow.addColumnAction)
-    assert(mainWindow.toolbar.actions()[1] == mainWindow.addRowAction)
-    assert(mainWindow.toolbar.actions()[2] == mainWindow.removeColumnAction)
-    assert(mainWindow.toolbar.actions()[3] == mainWindow.removeRowAction)
-    # [4] is a separator
-    assert(mainWindow.toolbar.actions()[5] == mainWindow.selectionMode)
-    assert(mainWindow.toolbar.actions()[6] == mainWindow.colorMode)
-    assert(mainWindow.toolbar.actions()[7] == mainWindow.clearMode)
+    assert(mainWindow.toolbar.actions()[0] == mainWindow.toolbarOrientationAction)
+    # [1] is a separator
+    assert(mainWindow.toolbar.actions()[2] == mainWindow.addColumnAction)
+    assert(mainWindow.toolbar.actions()[3] == mainWindow.addRowAction)
+    assert(mainWindow.toolbar.actions()[4] == mainWindow.removeColumnAction)
+    assert(mainWindow.toolbar.actions()[5] == mainWindow.removeRowAction)
+    # [6] is a separator
+    assert(mainWindow.toolbar.actions()[7] == mainWindow.selectionMode)
+    assert(mainWindow.toolbar.actions()[8] == mainWindow.colorMode)
+    assert(mainWindow.toolbar.actions()[9] == mainWindow.clearMode)
 
 def test_MainWindow_close(mainWindow):
     mainWindow.close()

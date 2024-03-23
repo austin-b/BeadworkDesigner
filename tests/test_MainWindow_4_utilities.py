@@ -51,7 +51,7 @@ def test_MainWindow_addColumn(mainWindow):
     mainWindow.addColumn()
     newWidth = mainWindow.modelWidth
     assert(newWidth == width + 1)
-    assert(mainWindow.widthSpinBox.value() == newWidth)
+    assert(mainWindow.widthEdit.text() == str(newWidth))
     assert(mainWindow.statusBarWidthLabel.text() == str(newWidth))
 
 def test_MainWindow_addRow(mainWindow):
@@ -59,7 +59,7 @@ def test_MainWindow_addRow(mainWindow):
     mainWindow.addRow()
     newHeight = mainWindow.modelHeight
     assert(newHeight == height + 1)
-    assert(mainWindow.heightSpinBox.value() == newHeight)
+    assert(mainWindow.heightEdit.text() == str(newHeight))
     assert(mainWindow.statusBarHeightLabel.text() == str(newHeight))
 
 def test_MainWindow_removeColumn(mainWindow):
@@ -67,7 +67,7 @@ def test_MainWindow_removeColumn(mainWindow):
     mainWindow.removeColumn()
     newWidth = mainWindow.modelWidth
     assert(newWidth == width - 1)
-    assert(mainWindow.widthSpinBox.value() == newWidth)
+    assert(mainWindow.widthEdit.text() == str(newWidth))
     assert(mainWindow.statusBarWidthLabel.text() == str(newWidth))
 
 def test_MainWindow_removeRow(mainWindow):
@@ -75,5 +75,15 @@ def test_MainWindow_removeRow(mainWindow):
     mainWindow.removeRow()
     newHeight = mainWindow.modelHeight
     assert(newHeight == height - 1)
-    assert(mainWindow.heightSpinBox.value() == newHeight)
+    assert(mainWindow.heightEdit.text() == str(newHeight))
     assert(mainWindow.statusBarHeightLabel.text() == str(newHeight))
+
+def test_MainWindow_setWidth(mainWindow):
+    # test removing and adding multiple columns
+
+    assert(False)
+
+def test_MainWindow_setHeight(mainWindow):
+    # test removing and adding multiple rows
+
+    assert(False)

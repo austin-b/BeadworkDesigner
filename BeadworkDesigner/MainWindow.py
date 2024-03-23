@@ -227,7 +227,7 @@ class MainWindow(QMainWindow):
         logger.debug("Setting up self.toolbar.")
         self.toolbar = QToolBar()
         self.addToolBar(self.toolbar)
-        self.toolbar.addWidget(self.orientationWidget)
+        self.toolbarOrientationAction = self.toolbar.addWidget(self.orientationWidget) # returns the action, not sure if I will ever need
         self.toolbar.addSeparator()
         self.toolbar.addAction(self.addColumnAction)
         self.toolbar.addAction(self.addRowAction)

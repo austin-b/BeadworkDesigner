@@ -19,8 +19,8 @@ def test_beadworkView_init(qtbot):
     assert(view.isVisible())
     assert(view.model() == mainWindow.origModel)
     assert(view.itemDelegate() == mainWindow.delegate)
-    assert(not view.verticalHeader().isVisible())
-    assert(not view.horizontalHeader().isVisible())
+    assert(view.verticalHeader().isVisible())
+    assert(view.horizontalHeader().isVisible())
     assert(view.showGrid() == False)
     assert(view.beadHeight == 22)  # default value
     assert(view.beadWidth == 12)   # default value
@@ -132,15 +132,13 @@ def test_beadworkView_changeHeight(qtbot):
     mainWindow.show()
     view = mainWindow.beadworkView
 
-    # add a row from the spinbox
-    currentHeight = mainWindow.heightSpinBox.value()
-    mainWindow.heightSpinBox.setValue(currentHeight + 1)
+    currentHeight = mainWindow.modelHeight
+    mainWindow.addRowAction.trigger()
 
     assert(view.model().rowCount(None) == currentHeight + 1)
 
-    # remove a row from the spinbox
-    currentHeight = mainWindow.heightSpinBox.value()
-    mainWindow.heightSpinBox.setValue(currentHeight - 1)
+    currentHeight = mainWindow.modelHeight
+    mainWindow.removeRowAction.trigger()
 
     assert(view.model().rowCount(None) == currentHeight - 1)
 
@@ -152,13 +150,13 @@ def test_beadworkView_changeWidth(qtbot):
     mainWindow.show()
     view = mainWindow.beadworkView
 
-    currentWidth = mainWindow.widthSpinBox.value()
-    mainWindow.widthSpinBox.setValue(currentWidth + 1)
+    currentWidth = mainWindow.modelWidth
+    mainWindow.addColumnAction.trigger()
 
     assert(view.model().columnCount(None) == currentWidth + 1)
 
-    currentWidth = mainWindow.widthSpinBox.value()
-    mainWindow.widthSpinBox.setValue(currentWidth - 1)
+    currentWidth = mainWindow.modelWidth
+    mainWindow.removeColumnAction.trigger()
 
     assert(view.model().columnCount(None) == currentWidth - 1)
 
@@ -171,13 +169,13 @@ def test_beadworkView_changeHeightAfterOrientation(qtbot):
 
     view.changeOrientation()
 
-    currentHeight = mainWindow.heightSpinBox.value()
-    mainWindow.heightSpinBox.setValue(currentHeight + 1)
+    currentHeight = mainWindow.modelHeight
+    mainWindow.addRowAction.trigger()
 
     assert(view.model().rowCount(None) == currentHeight + 1)
 
-    currentHeight = mainWindow.heightSpinBox.value()
-    mainWindow.heightSpinBox.setValue(currentHeight - 1)
+    currentHeight = mainWindow.modelHeight
+    mainWindow.removeRowAction.trigger()
 
     assert(view.model().rowCount(None) == currentHeight - 1)
 
@@ -190,12 +188,50 @@ def test_beadworkView_changeWidthAfterOrientation(qtbot):
 
     view.changeOrientation()
 
-    currentWidth = mainWindow.widthSpinBox.value()
-    mainWindow.widthSpinBox.setValue(currentWidth + 1)
+    currentWidth = mainWindow.modelWidth
+    mainWindow.addColumnAction.trigger()
 
     assert(view.model().columnCount(None) == currentWidth + 1)
 
-    currentWidth = mainWindow.widthSpinBox.value()
-    mainWindow.widthSpinBox.setValue(currentWidth - 1)
+    currentWidth = mainWindow.modelWidth
+    mainWindow.removeColumnAction.trigger()
 
     assert(view.model().columnCount(None) == currentWidth - 1)
+
+def test_beadworkView_verticalHeaderData(qtbot):
+    mainWindow = MainWindow(debug=True, configs=configs)
+    qtbot.addWidget(mainWindow)
+    mainWindow.show()
+    view = mainWindow.beadworkView
+
+    assert(False)
+
+def test_beadworkView_horizontalHeaderData(qtbot):
+    mainWindow = MainWindow(debug=True, configs=configs)
+    qtbot.addWidget(mainWindow)
+    mainWindow.show()
+    view = mainWindow.beadworkView
+
+    assert(False)
+
+def test_beaworkView_verticalHeaderData_changed(qtbot):
+    mainWindow = MainWindow(debug=True, configs=configs)
+    qtbot.addWidget(mainWindow)
+    mainWindow.show()
+    view = mainWindow.beadworkView
+
+    # test for correct header data after changing the model
+    # e.g., adding or removing multiple rows
+
+    assert(False)
+
+def test_beadworkView_horizontalHeaderData_changed(qtbot):
+    mainWindow = MainWindow(debug=True, configs=configs)
+    qtbot.addWidget(mainWindow)
+    mainWindow.show()
+    view = mainWindow.beadworkView
+
+    # test for correct header data after changing the model
+    # e.g., adding or removing multiple columns
+
+    assert(False)
