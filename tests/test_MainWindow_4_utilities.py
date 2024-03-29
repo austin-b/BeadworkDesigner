@@ -80,10 +80,41 @@ def test_MainWindow_removeRow(mainWindow):
 
 def test_MainWindow_setWidth(mainWindow):
     # test removing and adding multiple columns
+    width = mainWindow.modelWidth
+    assert(width < 15)
+    mainWindow.widthEdit.setText("15")
+    mainWindow.changeDimensionsButton.click()
 
-    assert(False)
+    newWidth = mainWindow.modelWidth
+    assert(newWidth == 15)
+    assert(mainWindow.widthEdit.text() == str(newWidth))
+    assert(mainWindow.statusBarWidthLabel.text() == str(newWidth))
+
+    mainWindow.widthEdit.setText("5")
+    mainWindow.changeDimensionsButton.click()
+
+    newWidth = mainWindow.modelWidth
+    assert(newWidth == 5)
+    assert(mainWindow.widthEdit.text() == str(newWidth))
+    assert(mainWindow.statusBarWidthLabel.text() == str(newWidth))
 
 def test_MainWindow_setHeight(mainWindow):
     # test removing and adding multiple rows
+    height = mainWindow.modelHeight
+    assert(height < 15)
+    mainWindow.heightEdit.setText("15")
+    mainWindow.changeDimensionsButton.click()
 
-    assert(False)
+    newHeight = mainWindow.modelHeight
+    assert(newHeight == 15)
+    assert(mainWindow.heightEdit.text() == str(newHeight))
+    assert(mainWindow.statusBarHeightLabel.text() == str(newHeight))
+
+    mainWindow.heightEdit.setText("5")
+    mainWindow.changeDimensionsButton.click()
+
+    newHeight = mainWindow.modelHeight
+    assert(newHeight == 5)
+    assert(mainWindow.heightEdit.text() == str(newHeight))
+    assert(mainWindow.statusBarHeightLabel.text() == str(newHeight))
+    
