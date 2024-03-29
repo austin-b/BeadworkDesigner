@@ -1,3 +1,4 @@
+from math import ceil
 import re
 import pytest
 
@@ -50,6 +51,23 @@ def test_BeadworkModel_setData(testingModel):
         for column in range(testingModel.columnCount(None)):
             testingModel.setData(testingModel.index(row, column), "#000000", Qt.ItemDataRole.EditRole)
             assert(testingModel.data(testingModel.index(row, column), Qt.ItemDataRole.DisplayRole) == "#000000")
+
+def test_BeadworkModel_headerData(testingModel):
+    for row in range(testingModel.rowCount(None)):
+        if (testingModel.rowCount(None) % 2 != 0) and (row == ceil(testingModel.rowCount(None) / 2) - 1):
+            assert(testingModel.headerData(row, Qt.Orientation.Vertical, Qt.ItemDataRole.DisplayRole) == "||")                
+        elif ((row + 1) % 5 == 0):
+            assert(testingModel.headerData(row, Qt.Orientation.Vertical, Qt.ItemDataRole.DisplayRole) == "|")
+        else:
+            assert(testingModel.headerData(row, Qt.Orientation.Vertical, Qt.ItemDataRole.DisplayRole) == None)
+    
+    for column in range(testingModel.columnCount(None)):
+        if (testingModel.columnCount(None) % 2 != 0) and (column == ceil(testingModel.columnCount(None) / 2) - 1):
+            assert(testingModel.headerData(column, Qt.Orientation.Horizontal, Qt.ItemDataRole.DisplayRole) == "||")                
+        elif ((column + 1) % 5 == 0):
+            assert(testingModel.headerData(column, Qt.Orientation.Horizontal, Qt.ItemDataRole.DisplayRole) == "|")
+        else:
+            assert(testingModel.headerData(column, Qt.Orientation.Horizontal, Qt.ItemDataRole.DisplayRole) == None)
 
 # TODO: make test for checking that these add the proper row
 # 0, 4, and 9 should mark the beginning, middle(ish), and end of the debug data

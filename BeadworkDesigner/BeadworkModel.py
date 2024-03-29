@@ -68,18 +68,21 @@ class BeadworkModel(QtCore.QAbstractTableModel):
     
     def headerData(self, section, orientation, role):
         if role == Qt.ItemDataRole.DisplayRole:
-            logger.debug(f"getting header data for {orientation} {section}")
+            headerData = None
             if orientation == Qt.Orientation.Horizontal: 
                 if (self.columnCount(None) % 2 != 0) and (section == ceil(self.columnCount(None) / 2) - 1):
-                    return "||"
+                    headerData = "||"
                 elif ((section + 1) % 5 == 0):
-                    return "|"
+                    headerData = "|"
 
             if orientation == Qt.Orientation.Vertical:
                 if (self.rowCount(None) % 2 != 0) and (section == ceil(self.rowCount(None) / 2) - 1):
-                    return "||"
+                    headerData = "||"
                 elif ((section + 1) % 5 == 0):
-                    return "|"
+                    headerData = "|"
+            
+            logger.debug(f"returning header data {headerData if headerData else ''} for {orientation} {section}")
+            return headerData
         
     def rowCount(self, index):
         # length of outer list
