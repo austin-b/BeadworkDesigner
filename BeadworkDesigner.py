@@ -1,6 +1,9 @@
-import sys
-import logging
 import argparse
+import datetime
+import logging
+import glob
+import os
+import sys
 
 from PySide6.QtWidgets import QApplication
 
@@ -20,13 +23,26 @@ args = parser.parse_args()
 
 debug = (args.debug) or configs["debug"]  # check if debug flag is set
 
-# TODO: implement CLI argument for logging file
-# TODO: make default a log file
-logging.basicConfig(stream = sys.stdout, level=(logging.DEBUG if debug else logging.INFO), format='%(filename)s: '    
-                                                                        '%(levelname)s: '
-                                                                        '%(funcName)s(): '
-                                                                        '%(lineno)d:\t'
-                                                                        '%(message)s')
+# primary log directory
+logDir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
+
+# check how many log files there are and remove oldest if there are more than 5
+logFiles = sorted(glob.glob(os.path.join(logDir, '*')), key=os.path.getmtime)
+if len(logFiles) >= 5:
+    os.remove(logFiles[0])
+
+# get current time for log file name
+nowTime = datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')
+
+logging.basicConfig(level=(logging.DEBUG if debug else logging.INFO), 
+                    format='%(filename)s:\t'
+                            '%(levelname)s:\t'
+                            '%(funcName)s():\t'
+                            '%(lineno)d:\t'
+                            '%(message)s',
+                    handlers=[logging.StreamHandler(sys.stdout), # output to console
+                              logging.FileHandler(os.path.join(logDir, args.log) if args.log else   # output to custom log file if specified
+                                                  os.path.join(logDir, f'{nowTime}.txt'))])         # else output to default log file
 
 logging.info("Starting...")
 

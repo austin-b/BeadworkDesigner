@@ -345,7 +345,7 @@ class MainWindow(QMainWindow):
     ########################################
         
     def updateCurrentColorText(self, index):
-        logger.info(f"Updating current color text for index {index}.")
+        logger.debug(f"Updating current color text for index {index}.")
         self.currentColor.setText((self.model.data(index, Qt.ItemDataRole.DisplayRole)).upper())
 
     def addColumn(self):

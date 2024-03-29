@@ -42,7 +42,7 @@ class BeadworkModel(QtCore.QAbstractTableModel):
         logger.info(f"BeadworkModel {self} created.")
 
     def data(self, index, role):
-        # logger.debug(f"Getting data: {self._data[index.row()][index.column()]} for role {role}.")
+        logger.debug(f"Getting data: {self._data[index.row()][index.column()]} for role {role}.")
 
         if role == Qt.ItemDataRole.DisplayRole:
             return self._data[index.row()][index.column()]
@@ -59,7 +59,7 @@ class BeadworkModel(QtCore.QAbstractTableModel):
         
     def setData(self, index, value, role):
         if role == Qt.ItemDataRole.EditRole:
-            # logger.debug(f"Setting data to {value} at {index.row()}, {index.column()}.")
+            logger.debug(f"Setting data to {value} at {index.row()}, {index.column()}.")
             self._data[index.row()][index.column()] = value
             self.dataChanged.emit(index, index)
             logger.debug(f"Data changed at {index.row()}, {index.column()}.")

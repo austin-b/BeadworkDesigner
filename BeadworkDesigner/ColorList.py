@@ -47,17 +47,17 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
 
     def mapFromSource(self, sourceIndex):
         color = self.sourceModel().data(sourceIndex, Qt.ItemDataRole.DisplayRole)
-        #logger.debug(f"Mapping from source color: {color}, index: {sourceIndex}")
+        logger.debug(f"Mapping from source color: {color}, index: {sourceIndex}")
         proxyIndex = self.createIndex(self._colors_index.index(color), 0) # returns the location in the colors_index list
-        #logger.debug(f"Mapped to proxy index: {proxyIndex}")
+        logger.debug(f"Mapped to proxy index: {proxyIndex}")
         return proxyIndex
 
     def mapToSource(self, proxyIndex):
         color = self.data(proxyIndex, Qt.ItemDataRole.DisplayRole)
-        #logger.debug(f"Mapping to source color: {color}, index: {proxyIndex}")
+        logger.debug(f"Mapping to source color: {color}, index: {proxyIndex}")
         r, c = self._colors[color][0] # we only return the first index of the color
         sourceIndex = self.sourceModel().index(r, c) 
-        #logger.debug(f"Mapped to source index: {sourceIndex}")
+        logger.debug(f"Mapped to source index: {sourceIndex}")
         return sourceIndex
     
     def mapToAllSourceIndexes(self, proxyIndex):
