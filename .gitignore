@@ -2,8 +2,6 @@ __pycache__/
 
 .pytest_cache/
 
-.vscode/
-
 BeadworkDesigner/__pycache__/
 
 tests/__pycache__/
