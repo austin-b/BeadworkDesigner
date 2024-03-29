@@ -11,10 +11,13 @@ from BeadworkDesigner.MainWindow import MainWindow
 from BeadworkDesigner.utils import loadProject
 
 # TODO: add capability to return config to default_config.py
-from bin.config import configs  # import config file
+try:
+    from bin.config import configs  # import config file
+except ImportError:
+    logging.error("Custom config not found, importing default.")
+    from bin.default_config import configs  # import default config file
 
-# TODO: provide better description for argparser
-parser = argparse.ArgumentParser(description="Beadwork Designer")
+parser = argparse.ArgumentParser(description="Beadwork Designer: An attempt at a Python-based desktop application for designing loom-based beadwork (https://en.wikipedia.org/wiki/Beadwork), also known as beadweaving (https://en.wikipedia.org/wiki/Bead_weaving).")
 parser.add_argument("--debug", help="Enable debug mode", action="store_true")
 parser.add_argument("--log", help="Log file", type=str, default=None)
 parser.add_argument("--load", help="Load project", type=str, default=None)

@@ -392,7 +392,6 @@ class MainWindow(QMainWindow):
         else:
             self.model.removeRows(self.model.rowCount(QModelIndex())-1, self.modelHeight - value, self.beadworkView.currentIndex())  
 
-    # TODO: unit tests
     def adjustDimensions(self):
         self.dimensionsWindow.close()
 
@@ -478,8 +477,6 @@ class MainWindow(QMainWindow):
         logger.debug(f"self.beadworkView.model() changed to {self.model}.")
 
         self.updateWidthXHeight()
-
-        # TODO: switch addRow/addColumn actions to fit with the new orientation
 
         logger.info(f"Orientation changed to {self.orientationOptions[self.currentOrientation]}.")
 
