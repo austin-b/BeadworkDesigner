@@ -24,9 +24,9 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
 
     def data(self, index, role):
         if role == Qt.ItemDataRole.DisplayRole:
-            return self._colors_index[index.row()-1]            # -1 to account for row "1" actually being row "0"
+            return self._colors_index[index.row()]
         elif role == Qt.ItemDataRole.BackgroundRole:
-            return QColor(self._colors_index[index.row()-1])    # -1 to account for row "1" actually being row "0"
+            return QColor(self._colors_index[index.row()])
         else:
             return None
 
@@ -53,7 +53,14 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
         return proxyIndex
 
     def mapToSource(self, proxyIndex):
-        color = self.data(proxyIndex, Qt.ItemDataRole.DisplayRole)
+        try:
+            color = self.data(proxyIndex, Qt.ItemDataRole.DisplayRole)
+        except:         # occasionally when using clear mode, the proxyIndex is invalid
+                        # this is a workaround to prevent a crash
+            logger.error(f"Invalid proxy index: {proxyIndex}, using 0,0.")
+            self.evaluateModelForUniqueColors()
+            proxyIndex = self.index(0, 0)
+            color = self.data(proxyIndex, Qt.ItemDataRole.DisplayRole)
         logger.debug(f"Mapping to source color: {color}, index: {proxyIndex}")
         r, c = self._colors[color][0] # we only return the first index of the color
         sourceIndex = self.sourceModel().index(r, c) 
@@ -138,12 +145,8 @@ class ColorList(QListView):
     def triggerChangeAll(self, newColor):
         self.model().changeAllInstancesOfColor(self.triggeredIndex.data(Qt.ItemDataRole.DisplayRole), newColor)
 
-    def updateSelected(self, sourceIndex):
-        try:
-            proxyIndex = self.model().mapFromSource(sourceIndex)
-        except:
-            self.model().evaluateModelForUniqueColors()
-            proxyIndex = self.model().mapFromSource(sourceIndex)
+    def updateSelected(self, sourceIndex):  
+        proxyIndex = self.model().mapFromSource(sourceIndex)
         self.setCurrentIndex(proxyIndex)
         self.scrollTo(proxyIndex)
 
