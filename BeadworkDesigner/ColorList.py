@@ -24,9 +24,9 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
 
     def data(self, index, role):
         if role == Qt.ItemDataRole.DisplayRole:
-            return self._colors_index[index.row()]
+            return self._colors_index[index.row()-1]            # -1 to account for row "1" actually being row "0"
         elif role == Qt.ItemDataRole.BackgroundRole:
-            return QColor(self._colors_index[index.row()])
+            return QColor(self._colors_index[index.row()-1])    # -1 to account for row "1" actually being row "0"
         else:
             return None
 
@@ -139,7 +139,11 @@ class ColorList(QListView):
         self.model().changeAllInstancesOfColor(self.triggeredIndex.data(Qt.ItemDataRole.DisplayRole), newColor)
 
     def updateSelected(self, sourceIndex):
-        proxyIndex = self.model().mapFromSource(sourceIndex)
+        try:
+            proxyIndex = self.model().mapFromSource(sourceIndex)
+        except:
+            self.model().evaluateModelForUniqueColors()
+            proxyIndex = self.model().mapFromSource(sourceIndex)
         self.setCurrentIndex(proxyIndex)
         self.scrollTo(proxyIndex)
 

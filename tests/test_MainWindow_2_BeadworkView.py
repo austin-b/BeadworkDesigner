@@ -231,3 +231,44 @@ def test_beadworkView_changeWidthAfterOrientation(qtbot):
 
     assert(view.verticalHeader().count() == view.model().rowCount(None))
     assert(view.horizontalHeader().count() == view.model().columnCount(None))
+
+def test_beadworkView_colorMode(qtbot):
+    mainWindow = MainWindow(debug=True, configs=configs)
+    qtbot.addWidget(mainWindow)
+    mainWindow.show()
+    view = mainWindow.beadworkView
+
+    mainWindow.colorMode.trigger()
+    mainWindow.currentColor.setText("FF0000")
+
+    testRow, testColumn = 0, 0
+
+    view.clicked.emit(view.model().index(testRow, testColumn))
+
+    assert(view.model().data(view.model().index(testRow, testColumn), Qt.ItemDataRole.DisplayRole) == "#FF0000")
+    
+    testRow, testColumn = 2, 2
+
+    view.clicked.emit(view.model().index(testRow, testColumn))
+
+    assert(view.model().data(view.model().index(testRow, testColumn), Qt.ItemDataRole.DisplayRole) == "#FF0000")
+
+def test_beadworkView_clearMode(qtbot):
+    mainWindow = MainWindow(debug=True, configs=configs)
+    qtbot.addWidget(mainWindow)
+    mainWindow.show()
+    view = mainWindow.beadworkView
+
+    mainWindow.clearMode.trigger()
+
+    testRow, testColumn = 0, 0
+
+    view.clicked.emit(view.model().index(testRow, testColumn))
+
+    assert(view.model().data(view.model().index(testRow, testColumn), Qt.ItemDataRole.DisplayRole) == "#FFFFFF")
+
+    testRow, testColumn = 2, 2
+
+    view.clicked.emit(view.model().index(testRow, testColumn))
+
+    assert(view.model().data(view.model().index(testRow, testColumn), Qt.ItemDataRole.DisplayRole) == "#FFFFFF")
