@@ -136,7 +136,7 @@ class MainWindow(QMainWindow):
                                      beadWidth=beadWidth if self.currentOrientation == BeadworkOrientation.VERTICAL else beadHeight)
         self.beadworkView.setItemDelegate(self.delegate)
         self.beadworkView.setModel(self.model)
-        self.beadworkView.clicked.connect(self.updateCurrentColorText)
+        self.beadworkView.clicked.connect(self.handleViewClicked)
         self.beadworkView.setObjectName("beadworkView")
 
     def setupOrientationWidget(self):
@@ -202,6 +202,7 @@ class MainWindow(QMainWindow):
         self.selectionMode.setCheckable(True)
         self.selectionMode.triggered.connect(self.inSelectionMode)
         self.selectionMode.setIcon(QIcon(os.path.join(icons_dir, "selection.png")))
+        self.selectionMode.setChecked(True) # default mode
 
         self.colorMode = QAction('Color Mode', self)
         self.colorMode.setCheckable(True)
@@ -348,6 +349,17 @@ class MainWindow(QMainWindow):
         logger.debug(f"Updating current color text for index {index}.")
         self.currentColor.setText((self.model.data(index, Qt.ItemDataRole.DisplayRole)).upper())
 
+    def handleViewClicked(self, index):
+        logger.debug(f"View clicked at index {index}.")
+        if self.selectionMode.isChecked():      # if in selection mode, update the current color text
+            self.updateCurrentColorText(index) 
+        elif self.colorMode.isChecked():        # if in color mode, change the color of the bead selected
+            # TODO: currently, does set the color of the bead, but does not account for multiple selections
+            self.model.setData(index, f"#{self.currentColor.text()}", Qt.ItemDataRole.EditRole)
+        elif self.clearMode.isChecked():        # if in clear mode, clear the color of the bead selected
+            # TODO: currently, does clear the color of the bead, but does not account for multiple selections
+            self.model.setData(index, "#FFFFFF", Qt.ItemDataRole.EditRole)
+
     def addColumn(self):
         logger.debug("Adding column.")
         self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth - 1)) # TODO: allow for selecting index
@@ -413,7 +425,6 @@ class MainWindow(QMainWindow):
     def changeColor(self, colorString):
         self.model.setData(self.beadworkView.currentIndex(), f"#{colorString}", Qt.ItemDataRole.EditRole)
         
-    # TODO: implement
     # NOTES:
         # selectionMode is default
         # in this mode, the user can select beads by clicking on them
@@ -424,15 +435,16 @@ class MainWindow(QMainWindow):
         if checked:
             self.colorMode.setChecked(False)
             self.clearMode.setChecked(False)
-        else:
+        else:   # if not checked but clicked, revert back to checked
             self.selectionMode.setChecked(True)
+
+        logger.debug("Entered selection mode.")
 
         # TODO: research these selection methods
             # self.beadworkView.setSelectionMode(QListView.SelectionMode.MultiSelection)
         #else:
             # self.beadworkView.setSelectionMode(QListView.SelectionMode.SingleSelection)
 
-    # TODO: implement
     # NOTES:
         # colorMode allows the user to change the color of multiple beads at once
         # every bead the user clicks on will change to the color in the currentColor dialog
@@ -442,10 +454,11 @@ class MainWindow(QMainWindow):
         if checked:
             self.selectionMode.setChecked(False)
             self.clearMode.setChecked(False)
-        else:
+        else:   # if not checked but clicked, revert back to checked
             self.selectionMode.setChecked(True)
 
-    # TODO: implement
+        logger.debug("Entered color mode.")
+
     # NOTES:
         # clearMode allows the user to clear the color of multiple beads at once
         # every bead clicked/selected will change to white/transparent
@@ -455,8 +468,10 @@ class MainWindow(QMainWindow):
         if checked:
             self.selectionMode.setChecked(False)
             self.colorMode.setChecked(False)
-        else:
+        else:   # if not checked but clicked, revert back to checked
             self.selectionMode.setChecked(True)
+
+        logger.debug("Entered clear mode.")
 
     def changeOrientation(self, spinboxValue): # does not use spinboxValue yet, may implement later if there are more orientation options
         logger.debug(f"Changing orientation to {self.orientationOptions[self.currentOrientation]}.")
