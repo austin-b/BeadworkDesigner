@@ -423,7 +423,8 @@ class MainWindow(QMainWindow):
 
     # TODO: this currently only changes the last one selected, multiple selections do not work
     def changeColor(self, colorString):
-        self.model.setData(self.beadworkView.currentIndex(), f"#{colorString}", Qt.ItemDataRole.EditRole)
+        if self.selectionMode.isChecked():
+            self.model.setData(self.beadworkView.currentIndex(), f"#{colorString}", Qt.ItemDataRole.EditRole)
         
     # NOTES:
         # selectionMode is default
@@ -455,7 +456,9 @@ class MainWindow(QMainWindow):
             self.selectionMode.setChecked(False)
             self.clearMode.setChecked(False)
         else:   # if not checked but clicked, revert back to checked
-            self.selectionMode.setChecked(True)
+            self.colorMode.setChecked(True)
+
+        self.currentColor.setText("")   # clear the current color dialog
 
         logger.debug("Entered color mode.")
 
@@ -469,7 +472,9 @@ class MainWindow(QMainWindow):
             self.selectionMode.setChecked(False)
             self.colorMode.setChecked(False)
         else:   # if not checked but clicked, revert back to checked
-            self.selectionMode.setChecked(True)
+            self.clearMode.setChecked(True)
+
+        self.currentColor.setText("")   # clear the current color dialog
 
         logger.debug("Entered clear mode.")
 

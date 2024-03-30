@@ -118,3 +118,42 @@ def test_MainWindow_setHeight(mainWindow):
     assert(mainWindow.heightEdit.text() == str(newHeight))
     assert(mainWindow.statusBarHeightLabel.text() == str(newHeight))
     
+def test_MainWindow_selectionModeOnly(mainWindow):
+    mainWindow.selectionMode.trigger()
+    assert(mainWindow.selectionMode.isChecked() == True)
+    assert(mainWindow.colorMode.isChecked() == False)
+    assert(mainWindow.clearMode.isChecked() == False)
+
+    # test that it stays on
+    mainWindow.selectionMode.trigger()
+    assert(mainWindow.selectionMode.isChecked() == True)
+    assert(mainWindow.colorMode.isChecked() == False)
+    assert(mainWindow.clearMode.isChecked() == False)
+
+def test_MainWindow_colorModeOnly(mainWindow):
+    mainWindow.colorMode.trigger()
+    assert(mainWindow.selectionMode.isChecked() == False)
+    assert(mainWindow.colorMode.isChecked() == True)
+    assert(mainWindow.clearMode.isChecked() == False)
+
+    # test that it stays on
+    mainWindow.colorMode.trigger()
+    assert(mainWindow.selectionMode.isChecked() == False)
+    assert(mainWindow.colorMode.isChecked() == True)
+    assert(mainWindow.clearMode.isChecked() == False)
+
+    assert(mainWindow.currentColor.text() == "")
+
+def test_MainWindow_clearModeOnly(mainWindow):
+    mainWindow.clearMode.trigger()
+    assert(mainWindow.selectionMode.isChecked() == False)
+    assert(mainWindow.colorMode.isChecked() == False)
+    assert(mainWindow.clearMode.isChecked() == True)
+
+    # test that it stays on
+    mainWindow.clearMode.trigger()
+    assert(mainWindow.selectionMode.isChecked() == False)
+    assert(mainWindow.colorMode.isChecked() == False)
+    assert(mainWindow.clearMode.isChecked() == True)
+
+    assert(mainWindow.currentColor.text() == "")
