@@ -37,6 +37,7 @@ if len(logFiles) >= 5:
 # get current time for log file name
 nowTime = datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')
 
+# config logging
 logging.basicConfig(level=(logging.DEBUG if debug else logging.INFO), 
                     format='%(filename)s:\t'
                             '%(levelname)s:\t'
@@ -54,7 +55,7 @@ app = QApplication(sys.argv)
 if args.load:
     json = loadProject(args.load)
     for key in json['configs'].keys():
-        configs[key] = json['configs'][key]                 # replace any config with the loaded one
+        configs[key] = json['configs'][key]        # replace any config with the loaded one
 
 window = MainWindow(debug=debug, configs=configs)  # check if debug flag is set
 
