@@ -3,6 +3,7 @@ Icons are provided by https://p.yusukekamiyamane.com/. They are licensed under a
 """
 
 #####################
+# TODO: make a Goals/Ideas/Features file
 #
 # TODO: add Save As file menu action
 # TODO: add "New Project" option to menu
@@ -10,10 +11,11 @@ Icons are provided by https://p.yusukekamiyamane.com/. They are licensed under a
 #       - OR: load default_project.json, but not allow Save, only Save As (determine via non-existent title field?)
 # TODO: change from RGB hex to HSV
 # TODO: add docstrings
-# TODO: add localization
-# TODO: font options
-# TODO: add a way to change the size of the beads
-# TODO: add a way to zoom in and out
+# TODO: add hints
+# TODO: Settings menu
+#       TODO: font options
+#       TODO: add a way to change the size of the beads
+# TODO: add a way to zoom in and out (just change bead size?)
 # TODO: add a way to change the color of the background
 # TODO: add a "bucket fill" option/tool
 # TODO: implement undo and redo functionality

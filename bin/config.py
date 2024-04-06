@@ -1,4 +1,5 @@
 # TODO: add provide None if no config is available, and log it to prevent errors
+# TODO: two types: default project configs, and default app configs
 
 configs = {
     "debug": True,

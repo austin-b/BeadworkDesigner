@@ -9,3 +9,5 @@ tests/__pycache__/
 beadworkdesigner/
 
 logs/*
+
+bin/__pycache__
