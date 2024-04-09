@@ -43,10 +43,10 @@ from PySide6.QtWidgets import (QColorDialog, QComboBox, QFileDialog,
 
 import BeadworkDesigner.utils as utils
 from BeadworkDesigner.BeadDelegate import BeadDelegate
-from BeadworkDesigner.BeadworkModel import (BeadworkModel,
-                                            BeadworkTransposeModel)
+from BeadworkDesigner.BeadworkModel import (BeadworkModel, BeadworkTransposeModel)
 from BeadworkDesigner.BeadworkView import BeadworkView
 from BeadworkDesigner.ColorList import BeadworkToColorListProxyModel, ColorList
+from BeadworkDesigner.Commands import CommandChangeColor
 
 logger = logging.getLogger(__name__)
 
@@ -186,6 +186,8 @@ class MainWindow(QMainWindow):
         logger.debug("Setting up actions.")
 
         ### TOOLBAR ACTIONS
+
+        # TODO: create Undo and Redo Actions for UndoStack
 
         self.addColumnAction = QAction('Add Column', self)
         self.addColumnAction.triggered.connect(self.addColumn)
@@ -360,7 +362,9 @@ class MainWindow(QMainWindow):
             self.updateCurrentColorText(index) 
         elif self.colorMode.isChecked():        # if in color mode, change the color of the bead selected
             # TODO: currently, does set the color of the bead, but does not account for multiple selections
-            self.model.setData(index, f"#{self.currentColor.text()}", Qt.ItemDataRole.EditRole)
+            # self.model.setData(index, f"#{self.currentColor.text()}", Qt.ItemDataRole.EditRole)
+            command = CommandChangeColor(self.model, index, self.currentColor.text(), f"Change color to {self.currentColor.text()}")
+            self.undoStack.push(command)
         elif self.clearMode.isChecked():        # if in clear mode, clear the color of the bead selected
             # TODO: currently, does clear the color of the bead, but does not account for multiple selections
             self.model.setData(index, "#FFFFFF", Qt.ItemDataRole.EditRole)
