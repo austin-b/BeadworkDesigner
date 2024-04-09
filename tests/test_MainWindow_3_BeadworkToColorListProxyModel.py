@@ -8,7 +8,7 @@ from BeadworkDesigner.MainWindow import MainWindow
 from BeadworkDesigner.BeadworkModel import BeadworkModel
 from BeadworkDesigner.ColorList import BeadworkToColorListProxyModel
 
-from bin.config import configs
+from bin.config import app_configs, project_configs
 
 # creates a list of unique colors from the BeadworkModel
 def uniqueColors(model):
@@ -84,7 +84,7 @@ def test_colorList_changeAllInstancesOfColor(testBeadworkModel, testProxyModel):
         assert(testBeadworkModel.data(index, Qt.ItemDataRole.DisplayRole) == "#FFFFFF")
 
 def test_colorList_changeDataFromColorDialog(qtbot):
-    main = MainWindow(debug=False, configs=configs)
+    main = MainWindow(debug=False, app_configs=app_configs, project_configs=project_configs)
     qtbot.addWidget(main)
     main.show()
 

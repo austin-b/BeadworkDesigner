@@ -2,7 +2,7 @@ import pytest
 
 from BeadworkDesigner.MainWindow import BeadworkOrientation, MainWindow
 
-from bin.config import configs
+from bin.config import app_configs, project_configs
 
 # What do I need to test?
 # - Are the proxy models working as expected?
@@ -21,7 +21,7 @@ from bin.config import configs
 
 @pytest.fixture
 def mainWindow(qtbot):
-    window = MainWindow(debug=True, configs=configs)
+    window = MainWindow(debug=True, app_configs=app_configs, project_configs=project_configs)
     qtbot.addWidget(window)
     return window
 

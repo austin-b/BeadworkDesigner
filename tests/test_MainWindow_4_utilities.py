@@ -8,15 +8,19 @@ testSavedProject = testProjectFilesFolder + "test.json"
 
 @pytest.fixture
 def mainWindow(qtbot):
-    configs = {
-        "debug": False,
+    app_configs = {
+        "debug": True,
+
+        # defaults
         "beadHeight": 22,
-        "beadWidth": 1,
-        "width": 5,
-        "height": 7,
+        "beadWidth": 12,
+    }
+    project_configs = {
+        "width": 10,
+        "height": 12,
         "defaultOrientation": "Vertical"
     }
-    window = MainWindow(debug=False, configs=configs)
+    window = MainWindow(debug=False, app_configs=app_configs, project_configs=project_configs)
     qtbot.addWidget(window)
     return window
 
@@ -28,7 +32,7 @@ def test_mainWindow_importProject(mainWindow, filename):
     mainWindow.importProject(filename)
     testProject = loadProject(filename)
     assert(mainWindow.origModel._data == testProject["project"])
-    assert(mainWindow.configs == testProject["configs"])
+    assert(mainWindow.project_configs == testProject["configs"])
 
 # this test depends on loadProject to work properly to ensure identity of saved and loaded projects
     # -- probably not correct, but it's a start
@@ -41,7 +45,7 @@ def test_mainWindow_exportProject(mainWindow, filename):
         "info": {
             "version": 0.1
         },
-        "configs": mainWindow.configs,
+        "configs": mainWindow.project_configs,
         "project": mainWindow.origModel._data
     })
     assert(loadProject(testSavedProject) == loadProject(filename))

@@ -60,11 +60,12 @@ class BeadworkOrientation(Enum):
     HORIZONTAL = 1
 
 class MainWindow(QMainWindow):
-    def __init__(self, debug=False, configs=None, modelData=None):
+    def __init__(self, debug=False, app_configs=None, project_configs=None, modelData=None):
         super().__init__()
 
         self.debug = debug
-        self.configs = configs
+        self.app_configs = app_configs
+        self.project_configs = project_configs
 
         # set initial orientation dict as we need nice string representations
         # TODO: is this needed if I replace the width x label spinbox?
@@ -74,14 +75,14 @@ class MainWindow(QMainWindow):
         logger.info("Initializing MainWindow.")
 
         ### TRACK INITIAL ORIENTATION
-        if self.configs["defaultOrientation"] == "Horizontal":
+        if self.project_configs["defaultOrientation"] == "Horizontal":
             self.currentOrientation = BeadworkOrientation.HORIZONTAL
         else:
             self.currentOrientation = BeadworkOrientation.VERTICAL
         
         ### SETUP MODELS & VIEW
-        self.setupModels(self.configs["height"], self.configs["width"], modelData)
-        self.setupView(self.configs["beadHeight"], self.configs["beadWidth"])
+        self.setupModels(self.project_configs["height"], self.project_configs["width"], modelData)
+        self.setupView(self.app_configs["beadHeight"], self.app_configs["beadWidth"])
 
         ### KEEP TRACK OF INITIAL WIDTH x HEIGHT
         self.modelWidth = self.model.columnCount(QModelIndex())
@@ -541,16 +542,16 @@ class MainWindow(QMainWindow):
 
         # these ifs are necessary as a horizontal model is only changing the orientation,
         # not the underlying structure
-        self.configs["width"] = self.modelWidth if self.currentOrientation == BeadworkOrientation.VERTICAL else self.modelHeight    
-        self.configs["height"] = self.modelHeight if self.currentOrientation == BeadworkOrientation.VERTICAL else self.modelWidth
+        self.project_configs["width"] = self.modelWidth if self.currentOrientation == BeadworkOrientation.VERTICAL else self.modelHeight    
+        self.project_configs["height"] = self.modelHeight if self.currentOrientation == BeadworkOrientation.VERTICAL else self.modelWidth
 
-        self.configs["defaultOrientation"] = self.orientationOptions[self.currentOrientation]
+        self.project_configs["defaultOrientation"] = self.orientationOptions[self.currentOrientation]
 
         project = {
             "info": {
                         "version": 0.1 # TODO: version checking?
                     },
-            "configs": self.configs,    # TODO: do I pull current configs from variables or reassign directly to configs?
+            "configs": self.project_configs,    # TODO: do I pull current configs from variables or reassign directly to configs?
             "project": self.origModel.exportData()
         }
         utils.saveProject(project, filename)
@@ -562,12 +563,12 @@ class MainWindow(QMainWindow):
 
         json = utils.loadProject(filename)
         for key in json['configs'].keys():
-            self.configs[key] = json['configs'][key]           # replace any config with the loaded one
+            self.project_configs[key] = json['configs'][key]           # replace any config with the loaded one
         
         self.currentOrientation = BeadworkOrientation.VERTICAL     # if this does not match the config, it will be changed in the if statement
 
         ### LOAD DATA
-        self.origModel.importData(json['project'], debug=self.configs['debug'])
+        self.origModel.importData(json['project'], debug=self.app_configs['debug'])
 
         ### UPDATE ELEMENTS & CHANGE ORIENTATION IF NECESSARY
         if json['configs']["defaultOrientation"] == "Horizontal":
