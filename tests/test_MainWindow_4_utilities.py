@@ -161,3 +161,19 @@ def test_MainWindow_clearModeOnly(mainWindow):
     assert(mainWindow.clearMode.isChecked() == True)
 
     assert(mainWindow.currentColor.text() == "")
+
+def test_MainWindow_configs(qtbot):
+    app_configs = {
+        "debug": True,
+
+        # defaults
+        "beadHeight": 22,
+        "beadWidth": 12,
+    }
+
+    window = MainWindow(debug=False, app_configs=app_configs)
+    assert(window.retrieveConfig("height") == 12) # not provided, from default_configs
+    assert(window.retrieveConfig("beadHeight") == 22) # from app_configs
+
+    with pytest.raises(KeyError):
+        window.retrieveConfig("should_fail") # fails

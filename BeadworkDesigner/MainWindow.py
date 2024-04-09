@@ -75,14 +75,14 @@ class MainWindow(QMainWindow):
         logger.info("Initializing MainWindow.")
 
         ### TRACK INITIAL ORIENTATION
-        if self.project_configs["defaultOrientation"] == "Horizontal":
+        if self.retrieveConfig("defaultOrientation") == "Horizontal":
             self.currentOrientation = BeadworkOrientation.HORIZONTAL
         else:
             self.currentOrientation = BeadworkOrientation.VERTICAL
         
         ### SETUP MODELS & VIEW
-        self.setupModels(self.project_configs["height"], self.project_configs["width"], modelData)
-        self.setupView(self.app_configs["beadHeight"], self.app_configs["beadWidth"])
+        self.setupModels(self.retrieveConfig("height"), self.retrieveConfig("width"), modelData)
+        self.setupView(self.retrieveConfig("beadHeight"), self.retrieveConfig("beadWidth"))
 
         ### KEEP TRACK OF INITIAL WIDTH x HEIGHT
         self.modelWidth = self.model.columnCount(QModelIndex())
@@ -568,7 +568,7 @@ class MainWindow(QMainWindow):
         self.currentOrientation = BeadworkOrientation.VERTICAL     # if this does not match the config, it will be changed in the if statement
 
         ### LOAD DATA
-        self.origModel.importData(json['project'], debug=self.app_configs['debug'])
+        self.origModel.importData(json['project'], debug=self.retrieveConfig('debug'))
 
         ### UPDATE ELEMENTS & CHANGE ORIENTATION IF NECESSARY
         if json['configs']["defaultOrientation"] == "Horizontal":
@@ -579,3 +579,29 @@ class MainWindow(QMainWindow):
             self.orientationComboBox.currentTextChanged.connect(self.changeOrientation)     # reconnect signal
         else:
             self.updateWidthXHeight()
+
+    # retrieveConfig method: and if no config is available, log it to prevent errors (and use default config instead)
+    # NOTE: this still fails with a KeyError if the key is not in any config
+    def retrieveConfig(self, key, config=None):
+        if config and config is self.project_configs:
+            value = self.project_configs[key]
+        elif config and config is self.app_configs:
+            value = self.app_configs[key]
+        else:
+            try:
+                if key in self.project_configs:
+                    value = self.project_configs[key]
+                else:
+                    value = self.app_configs[key]
+            except (TypeError, KeyError) as e:
+                logger.error(f"Config {key} not found, returning default. Message: {e}.")
+                import bin.default_config as default_config
+                try:
+                    value = default_config.project_configs[key]
+                except KeyError:
+                    value = default_config.app_configs[key]
+                finally:
+                    del default_config  # clean up
+        
+        logger.debug(f"Returning {value} for {key}.")
+        return value
