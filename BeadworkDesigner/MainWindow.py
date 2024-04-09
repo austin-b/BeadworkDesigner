@@ -35,7 +35,7 @@ import os
 from enum import Enum
 
 from PySide6.QtCore import QModelIndex, Qt
-from PySide6.QtGui import QAction, QIcon
+from PySide6.QtGui import QAction, QIcon, QUndoStack
 from PySide6.QtWidgets import (QColorDialog, QComboBox, QFileDialog,
                                QHBoxLayout, QLabel, QLineEdit, QMainWindow,
                                QPushButton, QSpinBox, QStatusBar, QToolBar,
@@ -109,6 +109,9 @@ class MainWindow(QMainWindow):
         mainWidget = QWidget()
         mainWidget.setObjectName("mainWidget")
         mainWidget.setLayout(mainLayout)
+
+        ### CREATE UNDO STACK
+        self.undoStack = QUndoStack()
 
         ### MAIN WINDOW CONFIGS
         self.setStyleSheet(open(os.path.join(qss_dir, "style.qss")).read())
