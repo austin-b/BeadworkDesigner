@@ -1,5 +1,3 @@
-# TODO: add provide None if no config is available, and log it to prevent errors
-
 app_configs = {
     "debug": True,
 

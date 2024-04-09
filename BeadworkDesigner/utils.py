@@ -13,3 +13,5 @@ def loadProject(filename):
         project = json.load(file)
     logger.info(f"Project loaded from {filename}.")
     return project
+
+# TODO: provide a retrieveConfig method, and if no config is available, log it to prevent errors (and use default config instead)
