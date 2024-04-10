@@ -273,10 +273,13 @@ class MainWindow(QMainWindow):
         self.statusBar = QStatusBar()
         self.statusBar.setStyleSheet("QStatusBar {text-align: left;}")
 
+        self.statusBarTextLabel = QLabel("")
+
         self.statusBarWidthLabel = QLabel(f"{self.modelWidth}")
         self.statusBarHeightLabel = QLabel(f"{self.modelHeight}")
 
         self.statusBarDimensionsLayout = QHBoxLayout()
+        self.statusBarDimensionsLayout.addWidget(self.statusBarTextLabel)
         self.statusBarDimensionsLayout.addWidget(QLabel("Size:"))
         self.statusBarDimensionsLayout.addWidget(self.statusBarWidthLabel)
         self.statusBarDimensionsLayout.addWidget(QLabel("x"))
@@ -441,6 +444,8 @@ class MainWindow(QMainWindow):
         else:   # if not checked but clicked, revert back to checked
             self.selectionMode.setChecked(True)
 
+        self.writeToStatusBar("Selection Mode")
+
         logger.debug("Entered selection mode.")
 
         # TODO: research these selection methods
@@ -460,6 +465,8 @@ class MainWindow(QMainWindow):
         else:   # if not checked but clicked, revert back to checked
             self.colorMode.setChecked(True)
 
+        self.writeToStatusBar("Color Mode")
+
         logger.debug("Entered color mode.")
 
     # NOTES:
@@ -473,6 +480,8 @@ class MainWindow(QMainWindow):
             self.colorMode.setChecked(False)
         else:   # if not checked but clicked, revert back to checked
             self.clearMode.setChecked(True)
+
+        self.writeToStatusBar("Clear Mode")
 
         self.currentColor.setText("")   # clear the current color dialog
 
@@ -528,6 +537,10 @@ class MainWindow(QMainWindow):
     ########################################
     # UTILITY METHODS
     ########################################
+
+    def writeToStatusBar(self, text):
+        delimiter = " 🞄"
+        self.statusBarTextLabel.setText(text + delimiter)
 
     def updateWidthXHeight(self):
         # get up to date model dimensions
