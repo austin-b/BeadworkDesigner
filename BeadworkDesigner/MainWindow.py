@@ -512,7 +512,10 @@ class MainWindow(QMainWindow):
         filename = QFileDialog.getSaveFileName(self, 'Save Project', os.path.expanduser("~"), 'Beadwork Designer Project (*.json)')[0]
         logger.debug(f"Selected filename: {filename}.")
         if filename:
-            self.exportProject(filename)
+            try:
+                self.exportProject(filename)
+            except Exception as e:
+                logger.error(f"Failed to save project to {filename}: {e}.")
         # TODO: update status bar with save status
             
     def openDialog(self):
