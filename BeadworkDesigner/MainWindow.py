@@ -167,7 +167,7 @@ class MainWindow(QMainWindow):
         self.currentColor = QLineEdit()
         self.currentColor.setFixedWidth(47)
         self.currentColor.setInputMask('HHHHHH')   # only allows hex color input
-        self.currentColor.textChanged.connect(self.changeColor) 
+        self.currentColor.textChanged.connect(self.changeColorFromCurrentColorDialog) 
         self.colorDialog = QColorDialog()
         self.colorDialog.colorSelected.connect(lambda c: self.currentColor.setText(c.name().upper()))
         self.colorDialogButton = QPushButton()
@@ -438,9 +438,10 @@ class MainWindow(QMainWindow):
 
         logger.info(f"New width: {newWidth}, New height: {newHeight}.")
 
-    def changeColor(self, colorString):
+    def changeColorFromCurrentColorDialog(self, colorString):
         if self.selectionMode.isChecked():
-            self.model.setData(self.beadworkView.currentIndex(), f"#{colorString}", Qt.ItemDataRole.EditRole)
+            command = CommandChangeColor(self.model, self.beadworkView.currentIndex(), colorString, f"Change color to {colorString}")
+            self.undoStack.push(command)
         
     # NOTES:
         # selectionMode is default
