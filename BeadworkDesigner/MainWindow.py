@@ -523,9 +523,10 @@ class MainWindow(QMainWindow):
         if filename:
             try:
                 self.exportProject(filename)
+                self.writeToStatusBar("Saved")
             except Exception as e:
                 logger.error(f"Failed to save project to {filename}: {e}.")
-        # TODO: update status bar with save status
+                self.writeToStatusBar("Failed to save project.")
             
     def openDialog(self):
         logger.info("Opening project.")
