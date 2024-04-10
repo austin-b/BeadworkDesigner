@@ -73,6 +73,9 @@ class MainWindow(QMainWindow):
         
         logger.info("Initializing MainWindow.")
 
+        ### CREATE UNDO STACK
+        self.undoStack = QUndoStack(self)
+
         ### TRACK INITIAL ORIENTATION
         if self.configs["defaultOrientation"] == "Horizontal":
             self.currentOrientation = BeadworkOrientation.HORIZONTAL
@@ -109,9 +112,6 @@ class MainWindow(QMainWindow):
         mainWidget = QWidget()
         mainWidget.setObjectName("mainWidget")
         mainWidget.setLayout(mainLayout)
-
-        ### CREATE UNDO STACK
-        self.undoStack = QUndoStack()
 
         ### MAIN WINDOW CONFIGS
         self.setStyleSheet(open(os.path.join(qss_dir, "style.qss")).read())
@@ -187,7 +187,13 @@ class MainWindow(QMainWindow):
 
         ### TOOLBAR ACTIONS
 
-        # TODO: create Undo and Redo Actions for UndoStack
+        self.undoAction = self.undoStack.createUndoAction(self)
+        self.undoAction.setShortcut("Ctrl+Z")
+        self.undoAction.setIcon(QIcon(os.path.join(icons_dir, "arrow-return-180-left.png")))
+
+        self.redoAction = self.undoStack.createRedoAction(self)
+        self.redoAction.setShortcut("Ctrl+Y")
+        self.redoAction.setIcon(QIcon(os.path.join(icons_dir, "arrow-return.png")))
 
         self.addColumnAction = QAction('Add Column', self)
         self.addColumnAction.triggered.connect(self.addColumn)
@@ -242,6 +248,9 @@ class MainWindow(QMainWindow):
         self.toolbar = QToolBar()
         self.addToolBar(self.toolbar)
         self.toolbarOrientationAction = self.toolbar.addWidget(self.orientationWidget) # returns the action, not sure if I will ever need
+        self.toolbar.addSeparator()
+        self.toolbar.addAction(self.undoAction)
+        self.toolbar.addAction(self.redoAction)
         self.toolbar.addSeparator()
         self.toolbar.addAction(self.addColumnAction)
         self.toolbar.addAction(self.addRowAction)
@@ -362,7 +371,6 @@ class MainWindow(QMainWindow):
             self.updateCurrentColorText(index) 
         elif self.colorMode.isChecked():        # if in color mode, change the color of the bead selected
             # TODO: currently, does set the color of the bead, but does not account for multiple selections
-            # self.model.setData(index, f"#{self.currentColor.text()}", Qt.ItemDataRole.EditRole)
             command = CommandChangeColor(self.model, index, self.currentColor.text(), f"Change color to {self.currentColor.text()}")
             self.undoStack.push(command)
         elif self.clearMode.isChecked():        # if in clear mode, clear the color of the bead selected
