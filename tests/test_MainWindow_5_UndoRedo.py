@@ -1,5 +1,7 @@
 import pytest
 
+from PySide6.QtCore import Qt
+
 from BeadworkDesigner.MainWindow import MainWindow
 
 from bin.config import configs
@@ -10,3 +12,18 @@ def mainWindow(qtbot):
     qtbot.addWidget(window)
     return window
 
+def test_undoRedo_CommandChangeColor(mainWindow):
+    mainWindow.colorMode.trigger()
+    mainWindow.currentColor.setText("#FF0000")
+
+    oldColor = mainWindow.beadworkView.model().data(mainWindow.beadworkView.model().index(0, 0), Qt.ItemDataRole.DisplayRole)
+
+    mainWindow.beadworkView.clicked.emit(mainWindow.beadworkView.model().index(0, 0))
+
+    assert(mainWindow.beadworkView.model().data(mainWindow.beadworkView.model().index(0, 0), Qt.ItemDataRole.DisplayRole) == "#FF0000")
+
+    mainWindow.undoAction.trigger()
+    assert(mainWindow.beadworkView.model().data(mainWindow.beadworkView.model().index(0, 0), Qt.ItemDataRole.DisplayRole) == oldColor)
+    
+    mainWindow.redoAction.trigger()
+    assert(mainWindow.beadworkView.model().data(mainWindow.beadworkView.model().index(0, 0), Qt.ItemDataRole.DisplayRole) == "#FF0000")

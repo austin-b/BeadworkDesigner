@@ -65,14 +65,17 @@ def test_MainWindow_init_colorList(mainWindow):
 def test_MainWindow_init_toolbar(mainWindow):
     assert(mainWindow.toolbar.actions()[0] == mainWindow.toolbarOrientationAction)
     # [1] is a separator
-    assert(mainWindow.toolbar.actions()[2] == mainWindow.addColumnAction)
-    assert(mainWindow.toolbar.actions()[3] == mainWindow.addRowAction)
-    assert(mainWindow.toolbar.actions()[4] == mainWindow.removeColumnAction)
-    assert(mainWindow.toolbar.actions()[5] == mainWindow.removeRowAction)
-    # [6] is a separator
-    assert(mainWindow.toolbar.actions()[7] == mainWindow.selectionMode)
-    assert(mainWindow.toolbar.actions()[8] == mainWindow.colorMode)
-    assert(mainWindow.toolbar.actions()[9] == mainWindow.clearMode)
+    assert(mainWindow.toolbar.actions()[2] == mainWindow.undoAction)
+    assert(mainWindow.toolbar.actions()[3] == mainWindow.redoAction)
+    # [4] is a separator
+    assert(mainWindow.toolbar.actions()[5] == mainWindow.addColumnAction)
+    assert(mainWindow.toolbar.actions()[6] == mainWindow.addRowAction)
+    assert(mainWindow.toolbar.actions()[7] == mainWindow.removeColumnAction)
+    assert(mainWindow.toolbar.actions()[8] == mainWindow.removeRowAction)
+    # [9] is a separator
+    assert(mainWindow.toolbar.actions()[10] == mainWindow.selectionMode)
+    assert(mainWindow.toolbar.actions()[11] == mainWindow.colorMode)
+    assert(mainWindow.toolbar.actions()[12] == mainWindow.clearMode)
 
 def test_MainWindow_close(mainWindow):
     mainWindow.close()
