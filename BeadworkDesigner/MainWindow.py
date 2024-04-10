@@ -375,7 +375,8 @@ class MainWindow(QMainWindow):
             self.undoStack.push(command)
         elif self.clearMode.isChecked():        # if in clear mode, clear the color of the bead selected
             # TODO: currently, does clear the color of the bead, but does not account for multiple selections
-            self.model.setData(index, "#FFFFFF", Qt.ItemDataRole.EditRole)
+            command = CommandChangeColor(self.model, index, "FFFFFF", f"Change color to #FFFFFF")
+            self.undoStack.push(command)
 
     def addColumn(self):
         logger.debug("Adding column.")
