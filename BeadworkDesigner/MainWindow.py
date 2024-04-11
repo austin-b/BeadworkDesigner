@@ -10,7 +10,6 @@ Icons are provided by https://p.yusukekamiyamane.com/. They are licensed under a
 #       - have loadNewProject - needs to import default config and create blank project, not load default
 #       - OR: load default_project.json, but not allow Save, only Save As (determine via non-existent title field?)
 # TODO: change from RGB hex to HSV
-# TODO: add docstrings
 # TODO: add hints
 # TODO: Settings menu
 #       TODO: font options
@@ -60,7 +59,18 @@ class BeadworkOrientation(Enum):
     HORIZONTAL = 1
 
 class MainWindow(QMainWindow):
+    """The application Main Window. This handles the main GUI elements and interactions."""
+
     def __init__(self, debug=False, app_configs=None, project_configs=None, modelData=None):
+        """Initialize the MainWindow, all GUI elements, and the BeadworkModel.
+
+        Args:
+            debug (bool, optional): Enable debug mode. Defaults to False.
+            app_configs (dict, optional): Application configurations. Defaults to None.
+            project_configs (dict, optional): Project configurations. Defaults to None.
+            modelData (list, optional): Initial model data. Defaults to None. If set, will import into a BeadworkModel.
+        """
+
         super().__init__()
 
         self.debug = debug
@@ -124,6 +134,13 @@ class MainWindow(QMainWindow):
     ########################################
 
     def setupModels(self, height, width, modelData):
+        """Sets up the BeadworkModel and BeadworkTransposeModel.
+
+        Args:
+            height (int): The height (rows) of the model.
+            width (int): The width (columns) of the model. 
+            modelData (list): The initial data for the model as a 2D list of hex colors.
+        """
         logger.debug("Setting up BeadworkModel and BeadworkTransposeModel.")
         self.origModel = BeadworkModel(debug=self.debug, defaultHeight=height, defaultWidth=width, data=modelData)
         self.transposeModel = BeadworkTransposeModel()
@@ -132,6 +149,12 @@ class MainWindow(QMainWindow):
         self.model = self.origModel     # beginning model will be the original model
 
     def setupView(self, beadHeight, beadWidth):
+        """Sets up the BeadworkView and BeadDelegate.
+
+        Args:
+            beadHeight (int): The height of the beads (in pixels) to draw in the view.
+            beadWidth (int): The width of the beads (in pixels) to draw in the view.
+        """
         logger.debug("Setting up BeadworkView and BeadDelegate.")
         self.beadworkView = BeadworkView(beadHeight=beadHeight if self.currentOrientation == BeadworkOrientation.VERTICAL else beadWidth, 
                                          beadWidth=beadWidth if self.currentOrientation == BeadworkOrientation.VERTICAL else beadHeight)
@@ -143,6 +166,7 @@ class MainWindow(QMainWindow):
         self.beadworkView.setObjectName("beadworkView")
 
     def setupOrientationWidget(self):
+        """Sets up the orientationWidget to allow the user to change the orientation of the beadwork."""
         logger.debug("Setting up orientationWidget.")
         self.orientationLabel = QLabel("Orientation:")
         self.orientationComboBox = QComboBox()
@@ -158,6 +182,7 @@ class MainWindow(QMainWindow):
         self.orientationWidget.setLayout(orientationLayout)
 
     def setupColorDialogWidget(self):
+        """Sets up the colorDialogWidget to allow the user to change the color of the beads."""
         logger.debug("Setting up colorDialogWidget.")
         colorDialogLayout = QHBoxLayout()
         self.currentColorLabel = QLabel('Current Color: #')
@@ -181,6 +206,7 @@ class MainWindow(QMainWindow):
         self.colorDialogWidget.setLayout(colorDialogLayout)
 
     def setupActions(self):
+        """Sets up the actions for the toolbar and menus."""
         logger.debug("Setting up actions.")
 
         ### TOOLBAR ACTIONS
@@ -234,6 +260,7 @@ class MainWindow(QMainWindow):
         self.adjustDimensionsAction.triggered.connect(lambda x: self.dimensionsWindow.show())
 
     def setupToolbar(self):
+        """Sets up the toolbar with the orientationWidget and the actions."""
         logger.debug("Setting up self.toolbar.")
         self.toolbar = QToolBar()
         self.addToolBar(self.toolbar)
@@ -249,6 +276,7 @@ class MainWindow(QMainWindow):
         self.toolbar.addAction(self.clearMode)
 
     def setupColorList(self):
+        """Sets up the ColorList view and the BeadworkToColorListProxyModel."""
         logger.debug("Setting up colorList.")
         self.colorList = ColorList()
         self.proxyModel = BeadworkToColorListProxyModel()
@@ -259,6 +287,7 @@ class MainWindow(QMainWindow):
         self.colorList.setModel(self.proxyModel)
 
     def setupSidebar(self):
+        """Sets up the sidebar with the colorDialogWidget and the colorList."""
         logger.debug("Setting up sidebar.")
         sidebarLayout = QVBoxLayout()
         sidebarLayout.addWidget(self.colorDialogWidget)
@@ -269,6 +298,8 @@ class MainWindow(QMainWindow):
         self.sidebar.setMaximumWidth(200)
 
     def setupStatusBar(self):
+        """Sets up the statusBar with a generic text label and the beadwork 
+        project's dimensions."""
         logger.debug("Setting up statusBar.")
         self.statusBar = QStatusBar()
         self.statusBar.setStyleSheet("QStatusBar {text-align: left;}")
@@ -293,6 +324,7 @@ class MainWindow(QMainWindow):
         self.setStatusBar(self.statusBar)
 
     def setupMenu(self):
+        """Sets up all menus: file, edit, etc."""
         logger.debug("Setting up menus.")
         self.menu = self.menuBar()
         self.fileMenu = self.menu.addMenu('File')
@@ -306,6 +338,8 @@ class MainWindow(QMainWindow):
         self.editMenu.addAction(self.adjustDimensionsAction)
 
     def setupDimensionsWindow(self):
+        """Sets up the dimensionsWindow to allow the user to adjust the 
+        dimensions of the beadwork more than one row or column at a time."""
         logger.debug("Setting up dimensionsWindow.")
         self.dimensionsWindow = QWidget()
         self.dimensionsWindow.setWindowTitle("Adjust Dimensions")
@@ -339,11 +373,11 @@ class MainWindow(QMainWindow):
         self.dimensionsWindowLayout.addWidget(heightLineWidget)
         self.dimensionsWindowLayout.addWidget(self.changeDimensionsButton)
 
-    # Override this function so that it repaints the beadworkView.
     # This is currently the workaround as I cannot figure out how to
     # get the rows and columns to size properly without explicitly
     # calling repaint()
     def show(self):
+        """Overrides the show method to guarantee repainting the beadworkView."""
         super().show()
         self.beadworkView.repaint()
 
@@ -352,10 +386,25 @@ class MainWindow(QMainWindow):
     ########################################
         
     def updateCurrentColorText(self, index):
+        """Updates the current color text in the colorDialogWidget if the user
+        is in Selection Mode.
+
+        Args:
+            index (QIndex): the location of the selected bead.
+        """
         logger.debug(f"Updating current color text for index {index}.")
         self.currentColor.setText((self.model.data(index, Qt.ItemDataRole.DisplayRole)).upper())
 
     def handleViewClicked(self, index):
+        """Handles different behavior types for clicking on the BeadworkView
+        depending on the mode selected:
+            Selection Mode: updates the current color text.
+            Color Mode: changes the color of the bead selected.
+            Clear Mode: clears the color of the bead selected.
+
+        Args:
+            index (QIndex): the location of the selected bead.
+        """
         logger.debug(f"View clicked at index {index}.")
         if self.selectionMode.isChecked():      # if in selection mode, update the current color text
             self.updateCurrentColorText(index) 
@@ -367,6 +416,7 @@ class MainWindow(QMainWindow):
             self.model.setData(index, "#FFFFFF", Qt.ItemDataRole.EditRole)
 
     def addColumn(self):
+        """Adds a single column to the original beadwork model."""
         logger.debug("Adding column.")
         self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth - 1)) # TODO: allow for selecting index
         self.model.insertColumn(self.model.columnCount(QModelIndex()), self.beadworkView.currentIndex())
@@ -374,6 +424,7 @@ class MainWindow(QMainWindow):
         self.updateWidthXHeight()
 
     def removeColumn(self):
+        """Removes a single column from the original beadwork model."""
         logger.debug("Removing column.")
         self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth - 1)) # TODO: allow for selecting index
         self.model.removeColumn(self.model.columnCount(QModelIndex()) - 1, self.beadworkView.currentIndex())
@@ -381,6 +432,7 @@ class MainWindow(QMainWindow):
         self.updateWidthXHeight()
 
     def addRow(self):
+        """Adds a single row to the original beadwork model."""
         logger.debug("Adding row.")
         self.beadworkView.setCurrentIndex(self.model.index(self.modelHeight-1, 0)) # TODO: allow for selecting index
         self.model.insertRow(self.model.rowCount(QModelIndex()), self.beadworkView.currentIndex())
@@ -388,6 +440,7 @@ class MainWindow(QMainWindow):
         self.updateWidthXHeight()
 
     def removeRow(self):
+        """Removes a single row from the original beadwork model."""
         logger.debug("Removing row.")
         self.beadworkView.setCurrentIndex(self.model.index(self.modelHeight-1, 0)) # TODO: allow for selecting index
         self.model.removeRow(self.model.rowCount(QModelIndex()) - 1, self.beadworkView.currentIndex())
@@ -395,6 +448,11 @@ class MainWindow(QMainWindow):
         self.updateWidthXHeight()
 
     def changeWidthTo(self, value):
+        """Changes the width (columns) of the beadwork model to the specified value.
+        
+        Args:
+            value (int): The new width of the beadwork model.
+        """
         logger.debug(f"Width changing to {value}.")
         self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth-1))
         if value > self.modelWidth:
@@ -403,6 +461,11 @@ class MainWindow(QMainWindow):
             self.model.removeColumns(self.model.columnCount(QModelIndex())-1, self.modelWidth - value, self.beadworkView.currentIndex())  
 
     def changeHeightTo(self, value):
+        """Changes the height (rows) of the beadwork model to the specified value.
+
+        Args:
+            value (int): The new height of the beadwork model.
+        """
         logger.debug(f"Height changing to {value}.")
         self.beadworkView.setCurrentIndex(self.model.index(self.modelHeight-1, 0))
         if value > self.modelHeight:
@@ -411,6 +474,8 @@ class MainWindow(QMainWindow):
             self.model.removeRows(self.model.rowCount(QModelIndex())-1, self.modelHeight - value, self.beadworkView.currentIndex())  
 
     def adjustDimensions(self):
+        """Adjusts the dimensions of the beadwork model to the specified width 
+        and height. Called from and retrieves values from the dimensionsWindow."""
         self.dimensionsWindow.close()
 
         newWidth = int(self.widthEdit.text())
@@ -428,6 +493,11 @@ class MainWindow(QMainWindow):
         logger.info(f"New width: {newWidth}, New height: {newHeight}.")
 
     def changeColor(self, colorString):
+        """Changes the color of a selected bead when the colorDialog is updated.
+
+        Args:
+            colorString (str): hex value of color.
+        """
         if self.selectionMode.isChecked():
             self.model.setData(self.beadworkView.currentIndex(), f"#{colorString}", Qt.ItemDataRole.EditRole)
         
@@ -438,6 +508,11 @@ class MainWindow(QMainWindow):
         # the currentColor dialog populates with the color of the selected bead(s)
         # if checked, should disconnect the relevant methods from the other modes
     def inSelectionMode(self, checked):
+        """Changes the mode to Selection Mode. Slot for the triggered selectionMode action.
+
+        Args:
+            checked (bool): flag for if the selectionMode action/button is checked.
+        """
         if checked:
             self.colorMode.setChecked(False)
             self.clearMode.setChecked(False)
@@ -459,6 +534,11 @@ class MainWindow(QMainWindow):
         # if checked, should disconnect the relevant methods from the other modes
         # and enable the currentColor dialog to change the color of the "painter"
     def inColorMode(self, checked):
+        """Changes the mode to Color Mode. Slot for the triggered colorMode action.
+
+        Args:
+            checked (bool): flag for if the colorMode action/button is checked.
+        """
         if checked:
             self.selectionMode.setChecked(False)
             self.clearMode.setChecked(False)
@@ -475,6 +555,11 @@ class MainWindow(QMainWindow):
         # if selecting multiple beads, hint to the user that they will all clear when finished selecting
         # if checked, should disconnect the relevant methods from the other modes
     def inClearMode(self, checked):
+        """Changes the mode to Clear Mode. Slot for the triggered clearMode action.
+
+        Args:
+            checked (bool): flag for if the clearMode action/button is checked.
+        """
         if checked:
             self.selectionMode.setChecked(False)
             self.colorMode.setChecked(False)
@@ -488,6 +573,11 @@ class MainWindow(QMainWindow):
         logger.debug("Entered clear mode.")
 
     def changeOrientation(self, spinboxValue): # does not use spinboxValue yet, may implement later if there are more orientation options
+        """Changes the orientation of the beadwork from horizontal to vertical or vice versa.
+
+        Args:
+            spinboxValue (str): the value of the spinbox when changed.
+        """
         logger.debug(f"Changing orientation to {self.orientationOptions[self.currentOrientation]}.")
 
         self.currentOrientation = BeadworkOrientation.VERTICAL if self.currentOrientation == BeadworkOrientation.HORIZONTAL else BeadworkOrientation.HORIZONTAL
@@ -513,10 +603,12 @@ class MainWindow(QMainWindow):
         # default config and a blank project data before implementing a single "SAVE" action
         # without a file dialog
     def loadNewProject(self):
+        """Loads a new project, replacing the current project with a blank one."""
         logger.info("Loading new project")
         self.importProject(bin_dir + "/default_project.json")
 
     def saveDialog(self):
+        """Opens a file dialog to save the project to a JSON file."""
         logger.info("Saving project.")
         filename = QFileDialog.getSaveFileName(self, 'Save Project', os.path.expanduser("~"), 'Beadwork Designer Project (*.json)')[0]
         logger.debug(f"Selected filename: {filename}.")
@@ -529,6 +621,7 @@ class MainWindow(QMainWindow):
                 self.writeToStatusBar("Failed to save project.")
             
     def openDialog(self):
+        """Opens a file dialog to open a project from a JSON file."""
         logger.info("Opening project.")
         filename = QFileDialog.getOpenFileName(self, 'Open Project', os.path.expanduser("~"), 'Beadwork Designer Project (*.json)')[0]
         logger.debug(f"Selected filename: {filename}.")
@@ -539,11 +632,18 @@ class MainWindow(QMainWindow):
     # UTILITY METHODS
     ########################################
 
+    # TODO: clear the status bar message after a certain time?
     def writeToStatusBar(self, text):
+        """Writes a message to the status bar.
+
+        Args:
+            text (str): The message to write to the status bar.
+        """
         delimiter = " 🞄"
         self.statusBarTextLabel.setText(text + delimiter)
 
     def updateWidthXHeight(self):
+        """Updates the width and height of the beadwork model to all needed areas."""
         # get up to date model dimensions
         self.modelWidth = self.model.columnCount(None)
         self.modelHeight = self.model.rowCount(None)
@@ -555,6 +655,11 @@ class MainWindow(QMainWindow):
         self.heightEdit.setText(str(self.modelHeight))
         
     def exportProject(self, filename):
+        """Exports the project to a JSON file.
+
+        Args:
+            filename (str): The filename to save the project to.
+        """
         self.setWindowTitle(f'Beadwork Designer - {filename}')
 
         # these ifs are necessary as a horizontal model is only changing the orientation,
@@ -576,6 +681,11 @@ class MainWindow(QMainWindow):
     # TODO: this is a bit of a mess, but it works for now
     # TODO: handle failure to load project
     def importProject(self, filename):
+        """Imports a project from a JSON file.
+
+        Args:
+            filename (str): The filename to load the project from.
+        """
         self.setWindowTitle(f'Beadwork Designer - {filename}')
 
         json = utils.loadProject(filename)
@@ -600,6 +710,12 @@ class MainWindow(QMainWindow):
     # retrieveConfig method: and if no config is available, log it to prevent errors (and use default config instead)
     # NOTE: this still fails with a KeyError if the key is not in any config
     def retrieveConfig(self, key, config=None):
+        """Retrieves a configuration value from the project or app configs.
+
+        Args:
+            key (str): The key to retrieve from the configs.
+            config (dict, optional): The config to retrieve from. Defaults to None.
+        """
         if config and config is self.project_configs:
             value = self.project_configs[key]
         elif config and config is self.app_configs:
