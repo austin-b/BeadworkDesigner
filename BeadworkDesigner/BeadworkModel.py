@@ -84,43 +84,47 @@ class BeadworkModel(QtCore.QAbstractTableModel):
             logger.debug(f"returning header data {headerData if headerData else ''} for {orientation} {section}")
             return headerData
         
-    def rowCount(self, index):
+    def rowCount(self, index=None):
         # length of outer list
         return len(self._data)
     
-    def columnCount(self, index):
+    def columnCount(self, index=None):
         # only works if all rows are an equal length
         return len(self._data[0])   
      
-    def insertRow(self, row, index):
-        logger.debug(f"Inserting row at {index.row()}.")
-        self.beginInsertRows(QtCore.QModelIndex(), row, row)
-        self._data.insert(index.row()+1, [color(random=self._debug) for _ in range(self.columnCount(index))])
-        self.endInsertRows()
-        logger.debug(f"New row at {index.row()+1}.")
-
-    def insertRows(self, row, count, index):
-        logger.debug(f"Inserting row at {index.row()}.")
-        self.beginInsertRows(QtCore.QModelIndex(), row, row+count)
-        for x in range(count):
-            self._data.insert(index.row()+x, [color(random=self._debug) for _ in range(self.columnCount(index))])
-        self.endInsertRows()
-        logger.debug(f"New row at {index.row()+1}.")
+    # from https://doc.qt.io/qtforpython-6/PySide6/QtCore/QAbstractItemModel.html#PySide6.QtCore.QAbstractItemModel.insertRows:
+    #   inserts count rows into the model before the given row
+    #   If row is 0, the rows are prepended to any existing rows in the parent.
+    #   If row is rowCount() , the rows are appended to any existing rows in the parent.
+    def insertRow(self, row, count=1, parent=None):
+        if row == 0:
+            logger.debug(f"Prepending {count} row(s) at beginning of model.")
+            self.beginInsertRows(QtCore.QModelIndex(), row, row+(count-1))
+            for i in range(count):
+                self._data.insert(i, [color(random=self._debug) for _ in range(self.columnCount())])
+            self.endInsertRows()
+            logger.debug(f"{count} new row(s) at index 0.")
+        elif row == self.rowCount():
+            logger.debug(f"Appending {count} row(s) at end of model.")
+            self.beginInsertRows(QtCore.QModelIndex(), row, row+(count-1))
+            for i in range(count):
+                self._data.insert(row+i, [color(random=self._debug) for _ in range(self.columnCount())])
+            self.endInsertRows()
+            logger.debug(f"{count} new row(s) at index {row}.")
+        else:
+            logger.debug(f"Inserting {count} row(s) before {self.row}.")
+            self.beginInsertRows(QtCore.QModelIndex(), row, row+(count-1))
+            for i in range(count):
+                self._data.insert(row+i, [color(random=self._debug) for _ in range(self.columnCount())])
+            self.endInsertRows()
+            logger.debug(f"{count} new row(s) at index {row}.")
     
+    # TODO: repeat refactor above
     def insertColumn(self, column, index):
         logger.debug(f"Inserting column at {index.column()}.")
         self.beginInsertColumns(QtCore.QModelIndex(), column, column)
         for row in range(self.rowCount(index)):
             self._data[row].insert(index.column()+1, color(random=self._debug))
-        self.endInsertColumns()
-        logger.debug(f"New column at {index.column()+1}.")
-
-    def insertColumns(self, column, count, index):
-        logger.debug(f"Inserting column at {index.column()}.")
-        self.beginInsertColumns(QtCore.QModelIndex(), column, column+count)
-        for x in range(count):
-            for row in range(self.rowCount(index)):
-                self._data[row].insert(index.column()+x, color(random=self._debug))
         self.endInsertColumns()
         logger.debug(f"New column at {index.column()+1}.")
     
@@ -131,15 +135,6 @@ class BeadworkModel(QtCore.QAbstractTableModel):
         del self._data[row]
         self.endRemoveRows()
         logger.debug(f"Removed row at {row}.")
-
-    def removeRows(self, row, count, index):
-        logger.debug(f"Removing rows {row-count} to {row}.")
-        self.beginRemoveRows(QtCore.QModelIndex(), row-count, row)
-        for x in range(count):
-            del self._data[row-(x+1)]
-            logger.debug(f"Removed row {row-(x+1)}.")
-        self.endRemoveRows()
-        logger.debug(f"Removed rows {row-count} to {row}.")
     
     # TODO: implement ability to give index like insertColumn
     def removeColumn(self, column, index):
@@ -149,16 +144,6 @@ class BeadworkModel(QtCore.QAbstractTableModel):
             del self._data[row][column]
         self.endRemoveColumns()
         logger.debug(f"Removed column at {column}.")
-
-    def removeColumns(self, column, count, index):
-        logger.debug(f"Removing columns {column-count} to {column}.")
-        self.beginRemoveColumns(QtCore.QModelIndex(), column-count, column)
-        for x in range(count):
-            for row in range(self.rowCount(index)):
-                del self._data[row][column-(x+1)]
-            logger.debug(f"Removed column {column-(x+1)}.")
-        self.endRemoveColumns()
-        logger.debug(f"Removed columns {column-count} to {column}.")
 
     def importData(self, data, debug=False):    # debug flag will fix issues importing data from a debug model to a non-debug existing model
         self._data = data

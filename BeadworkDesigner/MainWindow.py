@@ -46,7 +46,8 @@ from BeadworkDesigner.BeadDelegate import BeadDelegate
 from BeadworkDesigner.BeadworkModel import (BeadworkModel, BeadworkTransposeModel)
 from BeadworkDesigner.BeadworkView import BeadworkView
 from BeadworkDesigner.ColorList import BeadworkToColorListProxyModel, ColorList
-from BeadworkDesigner.Commands import CommandChangeColor
+from BeadworkDesigner.Commands import (CommandChangeColor,
+                                       CommandInsertRow)
 
 logger = logging.getLogger(__name__)
 
@@ -394,8 +395,8 @@ class MainWindow(QMainWindow):
 
     def addRow(self):
         logger.debug("Adding row.")
-        self.beadworkView.setCurrentIndex(self.model.index(self.modelHeight-1, 0)) # TODO: allow for selecting index
-        self.model.insertRow(self.model.rowCount(QModelIndex()), self.beadworkView.currentIndex())
+        command = CommandInsertRow(self.model, self.model.rowCount(QModelIndex()), 1, f"Add row at index {self.model.rowCount(QModelIndex())}")
+        self.undoStack.push(command)
         self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(QModelIndex()) - 1, self.model.columnCount(QModelIndex()) - 1), [Qt.ItemDataRole.BackgroundRole])
         self.updateWidthXHeight()
 
