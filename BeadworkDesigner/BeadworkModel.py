@@ -181,30 +181,14 @@ class BeadworkTransposeModel(QTransposeProxyModel):
         logger.debug("Calling insertColumn from BeadworkTransposeModel.")
         self.sourceModel().insertColumn(row, index)
 
-    def insertRows(self, row, count, index):
-        logger.debug("Calling insertColumns from BeadworkTransposeModel.")
-        self.sourceModel().insertColumns(row, count, index)
-
-    def insertColumn(self, column, count):
+    def insertColumn(self, column, count=1):
         logger.debug("Calling insertRow from BeadworkTransposeModel.")
         self.sourceModel().insertRow(column, count)
-
-    def insertColumns(self, column, count, index):
-        logger.debug("Calling insertRows from BeadworkTransposeModel.")
-        self.sourceModel().insertRows(column, count, index)
 
     def removeRow(self, row, index):
         logger.debug("Calling removeColumn from BeadworkTransposeModel.")
         self.sourceModel().removeColumn(row, index)
-
-    def removeRows(self, row, count, index):
-        logger.debug("Calling removeColumns from BeadworkTransposeModel.")
-        self.sourceModel().removeColumns(row, count, index)
     
-    def removeColumn(self, column, index):
+    def removeColumn(self, column, count=1):
         logger.debug("Calling removeRow from BeadworkTransposeModel.")
-        self.sourceModel().removeRow(column, index)
-
-    def removeColumns(self, column, count, index):
-        logger.debug("Calling removeRows from BeadworkTransposeModel.")
-        self.sourceModel().removeRows(column, count, index)
+        self.sourceModel().removeRow(column, count)
