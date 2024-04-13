@@ -10,7 +10,6 @@ Icons are provided by https://p.yusukekamiyamane.com/. They are licensed under a
 #       - have loadNewProject - needs to import default config and create blank project, not load default
 #       - OR: load default_project.json, but not allow Save, only Save As (determine via non-existent title field?)
 # TODO: change from RGB hex to HSV
-# TODO: add hints
 # TODO: Settings menu
 #       TODO: font options
 #       TODO: add a way to change the size of the beads

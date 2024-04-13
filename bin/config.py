@@ -1,3 +1,5 @@
+# TODO: cannot be overwritten on file by using hardcoded config -- needs to be exported as JSON or similar
+
 # Contains configurations for the app, used regardless of project.
 app_configs = {
     "debug": True,
