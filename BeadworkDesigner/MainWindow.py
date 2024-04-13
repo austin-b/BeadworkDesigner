@@ -398,7 +398,6 @@ class MainWindow(QMainWindow):
         logger.debug("Adding row.")
         command = CommandInsertRow(self.model, self.beadworkView, self.model.rowCount(QModelIndex()), 1, f"Add row at index {self.model.rowCount(QModelIndex())}")
         self.undoStack.push(command)
-        self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(QModelIndex()) - 1, self.model.columnCount(QModelIndex()) - 1), [Qt.ItemDataRole.BackgroundRole])
         self.updateWidthXHeight()           
 
     def removeRow(self):

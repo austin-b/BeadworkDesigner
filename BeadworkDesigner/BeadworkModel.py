@@ -42,7 +42,7 @@ class BeadworkModel(QtCore.QAbstractTableModel):
         logger.info(f"BeadworkModel {self} created.")
 
     def data(self, index, role):
-        logger.debug(f"Getting data: {self._data[index.row()][index.column()]} for role {role}.")
+        #logger.debug(f"Getting data: {self._data[index.row()][index.column()]} for role {role}.")
 
         if role == Qt.ItemDataRole.DisplayRole:
             return self._data[index.row()][index.column()]
@@ -81,7 +81,7 @@ class BeadworkModel(QtCore.QAbstractTableModel):
                 elif ((section + 1) % 5 == 0):
                     headerData = "|"
             
-            logger.debug(f"returning header data {headerData if headerData else ''} for {orientation} {section}")
+            #logger.debug(f"returning header data {headerData if headerData else ''} for {orientation} {section}")
             return headerData
         
     def rowCount(self, index=None):

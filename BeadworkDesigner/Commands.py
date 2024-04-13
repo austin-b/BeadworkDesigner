@@ -55,8 +55,7 @@ class CommandInsertRow(QUndoCommand):
     def undo(self):
         # just to test the undo functionality -- this is not the correct way to implement undo
         # does not account for which row was inserted, and that needs to be removed
-        self.model.removeRow(self.row, None)
-        self.view.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount() - 1, self.model.columnCount() - 1), [Qt.ItemDataRole.BackgroundRole])
+        self.model.removeRow(self.row, self.count)
 
 class CommandRemoveRow(QUndoCommand):
     # copy the entire row in order to redo properly?
@@ -83,12 +82,18 @@ class CommandRemoveRow(QUndoCommand):
     def undo(self):
         if self.row == self.rowCountBefore:
             self.model.insertRow(self.rowCountAfter, self.count)
+
+            for i in range(self.count):
+                for j in range(self.model.columnCount()):
+                    self.model.setData(self.model.index(self.row + (i-1), j), self.rowData[i][j], Qt.ItemDataRole.EditRole)
         else:
             self.model.insertRow(self.row, self.count)
 
-        for i in range(self.count):
-            for j in range(self.model.columnCount()):
-                self.model.setData(self.model.index(self.row + (i - 1), j), self.rowData[i][j], Qt.ItemDataRole.EditRole)
+            for i in range(self.count):
+                for j in range(self.model.columnCount()):
+                    self.model.setData(self.model.index(self.row + i, j), self.rowData[i][j], Qt.ItemDataRole.EditRole)
+
+        
 
 class CommandInsertColumn(QUndoCommand):
     pass
