@@ -79,6 +79,7 @@ def test_beadworkView_setBeadSize(qtbot):
     for i in range(view.model().columnCount(None)):
         view.setColumnWidth(i, 30)
 
+    # set bead size back to stored values
     view.setBeadSize()
     
     # ensure that they all get set back properly
@@ -86,6 +87,15 @@ def test_beadworkView_setBeadSize(qtbot):
         assert(view.rowHeight(i) == view.beadHeight)
     for i in range(view.model().columnCount(None)):
         assert(view.columnWidth(i) == view.beadWidth)
+
+    # set bead size to something else than default
+    view.setBeadSize(40, 40)
+
+    # ensure that they all got set
+    for i in range(view.model().rowCount(None)):
+        assert(view.rowHeight(i) == 40)
+    for i in range(view.model().columnCount(None)):
+        assert(view.columnWidth(i) == 40)
 
 def test_beadworkView_changeOrientationOnce(qtbot):
     mainWindow = MainWindow(debug=True, app_configs=app_configs, project_configs=project_configs)

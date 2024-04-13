@@ -69,8 +69,21 @@ class BeadworkView(QTableView):
         self.setBeadSize()
         super().repaint()
 
-    def setBeadSize(self):
-        """Sets the size of the beads in the view."""
+    def setBeadSize(self, height=None, width=None):
+        """Sets the size of the beads in the view.
+        
+        Args:
+            height (int, optional): The height, in pixels, of the beads. 
+                                    If none, uses stored value. Defaults to None.
+            width (int, optional):  The width, in pixels, of the beads. 
+                                    If none, uses stored value. Defaults to None.
+        """
+        if height != None:
+            self.beadHeight = height
+
+        if width != None:
+            self.beadWidth = width
+
         for i in range(self.model().rowCount(None)):
             self.setRowHeight(i, self.beadHeight)
         for i in range(self.model().columnCount(None)):
