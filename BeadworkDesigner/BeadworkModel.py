@@ -112,13 +112,31 @@ class BeadworkModel(QtCore.QAbstractTableModel):
             self.endInsertRows()
             logger.debug(f"{count} new row(s) at index {row}.")
         else:
-            logger.debug(f"Inserting {count} row(s) before {self.row}.")
+            logger.debug(f"Inserting {count} row(s) before {row}.")
             self.beginInsertRows(QtCore.QModelIndex(), row, row+(count-1))
             for i in range(count):
                 self._data.insert(row+i, [color(random=self._debug) for _ in range(self.columnCount())])
             self.endInsertRows()
             logger.debug(f"{count} new row(s) at index {row}.")
     
+    def removeRow(self, row, count=1, parent=None):
+        rowsRemoved = []
+        logger.debug(f"Removing row at {row}.")
+        if row == self.rowCount(): # if row index is at end of model, continue to remove the last row
+            self.beginRemoveRows(QtCore.QModelIndex(), row-count, row-1)
+            for i in range(count):
+                rowsRemoved.append(self._data.pop(row-(i+1)))
+        else:       # otherwise, remove the row at the given index
+            self.beginRemoveRows(QtCore.QModelIndex(), row, row+(count-1))
+            try:    # try to remove the row, and if it doesn't exist, log the error
+                for _ in range(count):
+                    rowsRemoved.append(self._data.pop(row))
+            except IndexError:
+                logger.error(f"Index out of range: {row}")
+        self.endRemoveRows()
+        logger.debug(f"Removed row at {row}.")
+        return rowsRemoved
+
     # TODO: repeat refactor above
     def insertColumn(self, column, index):
         logger.debug(f"Inserting column at {index.column()}.")
@@ -127,14 +145,6 @@ class BeadworkModel(QtCore.QAbstractTableModel):
             self._data[row].insert(index.column()+1, color(random=self._debug))
         self.endInsertColumns()
         logger.debug(f"New column at {index.column()+1}.")
-    
-    # TODO: implement ability to give index like insertRow
-    def removeRow(self, row, index):
-        logger.debug(f"Removing row at {row}.")
-        self.beginRemoveRows(QtCore.QModelIndex(), row, row)
-        del self._data[row]
-        self.endRemoveRows()
-        logger.debug(f"Removed row at {row}.")
     
     # TODO: implement ability to give index like insertColumn
     def removeColumn(self, column, index):
@@ -175,9 +185,9 @@ class BeadworkTransposeModel(QTransposeProxyModel):
         logger.debug("Calling insertColumns from BeadworkTransposeModel.")
         self.sourceModel().insertColumns(row, count, index)
 
-    def insertColumn(self, column, index):
+    def insertColumn(self, column, count):
         logger.debug("Calling insertRow from BeadworkTransposeModel.")
-        self.sourceModel().insertRow(column, index)
+        self.sourceModel().insertRow(column, count)
 
     def insertColumns(self, column, count, index):
         logger.debug("Calling insertRows from BeadworkTransposeModel.")

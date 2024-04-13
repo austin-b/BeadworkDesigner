@@ -56,7 +56,7 @@ def test_MainWindow_addColumn(mainWindow):
 
 def test_MainWindow_addRow(mainWindow):
     height = mainWindow.modelHeight
-    mainWindow.addRow()
+    mainWindow.addRow(mainWindow.model.rowCount(None))
     newHeight = mainWindow.modelHeight
     assert(newHeight == height + 1)
     assert(mainWindow.heightEdit.text() == str(newHeight))

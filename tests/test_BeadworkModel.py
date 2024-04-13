@@ -75,7 +75,7 @@ def test_BeadworkModel_headerData(testingModel):
 def test_BeadworkModel_insertRow(testingModel, input_row):
     rowCountBefore = testingModel.rowCount(None)
     index = testingModel.index(input_row, 0)
-    testingModel.insertRow(rowCountBefore, index)
+    testingModel.insertRow(rowCountBefore)
     assert(testingModel.rowCount(None) == rowCountBefore + 1)
 
 # TODO: make test for checking that these add the proper column
