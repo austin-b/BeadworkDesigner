@@ -213,12 +213,18 @@ class MainWindow(QMainWindow):
         ### TOOLBAR ACTIONS
 
         self.zoomInAction = QAction('Zoom In', self)
-        self.zoomInAction.triggered.connect(lambda x: self.beadworkView.setBeadSize(self.beadworkView.beadHeight + 1, self.beadworkView.beadWidth + 1))
+        self.zoomInAction.triggered.connect(self.zoomIn)
         self.zoomInAction.setIcon(QIcon(os.path.join(icons_dir, "magnifier-zoom-in.png")))
+        self.zoomInAction.setShortcut("Ctrl++")
 
         self.zoomOutAction = QAction('Zoom Out', self)
-        self.zoomOutAction.triggered.connect(lambda x: self.beadworkView.setBeadSize(self.beadworkView.beadHeight - 1, self.beadworkView.beadWidth - 1))
+        self.zoomOutAction.triggered.connect(self.zoomOut)
         self.zoomOutAction.setIcon(QIcon(os.path.join(icons_dir, "magnifier-zoom-out.png")))
+        self.zoomOutAction.setShortcut("Ctrl+-")
+
+        self.zoomResetAction = QAction('Reset Zoom', self)
+        self.zoomResetAction.triggered.connect(self.zoomReset)
+        self.zoomResetAction.setShortcut("Ctrl+0")
 
         self.addColumnAction = QAction('Add Column', self)
         self.addColumnAction.triggered.connect(self.addColumn)
@@ -348,6 +354,11 @@ class MainWindow(QMainWindow):
 
         self.editMenu = self.menu.addMenu('Edit')
         self.editMenu.addAction(self.adjustDimensionsAction)
+
+        self.viewMenu = self.menu.addMenu('View')
+        self.viewMenu.addAction(self.zoomInAction)
+        self.viewMenu.addAction(self.zoomOutAction)
+        self.viewMenu.addAction(self.zoomResetAction)
 
     def setupDimensionsWindow(self):
         """Sets up the dimensionsWindow to allow the user to adjust the 
@@ -610,6 +621,18 @@ class MainWindow(QMainWindow):
         self.updateWidthXHeight()
 
         logger.info(f"Orientation changed to {self.orientationOptions[self.currentOrientation]}.")
+
+    def zoomIn(self):
+        self.beadworkView.setBeadSize(self.beadworkView.beadHeight + 1, self.beadworkView.beadWidth + 1)
+        logger.debug(f"Zooming in to {self.beadworkView.beadHeight + 1} x {self.beadworkView.beadWidth + 1}.")
+
+    def zoomOut(self):
+        self.beadworkView.setBeadSize(self.beadworkView.beadHeight - 1, self.beadworkView.beadWidth - 1)
+        logger.debug(f"Zooming out to {self.beadworkView.beadHeight - 1} x {self.beadworkView.beadWidth - 1}.")
+
+    def zoomReset(self):
+        self.beadworkView.setBeadSize(self.retrieveConfig("beadHeight"), self.retrieveConfig("beadWidth"))
+        logger.debug(f"Resetting zoom to {self.retrieveConfig('beadHeight')} x {self.retrieveConfig('beadWidth')}.")
 
     # TODO: currently shows the default_project.json filename -- refactor this to just pull 
         # default config and a blank project data before implementing a single "SAVE" action
