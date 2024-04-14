@@ -89,6 +89,9 @@ class BeadworkView(QTableView):
         for i in range(self.model().columnCount(None)):
             self.setColumnWidth(i, self.beadWidth)
 
+        # may need to scale the 1 pixel border to fit with size -- a large bead size should have a larger border
+        self.itemDelegate().changeBeadDimensions(self.beadWidth-1, self.beadHeight-1)
+
         logger.debug(f"Bead size set to {self.beadWidth}, {self.beadHeight}.")
 
     def changeOrientation(self):
