@@ -13,7 +13,7 @@ Icons are provided by https://p.yusukekamiyamane.com/. They are licensed under a
 # TODO: Settings menu
 #       TODO: font options
 #       TODO: add a way to change the size of the beads
-# TODO: add a way to zoom in and out (just change bead size?)
+# TODO: optimize -- 100 x 100 grid is slow and laggy
 # TODO: add a way to change the color of the background
 # TODO: add a "bucket fill" option/tool
 # TODO: implement undo and redo functionality
@@ -212,6 +212,14 @@ class MainWindow(QMainWindow):
 
         ### TOOLBAR ACTIONS
 
+        self.zoomInAction = QAction('Zoom In', self)
+        self.zoomInAction.triggered.connect(lambda x: self.beadworkView.setBeadSize(self.beadworkView.beadHeight + 1, self.beadworkView.beadWidth + 1))
+        self.zoomInAction.setIcon(QIcon(os.path.join(icons_dir, "magnifier-zoom-in.png")))
+
+        self.zoomOutAction = QAction('Zoom Out', self)
+        self.zoomOutAction.triggered.connect(lambda x: self.beadworkView.setBeadSize(self.beadworkView.beadHeight - 1, self.beadworkView.beadWidth - 1))
+        self.zoomOutAction.setIcon(QIcon(os.path.join(icons_dir, "magnifier-zoom-out.png")))
+
         self.addColumnAction = QAction('Add Column', self)
         self.addColumnAction.triggered.connect(self.addColumn)
         self.addColumnAction.setIcon(QIcon(os.path.join(icons_dir, "table-insert-column.png")))
@@ -266,6 +274,9 @@ class MainWindow(QMainWindow):
         self.toolbar = QToolBar()
         self.addToolBar(self.toolbar)
         self.toolbarOrientationAction = self.toolbar.addWidget(self.orientationWidget) # returns the action, not sure if I will ever need
+        self.toolbar.addSeparator()
+        self.toolbar.addAction(self.zoomInAction)
+        self.toolbar.addAction(self.zoomOutAction)
         self.toolbar.addSeparator()
         self.toolbar.addAction(self.addColumnAction)
         self.toolbar.addAction(self.addRowAction)

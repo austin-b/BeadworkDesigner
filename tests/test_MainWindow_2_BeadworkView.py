@@ -282,3 +282,6 @@ def test_beadworkView_clearMode(qtbot):
     view.clicked.emit(view.model().index(testRow, testColumn))
 
     assert(view.model().data(view.model().index(testRow, testColumn), Qt.ItemDataRole.DisplayRole) == "#FFFFFF")
+
+def test_beadworkView_zoomIn(qtbot):
+    assert(False)
