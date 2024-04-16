@@ -551,11 +551,6 @@ class MainWindow(QMainWindow):
 
         logger.debug("Entered selection mode.")
 
-        # TODO: research these selection methods
-            # self.beadworkView.setSelectionMode(QListView.SelectionMode.MultiSelection)
-        #else:
-            # self.beadworkView.setSelectionMode(QListView.SelectionMode.SingleSelection)
-
     # NOTES:
         # colorMode allows the user to change the color of multiple beads at once
         # every bead the user clicks on will change to the color in the currentColor dialog

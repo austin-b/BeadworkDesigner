@@ -32,7 +32,7 @@ class BeadworkView(QTableView):
         
         self.setShowGrid(False)
 
-        self.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
+        self.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection) # allows using shift and ctrl when selecting
 
         logger.info("BeadworkView initialized.")
 
