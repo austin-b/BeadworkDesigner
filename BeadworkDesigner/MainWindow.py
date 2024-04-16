@@ -303,6 +303,7 @@ class MainWindow(QMainWindow):
         self.proxyModel.dataChanged.connect(self.colorList.dataChanged)
         self.beadworkView.clicked.connect(self.colorList.updateSelected) # update selected color in list when bead is selected
         self.colorList.setModel(self.proxyModel)
+        # self.colorList.clicked.connect(self.colorList.updateSelected) TODO: update the color in the colorDialogWidget
 
     def setupSidebar(self):
         """Sets up the sidebar with the colorDialogWidget and the colorList."""
@@ -523,6 +524,10 @@ class MainWindow(QMainWindow):
         """
         if self.selectionMode.isChecked():
             self.model.setData(self.beadworkView.currentIndex(), f"#{colorString}", Qt.ItemDataRole.EditRole)
+        elif self.colorMode.isChecked():
+            selected = self.beadworkView.selectedIndexes()
+            for index in selected:
+                self.model.setData(index, f"#{colorString}", Qt.ItemDataRole.EditRole)
         
     # NOTES:
         # selectionMode is default

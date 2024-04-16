@@ -1,6 +1,6 @@
 import logging
 
-from PySide6.QtWidgets import QHeaderView, QTableView
+from PySide6.QtWidgets import QAbstractItemView, QHeaderView, QTableView
 from PySide6.QtCore import Qt
 
 logger = logging.getLogger(__name__)
@@ -31,6 +31,8 @@ class BeadworkView(QTableView):
         self.beadWidth = beadWidth
         
         self.setShowGrid(False)
+
+        self.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
 
         logger.info("BeadworkView initialized.")
 
