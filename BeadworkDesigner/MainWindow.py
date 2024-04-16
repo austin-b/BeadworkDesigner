@@ -757,17 +757,28 @@ class MainWindow(QMainWindow):
             value = self.app_configs[key]
         else:
             try:
-                if key in self.project_configs:
+                try:
                     value = self.project_configs[key]
-                else:
+                    logger.debug(f"Config {key} found in project configs.")
+                except (TypeError, KeyError, AttributeError) as e:
                     value = self.app_configs[key]
-            except (TypeError, KeyError) as e:
+                    logger.debug(f"Config {key} not found in project configs but in app configs, returning app config. Message: {e}.")
+            except (TypeError, KeyError, AttributeError) as e:
+
+                # just in case neither of these exist
+                if not self.project_configs:
+                    self.project_configs = {}
+                if not self.app_configs:
+                    self.app_configs = {}
+
                 logger.error(f"Config {key} not found, returning default. Message: {e}.")
                 import bin.default_config as default_config
                 try:
-                    value = default_config.project_configs[key]
-                except KeyError:
-                    value = default_config.app_configs[key]
+                    self.project_configs[key] = default_config.project_configs[key]
+                    value = self.project_configs[key]
+                except (TypeError, KeyError, AttributeError) as e:
+                    self.app_configs[key] = default_config.app_configs[key]
+                    value = self.app_configs[key]
                 finally:
                     del default_config  # clean up
         
