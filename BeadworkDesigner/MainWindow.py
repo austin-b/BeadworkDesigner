@@ -410,17 +410,21 @@ class MainWindow(QMainWindow):
         logger.debug(f"Width changing to {value}.")
         self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth-1))
         if value > self.modelWidth:
-            self.model.insertColumns(self.model.columnCount(QModelIndex()), value - self.modelWidth, self.beadworkView.currentIndex())
+            command = CommandInsertColumn(self.model, self.beadworkView, self.model.columnCount(), value - self.modelWidth, f"Add column at index {self.model.columnCount()}")
+            self.undoStack.push(command)     
         else:
-            self.model.removeColumns(self.model.columnCount(QModelIndex())-1, self.modelWidth - value, self.beadworkView.currentIndex())  
+            command = CommandRemoveColumn(self.model, self.beadworkView, self.model.columnCount(), self.modelWidth - value, f"Remove column at index {self.model.columnCount()}")
+            self.undoStack.push(command)
 
     def changeHeightTo(self, value):
         logger.debug(f"Height changing to {value}.")
         self.beadworkView.setCurrentIndex(self.model.index(self.modelHeight-1, 0))
         if value > self.modelHeight:
-            self.model.insertRows(self.model.rowCount(QModelIndex()), value - self.modelHeight, self.beadworkView.currentIndex())
+            command = CommandInsertRow(self.model, self.beadworkView, self.model.rowCount(), value - self.modelHeight, f"Add row at index {self.model.rowCount()}")
+            self.undoStack.push(command)
         else:
-            self.model.removeRows(self.model.rowCount(QModelIndex())-1, self.modelHeight - value, self.beadworkView.currentIndex())  
+            command = CommandRemoveRow(self.model, self.beadworkView, self.model.rowCount(), self.modelHeight - value, f"Remove row at index {self.model.rowCount()}")
+            self.undoStack.push(command)
 
     def adjustDimensions(self):
         self.dimensionsWindow.close()

@@ -17,6 +17,8 @@ def mainWindow(qtbot):
     qtbot.addWidget(window)
     return window
 
+# TODO: create test for CommandChangeColor
+
 def test_undoRedo_CommandChangeColor(mainWindow):
     mainWindow.colorMode.trigger()
     mainWindow.currentColor.setText("#FF0000")
