@@ -84,7 +84,7 @@ def test_BeadworkModel_insertRow(testingModel, input_row):
 def test_BeadworkModel_insertColumn(testingModel, input_column):
     columnCountBefore = testingModel.columnCount(None)
     index = testingModel.index(0, input_column)
-    testingModel.insertColumn(columnCountBefore, index)
+    testingModel.insertColumn(columnCountBefore, count=1)
     assert(testingModel.columnCount(None) == columnCountBefore + 1)
 
 # TODO: make test for checking that these remove the proper row
@@ -100,7 +100,7 @@ def test_BeadworkModel_removeRow(testingModel, input_row):
 def test_BeadworkModel_removeColumn(testingModel, input_column):
     columnCountBefore = testingModel.columnCount(None)
     index = testingModel.index(0, input_column)
-    testingModel.removeColumn(input_column, index)
+    testingModel.removeColumn(input_column, count=1)
     assert(testingModel.columnCount(None) == columnCountBefore - 1)
 
 def test_BeadworkModel_exportData(testingModel):
@@ -155,7 +155,7 @@ def test_BeadworkTransposeModel_insertRow(testingTransposeModels):
     testModel, testTransposeModel = testingTransposeModels
     rowCountBefore = testTransposeModel.rowCount(None)
     index = testTransposeModel.index(0, 0)
-    testTransposeModel.insertRow(rowCountBefore, index)
+    testTransposeModel.insertRow(rowCountBefore, count=1)
     assert(testTransposeModel.rowCount(None) == rowCountBefore + 1)
     assert(testModel.columnCount(None) == rowCountBefore + 1)
 
@@ -170,7 +170,7 @@ def test_BeadworkTransposeModel_removeRow(testingTransposeModels):
     testModel, testTransposeModel = testingTransposeModels
     rowCountBefore = testTransposeModel.rowCount(None)
     index = testTransposeModel.index(0, 0)
-    testTransposeModel.removeRow(0, index)
+    testTransposeModel.removeRow(0, count=1)
     assert(testTransposeModel.rowCount(None) == rowCountBefore - 1)
     assert(testModel.columnCount(None) == rowCountBefore - 1)
 

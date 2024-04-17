@@ -213,17 +213,17 @@ class BeadworkTransposeModel(QTransposeProxyModel):
     def columnCount(self, parent):
         return self.sourceModel().rowCount(parent)
     
-    def insertRow(self, row, index):
+    def insertRow(self, row, count=1):
         logger.debug("Calling insertColumn from BeadworkTransposeModel.")
-        self.sourceModel().insertColumn(row, index)
+        self.sourceModel().insertColumn(row, count)
 
     def insertColumn(self, column, count=1):
         logger.debug("Calling insertRow from BeadworkTransposeModel.")
         self.sourceModel().insertRow(column, count)
 
-    def removeRow(self, row, index):
+    def removeRow(self, row, count=1):
         logger.debug("Calling removeColumn from BeadworkTransposeModel.")
-        self.sourceModel().removeColumn(row, index)
+        self.sourceModel().removeColumn(row, count)
     
     def removeColumn(self, column, count=1):
         logger.debug("Calling removeRow from BeadworkTransposeModel.")
