@@ -48,7 +48,9 @@ from BeadworkDesigner.BeadworkView import BeadworkView
 from BeadworkDesigner.ColorList import BeadworkToColorListProxyModel, ColorList
 from BeadworkDesigner.Commands import (CommandChangeColor,
                                        CommandInsertRow,
-                                       CommandRemoveRow)
+                                       CommandRemoveRow,
+                                       CommandInsertColumn,
+                                       CommandRemoveColumn)
 
 logger = logging.getLogger(__name__)
 
@@ -382,29 +384,26 @@ class MainWindow(QMainWindow):
 
     def addColumn(self):
         logger.debug("Adding column.")
-        self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth - 1)) # TODO: allow for selecting index
-        self.model.insertColumn(self.model.columnCount(QModelIndex()), self.beadworkView.currentIndex())
-        self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(QModelIndex()) - 1, self.model.columnCount(QModelIndex()) - 1), [Qt.ItemDataRole.BackgroundRole])
+        command = CommandInsertColumn(self.model, self.beadworkView, self.model.columnCount(), 1, f"Add column at index {self.model.columnCount()}")
+        self.undoStack.push(command)
         self.updateWidthXHeight()
 
     def removeColumn(self):
         logger.debug("Removing column.")
-        self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth - 1)) # TODO: allow for selecting index
-        self.model.removeColumn(self.model.columnCount(QModelIndex()) - 1, self.beadworkView.currentIndex())
-        self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(QModelIndex()) - 1, self.model.columnCount(QModelIndex()) - 1), [Qt.ItemDataRole.BackgroundRole])
+        command = CommandRemoveColumn(self.model, self.beadworkView, self.model.columnCount(), 1, f"Remove column at index {self.model.columnCount()}")
+        self.undoStack.push(command)
         self.updateWidthXHeight()
 
     def addRow(self, row, count=1):
         logger.debug("Adding row.")
-        command = CommandInsertRow(self.model, self.beadworkView, self.model.rowCount(QModelIndex()), 1, f"Add row at index {self.model.rowCount(QModelIndex())}")
+        command = CommandInsertRow(self.model, self.beadworkView, self.model.rowCount(), 1, f"Add row at index {self.model.rowCount()}")
         self.undoStack.push(command)
         self.updateWidthXHeight()           
 
     def removeRow(self):
         logger.debug("Removing row.")
-        command = CommandRemoveRow(self.model, self.beadworkView, self.model.rowCount(QModelIndex()), 1, f"Add row at index {self.model.rowCount(QModelIndex())}")
+        command = CommandRemoveRow(self.model, self.beadworkView, self.model.rowCount(), 1, f"Add row at index {self.model.rowCount()}")
         self.undoStack.push(command)
-        self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(QModelIndex()) - 1, self.model.columnCount(QModelIndex()) - 1), [Qt.ItemDataRole.BackgroundRole])
         self.updateWidthXHeight()
 
     def changeWidthTo(self, value):

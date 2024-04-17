@@ -137,24 +137,60 @@ class BeadworkModel(QtCore.QAbstractTableModel):
         logger.debug(f"Removed row at {row}.")
         return rowsRemoved
 
-    # TODO: repeat refactor above
-    def insertColumn(self, column, index):
-        logger.debug(f"Inserting column at {index.column()}.")
-        self.beginInsertColumns(QtCore.QModelIndex(), column, column)
-        for row in range(self.rowCount(index)):
-            self._data[row].insert(index.column()+1, color(random=self._debug))
-        self.endInsertColumns()
-        logger.debug(f"New column at {index.column()+1}.")
+    def insertColumn(self, column, count=1, parent=None):
+        if column == 0:
+            logger.debug(f"Prepending {count} column(s) at beginning of model.")
+            self.beginInsertColumns(QtCore.QModelIndex(), column, column+(count-1))
+            for i in range(count):
+                for row in range(self.rowCount()):
+                    self._data[row].insert(i, color(random=self._debug))
+            self.endInsertColumns()
+            logger.debug(f"{count} new column(s) at index 0.")
+        elif column == self.columnCount():
+            logger.debug(f"Appending {count} column(s) at end of model.")
+            self.beginInsertColumns(QtCore.QModelIndex(), column, column+(count-1))
+            for i in range(count):
+                for row in range(self.rowCount()):
+                    self._data[row].append(color(random=self._debug))
+            self.endInsertColumns()
+            logger.debug(f"{count} new column(s) at index {column}.")
+        else:
+            logger.debug(f"Inserting {count} column(s) before {column}.")
+            self.beginInsertColumns(QtCore.QModelIndex(), column, column+(count-1))
+            for i in range(count):
+                for row in range(self.rowCount()):
+                    self._data[row].insert(column+i, color(random=self._debug))
+            self.endInsertColumns()
+            logger.debug(f"{count} new column(s) at index {column}.")
     
-    # TODO: implement ability to give index like insertColumn
-    def removeColumn(self, column, index):
+    def removeColumn(self, column, count=1, parent=None):
+        columnsRemoved = {}
         logger.debug(f"Removing column at {column}.")
-        self.beginRemoveColumns(QtCore.QModelIndex(), column, column)
-        for row in range(self.rowCount(index)):
-            del self._data[row][column]
+        if column == self.columnCount(): # if column index is at end of model, continue to remove the last column
+            self.beginRemoveColumns(QtCore.QModelIndex(), column-count, column-1)
+            for i in range(count):
+                for row in range(self.rowCount()):
+                    try:
+                        columnsRemoved[row] += [self._data[row].pop(column-(i+1))]
+                    except KeyError:    # if the key doesn't exist, create it
+                        columnsRemoved[row] = []
+                        columnsRemoved[row] += [self._data[row].pop(column-(i+1))]
+        else:       # otherwise, remove the column at the given index
+            self.beginRemoveColumns(QtCore.QModelIndex(), column, column+(count-1))
+            try:    # try to remove the column, and if it doesn't exist, log the error
+                for i in range(count):
+                    for row in range(self.rowCount()):
+                        try:
+                            columnsRemoved[row] += [self._data[row].pop(column)]
+                        except KeyError:   # if the key doesn't exist, create it
+                            columnsRemoved[row] = []
+                            columnsRemoved[row] += [self._data[row].pop(column)]            
+            except IndexError: # if the index is out of range, log the error
+                logger.error(f"Index out of range: {column}")
         self.endRemoveColumns()
         logger.debug(f"Removed column at {column}.")
-
+        return columnsRemoved
+    
     def importData(self, data, debug=False):    # debug flag will fix issues importing data from a debug model to a non-debug existing model
         self._data = data
         self._debug = debug

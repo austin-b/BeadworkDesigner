@@ -1,6 +1,6 @@
 import logging
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QModelIndex
 from PySide6.QtGui import QUndoCommand
 
 logger = logging.getLogger(__name__)
@@ -47,20 +47,13 @@ class CommandInsertRow(QUndoCommand):
         self.row = row
         self.count = rowCount
 
-        self.rowCountBefore = self.model.rowCount(None)
-
     def redo(self):
         self.model.insertRow(self.row, self.count)
 
     def undo(self):
-        # just to test the undo functionality -- this is not the correct way to implement undo
-        # does not account for which row was inserted, and that needs to be removed
         self.model.removeRow(self.row, self.count)
 
 class CommandRemoveRow(QUndoCommand):
-    # copy the entire row in order to redo properly?
-    # add a method to BeadworkModel to retrieve a whole row?
-    # and add an option to insertRow to accept data?
     def __init__(self, model, view, row, rowCount=1, description=None):
         super().__init__(description)
 
@@ -92,13 +85,60 @@ class CommandRemoveRow(QUndoCommand):
             for i in range(self.count):
                 for j in range(self.model.columnCount()):
                     self.model.setData(self.model.index(self.row + i, j), self.rowData[i][j], Qt.ItemDataRole.EditRole)
-
-        
-
+      
 class CommandInsertColumn(QUndoCommand):
-    pass
+    def __init__(self, model, view, column, columnCount=1, description=None):
+        # from https://doc.qt.io/qtforpython-6/PySide6/QtCore/QAbstractItemModel.html#PySide6.QtCore.QAbstractItemModel.insertRows:
+        #   inserts count rows into the model before the given row
+        #   If row is 0, the rows are prepended to any existing rows in the parent.
+        #   If row is rowCount() , the rows are appended to any existing rows in the parent.
+        super().__init__(description)
 
+        self.model = model
+        self.view = view
+        self.column = column
+        self.count = columnCount
 
+    def redo(self):
+        self.model.insertColumn(self.column, self.count)
+
+    def undo(self):
+        # TODO: only for testing, refactor when removeColumn is fixed
+        self.model.removeColumn(self.column, self.count)
 
 class CommandRemoveColumn(QUndoCommand):
-    pass
+    def __init__(self, model, view, column, columnCount=1, description=None):
+        super().__init__(description)
+
+        self.model = model
+        self.view = view
+        self.column = column
+
+        self.count = columnCount
+
+        self.columnCountBefore = self.model.columnCount(None)
+        self.columnCountAfter = None
+
+        self.columnData = []   # to store rows removed
+
+    def redo(self):
+        self.columnData = self.model.removeColumn(self.column, self.count)
+        self.columnCountAfter = self.model.columnCount(None)
+
+    # TODO: probably not going to work and will need the for loops fixed
+    def undo(self):
+        if self.column == self.columnCountBefore:
+            self.model.insertColumn(self.columnCountAfter, self.count)
+        
+            for i in range(self.count):
+                for r in range(self.model.rowCount()): 
+                        logger.debug(f"Setting data at {r}, {self.column + (i-1)} to {self.columnData[r][i]}")
+                        self.model.setData(self.model.index(r, self.column + (i-1)), self.columnData[r][i], Qt.ItemDataRole.EditRole)
+
+        else:
+            self.model.insertColumn(self.column, self.count)
+
+            for i in range(self.count):
+                for r in range(self.model.rowCount()): 
+                        logger.debug(f"Setting data at {r}, {self.column + i} to {self.columnData[r][i]}")
+                        self.model.setData(self.model.index(r, self.column + i), self.columnData[r][i], Qt.ItemDataRole.EditRole)

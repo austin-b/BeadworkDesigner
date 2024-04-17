@@ -3,7 +3,11 @@ import pytest
 from PySide6.QtCore import Qt
 
 from BeadworkDesigner.MainWindow import MainWindow
-from BeadworkDesigner.Commands import (CommandChangeColor, CommandInsertRow, CommandRemoveRow)
+from BeadworkDesigner.Commands import (CommandChangeColor, 
+                                       CommandInsertRow, 
+                                       CommandRemoveRow,
+                                       CommandInsertColumn,
+                                       CommandRemoveColumn)
 
 from bin.config import configs
 
@@ -99,3 +103,124 @@ def test_UndoRedo_CommandRemoveRow(mainWindow):
 
     mainWindow.redoAction.trigger()
     assert(mainWindow.beadworkView.model().rowCount(None) == rowCountBefore - 3)
+
+    # try with multiple rows at end
+    rowCountBefore = mainWindow.beadworkView.model().rowCount(None)
+
+    rowBefore = [[mainWindow.model.data(mainWindow.model.index(rowCountBefore-1-r, c),
+                                       role=Qt.ItemDataRole.DisplayRole)
+                        for c in range(mainWindow.model.columnCount(None))]
+                        for r in range(3)]
+    
+    command = CommandRemoveRow(mainWindow.model, mainWindow.beadworkView,
+                                  rowCountBefore-3, 3, f"Remove 3 rows at end")
+    
+    mainWindow.undoStack.push(command)
+
+    assert(mainWindow.beadworkView.model().rowCount(None) == rowCountBefore - 3)
+
+    mainWindow.undoAction.trigger()
+
+    assert(mainWindow.beadworkView.model().rowCount(None) == rowCountBefore)
+
+    assert(all([mainWindow.model.data(mainWindow.model.index(rowCountBefore-1-r, c),
+                                      role=Qt.ItemDataRole.DisplayRole)
+                == rowBefore[r][c] for c in range(mainWindow.model.columnCount(None)) for r in range(3)]))
+
+    mainWindow.redoAction.trigger()
+    assert(mainWindow.beadworkView.model().rowCount(None) == rowCountBefore - 3)
+
+def test_UndoRedo_CommandInsertColumn(mainWindow):
+    columnCountBefore = mainWindow.beadworkView.model().columnCount(None)
+
+    mainWindow.addColumnAction.trigger()
+
+    assert(mainWindow.beadworkView.model().columnCount(None) == columnCountBefore + 1)
+
+    mainWindow.undoAction.trigger()
+    assert(mainWindow.beadworkView.model().columnCount(None) == columnCountBefore)
+
+    mainWindow.redoAction.trigger()
+    assert(mainWindow.beadworkView.model().columnCount(None) == columnCountBefore + 1)
+
+    columnCountBefore = mainWindow.beadworkView.model().columnCount(None)
+
+    # try with multiple columns in middle
+    command = CommandInsertColumn(mainWindow.model, mainWindow.beadworkView, 
+                               2, 3, f"Add 3 columns at index 2")
+    mainWindow.undoStack.push(command)
+
+    assert(mainWindow.beadworkView.model().columnCount(None) == columnCountBefore + 3)
+
+    mainWindow.undoAction.trigger()
+    assert(mainWindow.beadworkView.model().columnCount(None) == columnCountBefore)
+
+    mainWindow.redoAction.trigger()
+    assert(mainWindow.beadworkView.model().columnCount(None) == columnCountBefore + 3)
+
+def test_UndoRedo_CommandRemoveColumn(mainWindow):
+    columnCountBefore = mainWindow.beadworkView.model().columnCount(None)
+
+    columnBefore = [mainWindow.model.data(mainWindow.model.index(r, mainWindow.model.columnCount(None)-1), role=Qt.ItemDataRole.DisplayRole) for r in range(mainWindow.model.rowCount(None))]
+
+    mainWindow.removeColumnAction.trigger()
+
+    assert(mainWindow.beadworkView.model().columnCount(None) == columnCountBefore - 1)
+
+    mainWindow.undoAction.trigger()
+    assert(mainWindow.beadworkView.model().columnCount(None) == columnCountBefore)
+    assert(all([
+        mainWindow.model.data(mainWindow.model.index(r, mainWindow.model.columnCount(None)-1), role=Qt.ItemDataRole.DisplayRole) 
+        == columnBefore[r] for r in range(mainWindow.model.rowCount(None))]) == True)
+
+    mainWindow.redoAction.trigger()
+    assert(mainWindow.beadworkView.model().columnCount(None) == columnCountBefore - 1)
+
+    columnCountBefore = mainWindow.beadworkView.model().columnCount(None)
+
+    columnBefore = [[mainWindow.model.data(mainWindow.model.index(r, 2+c), 
+                                       role=Qt.ItemDataRole.DisplayRole) 
+                        for r in range(mainWindow.model.rowCount(None))]
+                        for c in range(3)]
+
+    # try with multiple columns in middle
+    command = CommandRemoveColumn(mainWindow.model, mainWindow.beadworkView, 
+                               2, 3, f"Add 3 columns at index 2")
+    mainWindow.undoStack.push(command)
+
+    assert(mainWindow.beadworkView.model().columnCount(None) == columnCountBefore - 3)
+
+    mainWindow.undoAction.trigger()
+    assert(mainWindow.beadworkView.model().columnCount(None) == columnCountBefore)
+
+    assert(all([mainWindow.model.data(mainWindow.model.index(r, 2+c), 
+                              role=Qt.ItemDataRole.DisplayRole) 
+        == columnBefore[c][r] for r in range(mainWindow.model.rowCount(None)) for c in range(3)]))
+
+    mainWindow.redoAction.trigger()
+    assert(mainWindow.beadworkView.model().columnCount(None) == columnCountBefore - 3)
+
+    # try with multiple columns at end
+    columnCountBefore = mainWindow.beadworkView.model().columnCount(None)
+
+    columnBefore = [[mainWindow.model.data(mainWindow.model.index(r, columnCountBefore-1-c),
+                                       role=Qt.ItemDataRole.DisplayRole) 
+                        for r in range(mainWindow.model.rowCount(None))]
+                        for c in range(3)]
+    
+    command = CommandRemoveColumn(mainWindow.model, mainWindow.beadworkView,
+                                  columnCountBefore-3, 3, f"Remove 3 columns at end")
+    
+    mainWindow.undoStack.push(command)
+
+    assert(mainWindow.beadworkView.model().columnCount(None) == columnCountBefore - 3)
+
+    mainWindow.undoAction.trigger()
+    assert(mainWindow.beadworkView.model().columnCount(None) == columnCountBefore)
+
+    assert(all([mainWindow.model.data(mainWindow.model.index(r, columnCountBefore-1-c),
+                                      role=Qt.ItemDataRole.DisplayRole) 
+                == columnBefore[c][r] for r in range(mainWindow.model.rowCount(None)) for c in range(3)]))
+
+    mainWindow.redoAction.trigger()
+    assert(mainWindow.beadworkView.model().columnCount(None) == columnCountBefore - 3)
