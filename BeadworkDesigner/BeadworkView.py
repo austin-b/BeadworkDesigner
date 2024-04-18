@@ -1,7 +1,9 @@
 import logging
 
 from PySide6.QtWidgets import QAbstractItemView, QHeaderView, QTableView
-from PySide6.QtCore import Qt
+from PySide6.QtCore import (QItemSelection,
+                            QItemSelectionModel,
+                            QItemSelectionRange)
 
 logger = logging.getLogger(__name__)
 
@@ -50,6 +52,18 @@ class BeadworkView(QTableView):
         self.horizontalHeader().setMinimumSectionSize(0)
 
         logger.debug(f"Model set to {model}.")
+
+    # TODO: build unit tests
+    # TODO: any way to optimize?
+    # ClearAndSelect flag does as it sounds - clears what was previously selected, and selects the next group
+    def selectListOfBeads(self, selection, command=QItemSelectionModel.SelectionFlag.ClearAndSelect):
+        selectionRanges = []
+        itemSelection = QItemSelection()    # build the selection
+        for index in selection:             # turn each index into a 
+            selectionRanges.append(QItemSelectionRange(index))  # selection range (possible room for optimization)
+        itemSelection.append(selectionRanges) # append all ranges to the selection we want
+        self.selectionModel().select(itemSelection, command)    # select the selection
+        logger.debug(f"Selected list {selection} in BeadworkView.")
 
     def dataChanged(self, topLeft, bottomRight, roles):
         """Slot for when the data in the model changes.

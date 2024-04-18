@@ -89,4 +89,4 @@ def test_colorList_changeDataFromColorDialog(qtbot):
     main.show()
 
     main.currentColor.setText("000000")
-    assert(main.proxyModel.data(main.proxyModel.index(0,0), Qt.ItemDataRole.DisplayRole) == "#000000")
+    assert(main.colorListModel.data(main.colorListModel.index(0,0), Qt.ItemDataRole.DisplayRole) == "#000000")

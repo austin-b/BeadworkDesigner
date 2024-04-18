@@ -32,7 +32,7 @@ import logging
 import os
 from enum import Enum
 
-from PySide6.QtCore import QModelIndex, Qt
+from PySide6.QtCore import QItemSelectionModel, QModelIndex, Qt
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import (QColorDialog, QComboBox, QFileDialog,
                                QHBoxLayout, QLabel, QLineEdit, QMainWindow,
@@ -297,13 +297,13 @@ class MainWindow(QMainWindow):
         """Sets up the ColorList view and the BeadworkToColorListProxyModel."""
         logger.debug("Setting up colorList.")
         self.colorList = ColorList()
-        self.proxyModel = BeadworkToColorListProxyModel()
-        self.proxyModel.setSourceModel(self.model)
-        self.model.dataChanged.connect(self.proxyModel.updateList)
-        self.proxyModel.dataChanged.connect(self.colorList.dataChanged)
+        self.colorListModel = BeadworkToColorListProxyModel()
+        self.colorListModel.setSourceModel(self.model)
+        self.model.dataChanged.connect(self.colorListModel.updateList)
+        self.colorListModel.dataChanged.connect(self.colorList.dataChanged)
         self.beadworkView.clicked.connect(self.colorList.updateSelected) # update selected color in list when bead is selected
-        self.colorList.setModel(self.proxyModel)
-        # self.colorList.clicked.connect(self.colorList.updateSelected) TODO: update the color in the colorDialogWidget
+        self.colorList.setModel(self.colorListModel)
+        self.colorList.clicked.connect(self.handleColorListClicked)
 
     def setupSidebar(self):
         """Sets up the sidebar with the colorDialogWidget and the colorList."""
@@ -419,6 +419,7 @@ class MainWindow(QMainWindow):
         logger.debug(f"Updating current color text for index {index}.")
         self.currentColor.setText((self.model.data(index, Qt.ItemDataRole.DisplayRole)).upper())
 
+    # TODO: refactor to set an enum instead of checking the button values each time
     def handleViewClicked(self, index):
         """Handles different behavior types for clicking on the BeadworkView
         depending on the mode selected:
@@ -438,6 +439,26 @@ class MainWindow(QMainWindow):
         elif self.clearMode.isChecked():        # if in clear mode, clear the color of the bead selected
             # TODO: currently, does clear the color of the bead, but does not account for multiple selections
             self.model.setData(index, "#FFFFFF", Qt.ItemDataRole.EditRole)
+
+    # TODO: build unit tests
+    def handleColorListClicked(self, index):
+        """Handles different behavior types for clicking on the ColorList
+        depending on the mode selected:
+            Selection Mode: selects all beads of the same color.
+            Color Mode: updates the colorDialogWidget color and selected beads.
+
+        Args:
+            index (QIndex): the location of the selected color in the ColorList.
+        """
+        logger.debug(f"ColorList clicked at index {index}.")
+        if self.selectionMode.isChecked():      # if in selection mode, select all beads of the same color
+            # TODO: select all beads of same color
+            # https://doc.qt.io/qtforpython-6/PySide6/QtWidgets/QAbstractItemView.html#PySide6.QtWidgets.QAbstractItemView.setSelection
+            allIndexes = self.colorListModel.mapToAllSourceIndexes(index)
+            self.beadworkView.selectListOfBeads(allIndexes)
+        elif self.colorMode.isChecked():        # if in color mode, update the colorDialogWidget color
+            self.currentColor.setText((self.colorListModel.data(index, Qt.ItemDataRole.DisplayRole)).upper())
+            # Sets all selected beads after changing the color in the colorList
 
     def addColumn(self):
         """Adds a single column to the original beadwork model."""
@@ -611,7 +632,7 @@ class MainWindow(QMainWindow):
         else:
             self.model = self.origModel
         self.beadworkView.setModel(self.model)
-        self.proxyModel.setSourceModel(self.model)
+        self.colorListModel.setSourceModel(self.model)
 
         # change internal orientations of delegate and view
         self.delegate.changeOrientation()
