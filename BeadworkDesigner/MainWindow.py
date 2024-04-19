@@ -33,7 +33,7 @@ import os
 from enum import Enum
 
 from PySide6.QtCore import QItemSelectionModel, QModelIndex, Qt
-from PySide6.QtGui import QAction, QIcon
+from PySide6.QtGui import QAction, QIcon, QUndoStack
 from PySide6.QtWidgets import (QColorDialog, QComboBox, QFileDialog,
                                QHBoxLayout, QLabel, QLineEdit, QMainWindow,
                                QPushButton, QSpinBox, QStatusBar, QToolBar,
@@ -41,10 +41,14 @@ from PySide6.QtWidgets import (QColorDialog, QComboBox, QFileDialog,
 
 import BeadworkDesigner.utils as utils
 from BeadworkDesigner.BeadDelegate import BeadDelegate
-from BeadworkDesigner.BeadworkModel import (BeadworkModel,
-                                            BeadworkTransposeModel)
+from BeadworkDesigner.BeadworkModel import (BeadworkModel, BeadworkTransposeModel)
 from BeadworkDesigner.BeadworkView import BeadworkView
 from BeadworkDesigner.ColorList import BeadworkToColorListProxyModel, ColorList
+from BeadworkDesigner.Commands import (CommandChangeColor,
+                                       CommandInsertRow,
+                                       CommandRemoveRow,
+                                       CommandInsertColumn,
+                                       CommandRemoveColumn)
 
 logger = logging.getLogger(__name__)
 
@@ -82,6 +86,9 @@ class MainWindow(QMainWindow):
         self.orientationOptions = {BeadworkOrientation.HORIZONTAL: "Horizontal", BeadworkOrientation.VERTICAL: "Vertical"}
         
         logger.info("Initializing MainWindow.")
+
+        ### CREATE UNDO STACK
+        self.undoStack = QUndoStack(self)
 
         ### TRACK INITIAL ORIENTATION
         if self.retrieveConfig("defaultOrientation") == "Horizontal":
@@ -190,7 +197,7 @@ class MainWindow(QMainWindow):
         self.currentColor = QLineEdit()
         self.currentColor.setFixedWidth(47)
         self.currentColor.setInputMask('HHHHHH')   # only allows hex color input
-        self.currentColor.textChanged.connect(self.changeColor) 
+        self.currentColor.textChanged.connect(self.changeColorFromCurrentColorDialog) 
         self.colorDialog = QColorDialog()
         self.colorDialog.colorSelected.connect(lambda c: self.currentColor.setText(c.name().upper()))
         self.colorDialogButton = QPushButton()
@@ -211,6 +218,14 @@ class MainWindow(QMainWindow):
         logger.debug("Setting up actions.")
 
         ### TOOLBAR ACTIONS
+
+        self.undoAction = self.undoStack.createUndoAction(self)
+        self.undoAction.setShortcut("Ctrl+Z")
+        self.undoAction.setIcon(QIcon(os.path.join(icons_dir, "arrow-return-180-left.png")))
+
+        self.redoAction = self.undoStack.createRedoAction(self)
+        self.redoAction.setShortcut("Ctrl+Y")
+        self.redoAction.setIcon(QIcon(os.path.join(icons_dir, "arrow-return.png")))
 
         self.zoomInAction = QAction('Zoom In', self)
         self.zoomInAction.triggered.connect(self.zoomIn)
@@ -235,7 +250,7 @@ class MainWindow(QMainWindow):
         self.removeColumnAction.setIcon(QIcon(os.path.join(icons_dir, "table-delete-column.png")))
 
         self.addRowAction = QAction('Add Row', self)
-        self.addRowAction.triggered.connect(self.addRow)
+        self.addRowAction.triggered.connect(lambda x: self.addRow(self.model, self.model.rowCount(QModelIndex())))
         self.addRowAction.setIcon(QIcon(os.path.join(icons_dir, "table-insert-row.png")))
 
         self.removeRowAction = QAction('Remove Row', self)
@@ -280,6 +295,9 @@ class MainWindow(QMainWindow):
         self.toolbar = QToolBar()
         self.addToolBar(self.toolbar)
         self.toolbarOrientationAction = self.toolbar.addWidget(self.orientationWidget) # returns the action, not sure if I will ever need
+        self.toolbar.addSeparator()
+        self.toolbar.addAction(self.undoAction)
+        self.toolbar.addAction(self.redoAction)
         self.toolbar.addSeparator()
         self.toolbar.addAction(self.zoomInAction)
         self.toolbar.addAction(self.zoomOutAction)
@@ -435,10 +453,32 @@ class MainWindow(QMainWindow):
             self.updateCurrentColorText(index) 
         elif self.colorMode.isChecked():        # if in color mode, change the color of the bead selected
             # TODO: currently, does set the color of the bead, but does not account for multiple selections
-            self.model.setData(index, f"#{self.currentColor.text()}", Qt.ItemDataRole.EditRole)
+            command = CommandChangeColor(self.model, index, self.currentColor.text(), f"Change color to {self.currentColor.text()}")
+            self.undoStack.push(command)
         elif self.clearMode.isChecked():        # if in clear mode, clear the color of the bead selected
             # TODO: currently, does clear the color of the bead, but does not account for multiple selections
-            self.model.setData(index, "#FFFFFF", Qt.ItemDataRole.EditRole)
+            command = CommandChangeColor(self.model, index, "FFFFFF", f"Change color to #FFFFFF")
+            self.undoStack.push(command)
+
+    # TODO: build unit tests
+    def handleColorListClicked(self, index):
+        """Handles different behavior types for clicking on the ColorList
+        depending on the mode selected:
+            Selection Mode: selects all beads of the same color.
+            Color Mode: updates the colorDialogWidget color and selected beads.
+
+        Args:
+            index (QIndex): the location of the selected color in the ColorList.
+        """
+        logger.debug(f"ColorList clicked at index {index}.")
+        if self.selectionMode.isChecked():      # if in selection mode, select all beads of the same color
+            # TODO: select all beads of same color
+            # https://doc.qt.io/qtforpython-6/PySide6/QtWidgets/QAbstractItemView.html#PySide6.QtWidgets.QAbstractItemView.setSelection
+            allIndexes = self.colorListModel.mapToAllSourceIndexes(index)
+            self.beadworkView.selectListOfBeads(allIndexes)
+        elif self.colorMode.isChecked():        # if in color mode, update the colorDialogWidget color
+            self.currentColor.setText((self.colorListModel.data(index, Qt.ItemDataRole.DisplayRole)).upper())
+            # Sets all selected beads after changing the color in the colorDialogWidget
 
     # TODO: build unit tests
     def handleColorListClicked(self, index):
@@ -463,33 +503,29 @@ class MainWindow(QMainWindow):
     def addColumn(self):
         """Adds a single column to the original beadwork model."""
         logger.debug("Adding column.")
-        self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth - 1)) # TODO: allow for selecting index
-        self.model.insertColumn(self.model.columnCount(QModelIndex()), self.beadworkView.currentIndex())
-        self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(QModelIndex()) - 1, self.model.columnCount(QModelIndex()) - 1), [Qt.ItemDataRole.BackgroundRole])
+        command = CommandInsertColumn(self.model, self.beadworkView, self.model.columnCount(), 1, f"Add column at index {self.model.columnCount()}")
+        self.undoStack.push(command)
         self.updateWidthXHeight()
 
     def removeColumn(self):
         """Removes a single column from the original beadwork model."""
         logger.debug("Removing column.")
-        self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth - 1)) # TODO: allow for selecting index
-        self.model.removeColumn(self.model.columnCount(QModelIndex()) - 1, self.beadworkView.currentIndex())
-        self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(QModelIndex()) - 1, self.model.columnCount(QModelIndex()) - 1), [Qt.ItemDataRole.BackgroundRole])
+        command = CommandRemoveColumn(self.model, self.beadworkView, self.model.columnCount(), 1, f"Remove column at index {self.model.columnCount()}")
+        self.undoStack.push(command)
         self.updateWidthXHeight()
 
-    def addRow(self):
-        """Adds a single row to the original beadwork model."""
+    def addRow(self, row, count=1):
+        # TODO: add docstring
         logger.debug("Adding row.")
-        self.beadworkView.setCurrentIndex(self.model.index(self.modelHeight-1, 0)) # TODO: allow for selecting index
-        self.model.insertRow(self.model.rowCount(QModelIndex()), self.beadworkView.currentIndex())
-        self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(QModelIndex()) - 1, self.model.columnCount(QModelIndex()) - 1), [Qt.ItemDataRole.BackgroundRole])
-        self.updateWidthXHeight()
+        command = CommandInsertRow(self.model, self.beadworkView, self.model.rowCount(), 1, f"Add row at index {self.model.rowCount()}")
+        self.undoStack.push(command)
+        self.updateWidthXHeight()           
 
     def removeRow(self):
-        """Removes a single row from the original beadwork model."""
+        # TODO: add docstring
         logger.debug("Removing row.")
-        self.beadworkView.setCurrentIndex(self.model.index(self.modelHeight-1, 0)) # TODO: allow for selecting index
-        self.model.removeRow(self.model.rowCount(QModelIndex()) - 1, self.beadworkView.currentIndex())
-        self.beadworkView.dataChanged(self.model.index(0, 0), self.model.index(self.model.rowCount(QModelIndex()) - 1, self.model.columnCount(QModelIndex()) - 1), [Qt.ItemDataRole.BackgroundRole])
+        command = CommandRemoveRow(self.model, self.beadworkView, self.model.rowCount(), 1, f"Add row at index {self.model.rowCount()}")
+        self.undoStack.push(command)
         self.updateWidthXHeight()
 
     def changeWidthTo(self, value):
@@ -501,9 +537,11 @@ class MainWindow(QMainWindow):
         logger.debug(f"Width changing to {value}.")
         self.beadworkView.setCurrentIndex(self.model.index(0, self.modelWidth-1))
         if value > self.modelWidth:
-            self.model.insertColumns(self.model.columnCount(QModelIndex()), value - self.modelWidth, self.beadworkView.currentIndex())
+            command = CommandInsertColumn(self.model, self.beadworkView, self.model.columnCount(), value - self.modelWidth, f"Add column at index {self.model.columnCount()}")
+            self.undoStack.push(command)     
         else:
-            self.model.removeColumns(self.model.columnCount(QModelIndex())-1, self.modelWidth - value, self.beadworkView.currentIndex())  
+            command = CommandRemoveColumn(self.model, self.beadworkView, self.model.columnCount(), self.modelWidth - value, f"Remove column at index {self.model.columnCount()}")
+            self.undoStack.push(command)
 
     def changeHeightTo(self, value):
         """Changes the height (rows) of the beadwork model to the specified value.
@@ -514,9 +552,11 @@ class MainWindow(QMainWindow):
         logger.debug(f"Height changing to {value}.")
         self.beadworkView.setCurrentIndex(self.model.index(self.modelHeight-1, 0))
         if value > self.modelHeight:
-            self.model.insertRows(self.model.rowCount(QModelIndex()), value - self.modelHeight, self.beadworkView.currentIndex())
+            command = CommandInsertRow(self.model, self.beadworkView, self.model.rowCount(), value - self.modelHeight, f"Add row at index {self.model.rowCount()}")
+            self.undoStack.push(command)
         else:
-            self.model.removeRows(self.model.rowCount(QModelIndex())-1, self.modelHeight - value, self.beadworkView.currentIndex())  
+            command = CommandRemoveRow(self.model, self.beadworkView, self.model.rowCount(), self.modelHeight - value, f"Remove row at index {self.model.rowCount()}")
+            self.undoStack.push(command)
 
     def adjustDimensions(self):
         """Adjusts the dimensions of the beadwork model to the specified width 
@@ -537,14 +577,15 @@ class MainWindow(QMainWindow):
 
         logger.info(f"New width: {newWidth}, New height: {newHeight}.")
 
-    def changeColor(self, colorString):
+    def changeColorFromCurrentColorDialog(self, colorString):
         """Changes the color of a selected bead when the colorDialog is updated.
 
         Args:
             colorString (str): hex value of color.
         """
         if self.selectionMode.isChecked():
-            self.model.setData(self.beadworkView.currentIndex(), f"#{colorString}", Qt.ItemDataRole.EditRole)
+            command = CommandChangeColor(self.model, self.beadworkView.currentIndex(), colorString, f"Change color to {colorString}")
+            self.undoStack.push(command) 
         elif self.colorMode.isChecked():
             selected = self.beadworkView.selectedIndexes()
             for index in selected:

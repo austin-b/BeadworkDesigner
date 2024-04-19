@@ -67,7 +67,7 @@ class BeadworkModel(QtCore.QAbstractTableModel):
             Qt.ItemDataRole.DecorationRole -> QColor: color of the bead.
             Qt.ItemDataRole.SizeHintRole -> QSize: size hint for the bead.
         """
-        logger.debug(f"Getting data: {self._data[index.row()][index.column()]} for role {role}.")
+        #logger.debug(f"Getting data: {self._data[index.row()][index.column()]} for role {role}.")
 
         if role == Qt.ItemDataRole.DisplayRole:
             return self._data[index.row()][index.column()]
@@ -121,139 +121,122 @@ class BeadworkModel(QtCore.QAbstractTableModel):
                 elif ((section + 1) % 5 == 0):
                     headerData = "|"
             
-            logger.debug(f"returning header data {headerData if headerData else ''} for {orientation} {section}")
+            #logger.debug(f"returning header data {headerData if headerData else ''} for {orientation} {section}")
             return headerData
         
-    def rowCount(self, index):
+    def rowCount(self, index=None):
         """Returns the number of rows in the model."""
         # length of outer list
         return len(self._data)
     
-    def columnCount(self, index):
+    def columnCount(self, index=None):
         """Returns the number of columns in the model."""
         # only works if all rows are an equal length
         return len(self._data[0])   
      
-    def insertRow(self, row, index):
-        """Inserts a row at the given index.
-
-        Args:
-            row (int): the row to insert. 
-            index (QIndex): the index to insert the row at.
-        """
-        logger.debug(f"Inserting row at {index.row()}.")
-        self.beginInsertRows(QtCore.QModelIndex(), row, row)
-        self._data.insert(index.row()+1, [color(random=self._debug) for _ in range(self.columnCount(index))])
-        self.endInsertRows()
-        logger.debug(f"New row at {index.row()+1}.")
-
-    def insertRows(self, row, count, index):
-        """Inserts count rows at the given index.
-
-        Args:
-            row (int): the row to insert. 
-            count (int): the number of rows to insert.
-            index (QIndex): the index to insert the rows at.
-        """
-        logger.debug(f"Inserting row at {index.row()}.")
-        self.beginInsertRows(QtCore.QModelIndex(), row, row+count)
-        for x in range(count):
-            self._data.insert(index.row()+x, [color(random=self._debug) for _ in range(self.columnCount(index))])
-        self.endInsertRows()
-        logger.debug(f"New row at {index.row()+1}.")
+    # from https://doc.qt.io/qtforpython-6/PySide6/QtCore/QAbstractItemModel.html#PySide6.QtCore.QAbstractItemModel.insertRows:
+    #   inserts count rows into the model before the given row
+    #   If row is 0, the rows are prepended to any existing rows in the parent.
+    #   If row is rowCount() , the rows are appended to any existing rows in the parent.
+    def insertRow(self, row, count=1, parent=None):
+        # TODO: add docstring
+        if row == 0:
+            logger.debug(f"Prepending {count} row(s) at beginning of model.")
+            self.beginInsertRows(QtCore.QModelIndex(), row, row+(count-1))
+            for i in range(count):
+                self._data.insert(i, [color(random=self._debug) for _ in range(self.columnCount())])
+            self.endInsertRows()
+            logger.debug(f"{count} new row(s) at index 0.")
+        elif row == self.rowCount():
+            logger.debug(f"Appending {count} row(s) at end of model.")
+            self.beginInsertRows(QtCore.QModelIndex(), row, row+(count-1))
+            for i in range(count):
+                self._data.insert(row+i, [color(random=self._debug) for _ in range(self.columnCount())])
+            self.endInsertRows()
+            logger.debug(f"{count} new row(s) at index {row}.")
+        else:
+            logger.debug(f"Inserting {count} row(s) before {row}.")
+            self.beginInsertRows(QtCore.QModelIndex(), row, row+(count-1))
+            for i in range(count):
+                self._data.insert(row+i, [color(random=self._debug) for _ in range(self.columnCount())])
+            self.endInsertRows()
+            logger.debug(f"{count} new row(s) at index {row}.")
     
-    def insertColumn(self, column, index):
-        """Inserts a column at the given index.
-
-        Args:
-            column (int): the column to insert. 
-            index (QIndex): the index to insert the column at.
-        """
-        logger.debug(f"Inserting column at {index.column()}.")
-        self.beginInsertColumns(QtCore.QModelIndex(), column, column)
-        for row in range(self.rowCount(index)):
-            self._data[row].insert(index.column()+1, color(random=self._debug))
-        self.endInsertColumns()
-        logger.debug(f"New column at {index.column()+1}.")
-
-    def insertColumns(self, column, count, index):
-        """Inserts count columns at the given index.
-
-        Args:
-            column (int): the column to insert. 
-            count (int): the number of columns to insert.
-            index (QIndex): the index to insert the columns at.
-        """
-        logger.debug(f"Inserting column at {index.column()}.")
-        self.beginInsertColumns(QtCore.QModelIndex(), column, column+count)
-        for x in range(count):
-            for row in range(self.rowCount(index)):
-                self._data[row].insert(index.column()+x, color(random=self._debug))
-        self.endInsertColumns()
-        logger.debug(f"New column at {index.column()+1}.")
-    
-    # TODO: implement ability to give index like insertRow
-    def removeRow(self, row, index):
-        """Removes a row at the given index.
-
-        Args:
-            row (int): the row to remove. 
-            index (QIndex): the index to remove the row at.
-        """
+    def removeRow(self, row, count=1, parent=None):
+        # TODO: add docstring
+        rowsRemoved = []
         logger.debug(f"Removing row at {row}.")
-        self.beginRemoveRows(QtCore.QModelIndex(), row, row)
-        del self._data[row]
+        if row == self.rowCount(): # if row index is at end of model, continue to remove the last row
+            self.beginRemoveRows(QtCore.QModelIndex(), row-count, row-1)
+            for i in range(count):
+                rowsRemoved.append(self._data.pop(row-(i+1)))
+        else:       # otherwise, remove the row at the given index
+            self.beginRemoveRows(QtCore.QModelIndex(), row, row+(count-1))
+            try:    # try to remove the row, and if it doesn't exist, log the error
+                for _ in range(count):
+                    rowsRemoved.append(self._data.pop(row))
+            except IndexError:
+                logger.error(f"Index out of range: {row}")
         self.endRemoveRows()
         logger.debug(f"Removed row at {row}.")
+        return rowsRemoved
 
-    def removeRows(self, row, count, index):
-        """Removes count rows at the given index.
-
-        Args:
-            row (int): the row to remove. 
-            count (int): the number of rows to remove.
-            index (QIndex): the index to remove the rows at.
-        """
-        logger.debug(f"Removing rows {row-count} to {row}.")
-        self.beginRemoveRows(QtCore.QModelIndex(), row-count, row)
-        for x in range(count):
-            del self._data[row-(x+1)]
-            logger.debug(f"Removed row {row-(x+1)}.")
-        self.endRemoveRows()
-        logger.debug(f"Removed rows {row-count} to {row}.")
+    def insertColumn(self, column, count=1, parent=None):
+        # TODO: add docstring
+        if column == 0:
+            logger.debug(f"Prepending {count} column(s) at beginning of model.")
+            self.beginInsertColumns(QtCore.QModelIndex(), column, column+(count-1))
+            for i in range(count):
+                for row in range(self.rowCount()):
+                    self._data[row].insert(i, color(random=self._debug))
+            self.endInsertColumns()
+            logger.debug(f"{count} new column(s) at index 0.")
+        elif column == self.columnCount():
+            logger.debug(f"Appending {count} column(s) at end of model.")
+            self.beginInsertColumns(QtCore.QModelIndex(), column, column+(count-1))
+            for i in range(count):
+                for row in range(self.rowCount()):
+                    self._data[row].append(color(random=self._debug))
+            self.endInsertColumns()
+            logger.debug(f"{count} new column(s) at index {column}.")
+        else:
+            logger.debug(f"Inserting {count} column(s) before {column}.")
+            self.beginInsertColumns(QtCore.QModelIndex(), column, column+(count-1))
+            for i in range(count):
+                for row in range(self.rowCount()):
+                    self._data[row].insert(column+i, color(random=self._debug))
+            self.endInsertColumns()
+            logger.debug(f"{count} new column(s) at index {column}.")
     
-    # TODO: implement ability to give index like insertColumn
-    def removeColumn(self, column, index):
-        """Removes a column at the given index.
-
-        Args:
-            column (int): the column to remove. 
-            index (QIndex): the index to remove the column at.
-        """
+    def removeColumn(self, column, count=1, parent=None):
+        # TODO add docstring
+        columnsRemoved = {}
         logger.debug(f"Removing column at {column}.")
-        self.beginRemoveColumns(QtCore.QModelIndex(), column, column)
-        for row in range(self.rowCount(index)):
-            del self._data[row][column]
+        if column == self.columnCount(): # if column index is at end of model, continue to remove the last column
+            self.beginRemoveColumns(QtCore.QModelIndex(), column-count, column-1)
+            for i in range(count):
+                for row in range(self.rowCount()):
+                    try:
+                        columnsRemoved[row] += [self._data[row].pop(column-(i+1))]
+                    except KeyError:    # if the key doesn't exist, create it
+                        columnsRemoved[row] = []
+                        columnsRemoved[row] += [self._data[row].pop(column-(i+1))]
+        else:       # otherwise, remove the column at the given index
+            self.beginRemoveColumns(QtCore.QModelIndex(), column, column+(count-1))
+            try:    # try to remove the column, and if it doesn't exist, log the error
+                for i in range(count):
+                    for row in range(self.rowCount()):
+                        try:
+                            columnsRemoved[row] += [self._data[row].pop(column)]
+                        except KeyError:   # if the key doesn't exist, create it
+                            columnsRemoved[row] = []
+                            columnsRemoved[row] += [self._data[row].pop(column)]            
+            except IndexError: # if the index is out of range, log the error
+                logger.error(f"Index out of range: {column}")
         self.endRemoveColumns()
         logger.debug(f"Removed column at {column}.")
-
-    def removeColumns(self, column, count, index):
-        """Removes count columns at the given index.
-
-        Args:
-            column (int): the column to remove. 
-            count (int): the number of columns to remove.
-            index (QIndex): the index to remove the columns at.
-        """
-        logger.debug(f"Removing columns {column-count} to {column}.")
-        self.beginRemoveColumns(QtCore.QModelIndex(), column-count, column)
-        for x in range(count):
-            for row in range(self.rowCount(index)):
-                del self._data[row][column-(x+1)]
-            logger.debug(f"Removed column {column-(x+1)}.")
-        self.endRemoveColumns()
-        logger.debug(f"Removed columns {column-count} to {column}.")
-
+        return columnsRemoved
+    
     def importData(self, data, debug=False):    # debug flag will fix issues importing data from a debug model to a non-debug existing model
         """Imports data into the BeadworkModel.
 
@@ -299,42 +282,22 @@ class BeadworkTransposeModel(QTransposeProxyModel):
         """Returns the number of columns in the model."""
         return self.sourceModel().rowCount(parent)
     
-    def insertRow(self, row, index):
+    def insertRow(self, row, count=1):
         """Inserts a row at the given index."""
         logger.debug("Calling insertColumn from BeadworkTransposeModel.")
-        self.sourceModel().insertColumn(row, index)
+        self.sourceModel().insertColumn(row, count)
 
-    def insertRows(self, row, count, index):
-        """Inserts count rows at the given index."""
-        logger.debug("Calling insertColumns from BeadworkTransposeModel.")
-        self.sourceModel().insertColumns(row, count, index)
-
-    def insertColumn(self, column, index):
+    def insertColumn(self, column, count=1):
         """Inserts a column at the given index."""
         logger.debug("Calling insertRow from BeadworkTransposeModel.")
-        self.sourceModel().insertRow(column, index)
+        self.sourceModel().insertRow(column, count)
 
-    def insertColumns(self, column, count, index):
-        """Inserts count columns at the given index."""
-        logger.debug("Calling insertRows from BeadworkTransposeModel.")
-        self.sourceModel().insertRows(column, count, index)
-
-    def removeRow(self, row, index):
+    def removeRow(self, row, count=1):
         """Removes a row at the given index."""
         logger.debug("Calling removeColumn from BeadworkTransposeModel.")
-        self.sourceModel().removeColumn(row, index)
-
-    def removeRows(self, row, count, index):
-        """Removes count rows at the given index."""
-        logger.debug("Calling removeColumns from BeadworkTransposeModel.")
-        self.sourceModel().removeColumns(row, count, index)
+        self.sourceModel().removeColumn(row, count)
     
-    def removeColumn(self, column, index):
+    def removeColumn(self, column, count=1):
         """Removes a column at the given index."""
         logger.debug("Calling removeRow from BeadworkTransposeModel.")
-        self.sourceModel().removeRow(column, index)
-
-    def removeColumns(self, column, count, index):
-        """Removes count columns at the given index."""
-        logger.debug("Calling removeRows from BeadworkTransposeModel.")
-        self.sourceModel().removeRows(column, count, index)
+        self.sourceModel().removeRow(column, count)
