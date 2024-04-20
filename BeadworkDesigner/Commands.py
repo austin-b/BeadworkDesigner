@@ -49,9 +49,11 @@ class CommandInsertRow(QUndoCommand):
 
     def redo(self):
         self.model.insertRow(self.row, self.count)
+        self.view.repaint()
 
     def undo(self):
         self.model.removeRow(self.row, self.count)
+        self.view.repaint()
 
 class CommandRemoveRow(QUndoCommand):
     def __init__(self, model, view, row, rowCount=1, description=None):
@@ -71,6 +73,7 @@ class CommandRemoveRow(QUndoCommand):
     def redo(self):
         self.rowData = self.model.removeRow(self.row, self.count)
         self.rowCountAfter = self.model.rowCount(None)
+        self.view.repaint()
 
     def undo(self):
         if self.row == self.rowCountBefore:
@@ -85,6 +88,7 @@ class CommandRemoveRow(QUndoCommand):
             for i in range(self.count):
                 for j in range(self.model.columnCount()):
                     self.model.setData(self.model.index(self.row + i, j), self.rowData[i][j], Qt.ItemDataRole.EditRole)
+        self.view.repaint()
       
 class CommandInsertColumn(QUndoCommand):
     def __init__(self, model, view, column, columnCount=1, description=None):
@@ -101,10 +105,12 @@ class CommandInsertColumn(QUndoCommand):
 
     def redo(self):
         self.model.insertColumn(self.column, self.count)
+        self.view.repaint()
 
     def undo(self):
         # TODO: only for testing, refactor when removeColumn is fixed
         self.model.removeColumn(self.column, self.count)
+        self.view.repaint()
 
 class CommandRemoveColumn(QUndoCommand):
     def __init__(self, model, view, column, columnCount=1, description=None):
@@ -124,6 +130,7 @@ class CommandRemoveColumn(QUndoCommand):
     def redo(self):
         self.columnData = self.model.removeColumn(self.column, self.count)
         self.columnCountAfter = self.model.columnCount(None)
+        self.view.repaint()
 
     # TODO: probably not going to work and will need the for loops fixed
     def undo(self):
@@ -142,3 +149,4 @@ class CommandRemoveColumn(QUndoCommand):
                 for r in range(self.model.rowCount()): 
                         logger.debug(f"Setting data at {r}, {self.column + i} to {self.columnData[r][i]}")
                         self.model.setData(self.model.index(r, self.column + i), self.columnData[r][i], Qt.ItemDataRole.EditRole)
+        self.view.repaint()
