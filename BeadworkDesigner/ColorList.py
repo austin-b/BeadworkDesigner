@@ -184,6 +184,7 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
         indexes = self.allIndexesForColor(initColor)
         logger.info(f"Changing all instances of {initColor} to {newColor}.")
         for index in indexes:
+            # TODO: make this an Undo/Redo command
             self.sourceModel().setData(index, newColor, Qt.ItemDataRole.EditRole)
 
     # runs through model and creates a dictionary of unique colors
@@ -221,9 +222,11 @@ class ColorList(QListView):
     Must call setModel() with a ColorListProxyModel to display the colors.
     """
 
-    def __init__(self):
+    def __init__(self, view=None):
         """Initializes the ColorList view and GUI elements."""
         super().__init__()
+
+        self.view = view
 
         self.triggeredIndex = None # index of the item that was right-clicked
 
@@ -233,7 +236,8 @@ class ColorList(QListView):
         self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.customContextMenuRequested.connect(self.customContextMenu)
 
-        self.selectAllAction = QAction("Select All", self) # TODO: implement
+        self.selectAllAction = QAction("Select All", self)
+        self.selectAllAction.triggered.connect(self.selectAll)
 
         self.changeAllAction = QAction("Change All Occurrences", self)
         self.changeAllAction.triggered.connect(self.openColorDialog)
@@ -256,6 +260,15 @@ class ColorList(QListView):
             menu.addAction(self.selectAllAction)
             menu.addAction(self.changeAllAction)
             menu.exec(self.mapToGlobal(point))
+
+    # TODO: make unittest
+    def selectAll(self):
+        """Selects all items in the ColorList."""
+        if self.view:
+            allIndexes = self.model().mapToAllSourceIndexes(self.triggeredIndex)
+            self.view.selectListOfBeads(allIndexes)
+        else:
+            logger.error("No view to select all items in.")
 
     def openColorDialog(self):
         """Opens the color dialog to select a new color."""

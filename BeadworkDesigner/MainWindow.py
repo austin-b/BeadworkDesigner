@@ -314,7 +314,7 @@ class MainWindow(QMainWindow):
     def setupColorList(self):
         """Sets up the ColorList view and the BeadworkToColorListProxyModel."""
         logger.debug("Setting up colorList.")
-        self.colorList = ColorList()
+        self.colorList = ColorList(view=self.beadworkView)
         self.colorListModel = BeadworkToColorListProxyModel()
         self.colorListModel.setSourceModel(self.model)
         self.model.dataChanged.connect(self.colorListModel.updateList)
