@@ -1,31 +1,9 @@
-"""
-Icons are provided by https://p.yusukekamiyamane.com/. They are licensed under a Creative Commons Attribution 3.0 License.
-"""
-
 #####################
-# TODO: make a Goals/Ideas/Features file
+# The main window of the application.
+# All new/planned features are described in the TODO.md file.
 #
-# TODO: add Save As file menu action
-# TODO: add "New Project" option to menu
-#       - have loadNewProject - needs to import default config and create blank project, not load default
-#       - OR: load default_project.json, but not allow Save, only Save As (determine via non-existent title field?)
-# TODO: change from RGB hex to HSV
-# TODO: Settings menu
-#       TODO: font options
-#       TODO: add a way to change the size of the beads
-# TODO: optimize -- 100 x 100 grid is slow and laggy
-# TODO: add a way to change the color of the background
-# TODO: add a "bucket fill" option/tool
-# TODO: implement undo and redo functionality
-#       - https://www.informit.com/articles/article.aspx?p=1187104&seqNum=3
-#       - https://doc.qt.io/qtforpython-6/overviews/qundo.html
-#       - https://doc.qt.io/qtforpython-6/PySide6/QtGui/QUndoStack.html#qundostack
-# TODO: implement a copy and paste functionality for selected beads
-# TODO: add a way to align beads horizontally and vertically
-# TODO: implement a way to group and ungroup beads for easier manipulation
-# TODO: Add a way to add text labels or annotations to the beadwork design
-# TODO: add a way to print or export to PDF
 #
+# Icons are provided by https://p.yusukekamiyamane.com/. They are licensed under a Creative Commons Attribution 3.0 License.
 #####################
 
 import logging
