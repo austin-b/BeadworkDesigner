@@ -11,6 +11,9 @@
     - [ ] add a way to change the size of the beads
 - [ ] add a way to change the color of the background
 - [ ] add a "bucket fill" option/tool
+- [x] optimize -- 100 x 100 grid is slow and laggy
+    - turns out it was all the log entries that I have now commented out
+- [x] implement undo and redo functionality
 - [ ] implement a copy and paste functionality for selected beads
 - [ ] add a way to align beads horizontally and vertically
 - [ ] implement a way to group and ungroup beads for easier manipulation
