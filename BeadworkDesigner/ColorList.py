@@ -215,7 +215,6 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
         self.evaluateModelForUniqueColors()
         self.dataChanged.emit(self.mapFromSource(topLeft), self.mapFromSource(bottomRight))
 
-# TODO: implement a method to select all in source model/view that match the color clicked on
 class ColorList(QListView):
     """A view for the ColorListProxyModel that displays a list of unique colors.
 

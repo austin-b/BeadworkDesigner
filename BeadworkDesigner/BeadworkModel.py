@@ -139,7 +139,13 @@ class BeadworkModel(QtCore.QAbstractTableModel):
     #   If row is 0, the rows are prepended to any existing rows in the parent.
     #   If row is rowCount() , the rows are appended to any existing rows in the parent.
     def insertRow(self, row, count=1, parent=None):
-        # TODO: add docstring
+        """Inserts a row at the given index.
+        
+        Args:
+            row (int): The index of the row to insert.
+            count (int, optional): The number of rows to insert. Defaults to 1.
+            parent (QModelIndex, optional): The parent index. Defaults to None.
+        """
         if row == 0:
             logger.debug(f"Prepending {count} row(s) at beginning of model.")
             self.beginInsertRows(QtCore.QModelIndex(), row, row+(count-1))
@@ -163,7 +169,13 @@ class BeadworkModel(QtCore.QAbstractTableModel):
             logger.debug(f"{count} new row(s) at index {row}.")
     
     def removeRow(self, row, count=1, parent=None):
-        # TODO: add docstring
+        """Removes a row at the given index.
+        
+        Args:
+            row (int): The index of the row to remove.
+            count (int, optional): The number of rows to remove. Defaults to 1.
+            parent (QModelIndex, optional): The parent index. Defaults to None.
+        """
         rowsRemoved = []
         logger.debug(f"Removing row at {row}.")
         if row == self.rowCount(): # if row index is at end of model, continue to remove the last row
@@ -182,7 +194,13 @@ class BeadworkModel(QtCore.QAbstractTableModel):
         return rowsRemoved
 
     def insertColumn(self, column, count=1, parent=None):
-        # TODO: add docstring
+        """Inserts a column at the given index.
+
+        Args:
+            column (int): The index of the column to insert.
+            count (int, optional): The number of columns to insert. Defaults to 1.
+            parent (QModelIndex, optional): The parent index. Defaults to None.
+        """
         if column == 0:
             logger.debug(f"Prepending {count} column(s) at beginning of model.")
             self.beginInsertColumns(QtCore.QModelIndex(), column, column+(count-1))
@@ -209,7 +227,13 @@ class BeadworkModel(QtCore.QAbstractTableModel):
             logger.debug(f"{count} new column(s) at index {column}.")
     
     def removeColumn(self, column, count=1, parent=None):
-        # TODO add docstring
+        """Removes a column at the given index.
+
+        Args:
+            column (int): The index of the column to remove.
+            count (int, optional): The number of columns to remove. Defaults to 1.
+            parent (QModelIndex, optional): The parent index. Defaults to None.
+        """
         columnsRemoved = {}
         logger.debug(f"Removing column at {column}.")
         if column == self.columnCount(): # if column index is at end of model, continue to remove the last column
