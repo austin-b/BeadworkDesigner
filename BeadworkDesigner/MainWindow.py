@@ -746,7 +746,7 @@ class MainWindow(QMainWindow):
 
         project = {
             "info": {
-                        "version": 0.1 # TODO: version checking?
+                        "version": 0.1
                     },
             "configs": self.project_configs,    # TODO: do I pull current configs from variables or reassign directly to configs?
             "project": self.origModel.exportData()
@@ -755,6 +755,7 @@ class MainWindow(QMainWindow):
 
     # TODO: this is a bit of a mess, but it works for now
     # TODO: handle failure to load project
+    # TODO: add version checking
     def importProject(self, filename):
         """Imports a project from a JSON file.
 
