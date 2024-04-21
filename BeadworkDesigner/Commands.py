@@ -34,6 +34,29 @@ class CommandChangeColor(QUndoCommand):
         logger.debug(f"Undoing color change at {self.index} from {self.oldColor} to {self.newColor}")
         self.model.setData(self.index, self.oldColor, Qt.ItemDataRole.EditRole)
 
+# TODO: make unittests
+class CommandChangeMultipleColors(QUndoCommand):
+    def __init__(self, model, indexes, color, description=None):
+        super().__init__(description)
+
+        self.model = model
+        self.indexes = indexes
+        self.color = f"#{color}"
+
+        self.oldColors = {}
+        for index in indexes:
+            self.oldColors[index] = self.model.data(index, Qt.ItemDataRole.DisplayRole)
+        
+    def redo(self):
+        for index in self.indexes:
+            logger.debug(f"Changing color at {index} from {self.oldColors[index]} to {self.color}")
+            self.model.setData(index, self.color, Qt.ItemDataRole.EditRole)
+
+    def undo(self):
+        for index in self.indexes:
+            logger.debug(f"Undoing color change at {index} from {self.oldColors[index]} to {self.color}")
+            self.model.setData(index, self.oldColors[index], Qt.ItemDataRole.EditRole)
+
 class CommandInsertRow(QUndoCommand):
     def __init__(self, model, view, row, rowCount=1, description=None):
         # from https://doc.qt.io/qtforpython-6/PySide6/QtCore/QAbstractItemModel.html#PySide6.QtCore.QAbstractItemModel.insertRows:

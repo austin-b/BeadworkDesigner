@@ -23,6 +23,7 @@ from BeadworkDesigner.BeadworkModel import (BeadworkModel, BeadworkTransposeMode
 from BeadworkDesigner.BeadworkView import BeadworkView
 from BeadworkDesigner.ColorList import BeadworkToColorListProxyModel, ColorList
 from BeadworkDesigner.Commands import (CommandChangeColor,
+                                       CommandChangeMultipleColors,
                                        CommandInsertRow,
                                        CommandRemoveRow,
                                        CommandInsertColumn,
@@ -228,7 +229,7 @@ class MainWindow(QMainWindow):
         self.removeColumnAction.setIcon(QIcon(os.path.join(icons_dir, "table-delete-column.png")))
 
         self.addRowAction = QAction('Add Row', self)
-        self.addRowAction.triggered.connect(lambda x: self.addRow(self.model, self.model.rowCount(QModelIndex())))
+        self.addRowAction.triggered.connect(self.addRow)
         self.addRowAction.setIcon(QIcon(os.path.join(icons_dir, "table-insert-row.png")))
 
         self.removeRowAction = QAction('Remove Row', self)
@@ -492,15 +493,15 @@ class MainWindow(QMainWindow):
         self.undoStack.push(command)
         self.updateWidthXHeight()
 
-    def addRow(self, row, count=1):
-        # TODO: add docstring
+    def addRow(self, row):
+        """Adds a single row to the original beadwork model."""
         logger.debug("Adding row.")
         command = CommandInsertRow(self.model, self.beadworkView, self.model.rowCount(), 1, f"Add row at index {self.model.rowCount()}")
         self.undoStack.push(command)
         self.updateWidthXHeight()           
 
     def removeRow(self):
-        # TODO: add docstring
+        """Removes a row from the original beadwork model."""
         logger.debug("Removing row.")
         command = CommandRemoveRow(self.model, self.beadworkView, self.model.rowCount(), 1, f"Add row at index {self.model.rowCount()}")
         self.undoStack.push(command)
@@ -566,8 +567,8 @@ class MainWindow(QMainWindow):
             self.undoStack.push(command) 
         elif self.colorMode.isChecked():
             selected = self.beadworkView.selectedIndexes()
-            for index in selected:
-                self.model.setData(index, f"#{colorString}", Qt.ItemDataRole.EditRole)
+            command = CommandChangeMultipleColors(self.model, selected, colorString, f"Change color to {colorString}")
+            self.undoStack.push(command)
         
     # NOTES:
         # selectionMode is default
