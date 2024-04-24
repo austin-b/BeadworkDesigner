@@ -44,6 +44,30 @@ def test_beadworkView_data(qtbot):
 
     assert(f"#{currentColorText}" == color)
 
+def test_beadworkView_selectListOfBeads(qtbot):
+    mainWindow = MainWindow(debug=True, app_configs=app_configs, project_configs=project_configs)
+    qtbot.addWidget(mainWindow)
+    mainWindow.show()
+    view = mainWindow.beadworkView
+
+    testRow, testColumn = 0, 0
+    view.clicked.emit(view.model().index(testRow, testColumn))
+
+    selection = [view.model().index(testRow, testColumn)]
+
+    view.selectListOfBeads(selection)
+
+    assert(view.selectionModel().selectedIndexes() == selection)
+
+    testRow, testColumn = 2, 2
+    view.clicked.emit(view.model().index(testRow, testColumn))
+
+    selection.append(view.model().index(testRow, testColumn))
+
+    view.selectListOfBeads(selection)
+
+    assert(view.selectionModel().selectedIndexes() == selection)
+
 def test_beadworkView_changeBeadColorFromDialog(qtbot):
     mainWindow = MainWindow(debug=True, app_configs=app_configs, project_configs=project_configs)
     qtbot.addWidget(mainWindow)
@@ -221,7 +245,6 @@ def test_beadworkView_changeWidth(qtbot):
     assert(view.verticalHeader().count() == view.model().rowCount(None))
     assert(view.horizontalHeader().count() == view.model().columnCount(None))
 
-# TODO: test for direct input values of any kind, not just current+1
 def test_beadworkView_changeHeightAfterOrientation(qtbot):
     mainWindow = MainWindow(debug=True, app_configs=app_configs, project_configs=project_configs)
     qtbot.addWidget(mainWindow)
@@ -261,7 +284,6 @@ def test_beadworkView_changeHeightAfterOrientation(qtbot):
     assert(view.verticalHeader().count() == view.model().rowCount(None))
     assert(view.horizontalHeader().count() == view.model().columnCount(None))
 
-# TODO: test for direct input values of any kind, not just current+1
 def test_beadworkView_changeWidthAfterOrientation(qtbot):
     mainWindow = MainWindow(debug=True, app_configs=app_configs, project_configs=project_configs)
     qtbot.addWidget(mainWindow)

@@ -53,7 +53,6 @@ class BeadworkView(QTableView):
 
         logger.debug(f"Model set to {model}.")
 
-    # TODO: build unit tests
     # TODO: any way to optimize?
     # ClearAndSelect flag does as it sounds - clears what was previously selected, and selects the next group
     def selectListOfBeads(self, selection, command=QItemSelectionModel.SelectionFlag.ClearAndSelect):

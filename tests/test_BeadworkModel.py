@@ -87,21 +87,30 @@ def test_BeadworkModel_insertColumn(testingModel, input_column):
     testingModel.insertColumn(columnCountBefore, count=1)
     assert(testingModel.columnCount(None) == columnCountBefore + 1)
 
-# TODO: make test for checking that these remove the proper row
 @pytest.mark.parametrize("input_row", [0, 3, 5])
 def test_BeadworkModel_removeRow(testingModel, input_row):
     rowCountBefore = testingModel.rowCount(None)
-    index = testingModel.index(input_row, 0)
-    testingModel.removeRow(input_row)
+
+    # double list because removeRow returns a list of lists
+    oldData = [[testingModel.data(testingModel.index(input_row, column), Qt.ItemDataRole.DisplayRole) for column in range(testingModel.columnCount(None))]]
+
+    removedData = testingModel.removeRow(input_row)
+
     assert(testingModel.rowCount(None) == rowCountBefore - 1)
+    assert(removedData == oldData)
 
 # TODO: make test for checking that these remove the proper column
 @pytest.mark.parametrize("input_column", [0, 2])
 def test_BeadworkModel_removeColumn(testingModel, input_column):
     columnCountBefore = testingModel.columnCount(None)
-    index = testingModel.index(0, input_column)
-    testingModel.removeColumn(input_column, count=1)
+    
+    # double list because removeColumn returns a list of lists
+    oldData = {input_column: [testingModel.data(testingModel.index(row, input_column), Qt.ItemDataRole.DisplayRole) for row in range(testingModel.rowCount(None))]}
+
+    removedData = testingModel.removeColumn(input_column, count=1)
+
     assert(testingModel.columnCount(None) == columnCountBefore - 1)
+    assert(removedData == oldData)
 
 def test_BeadworkModel_exportData(testingModel):
     testDict = testingModel.exportData()
