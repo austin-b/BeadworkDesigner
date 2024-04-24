@@ -457,26 +457,6 @@ class MainWindow(QMainWindow):
             self.beadworkView.selectListOfBeads(allIndexes)
         elif self.colorMode.isChecked():        # if in color mode, update the colorDialogWidget color
             self.currentColor.setText((self.colorListModel.data(index, Qt.ItemDataRole.DisplayRole)).upper())
-            # Sets all selected beads after changing the color in the colorDialogWidget
-
-    # TODO: build unit tests
-    def handleColorListClicked(self, index):
-        """Handles different behavior types for clicking on the ColorList
-        depending on the mode selected:
-            Selection Mode: selects all beads of the same color.
-            Color Mode: updates the colorDialogWidget color and selected beads.
-
-        Args:
-            index (QIndex): the location of the selected color in the ColorList.
-        """
-        logger.debug(f"ColorList clicked at index {index}.")
-        if self.selectionMode.isChecked():      # if in selection mode, select all beads of the same color
-            # TODO: select all beads of same color
-            # https://doc.qt.io/qtforpython-6/PySide6/QtWidgets/QAbstractItemView.html#PySide6.QtWidgets.QAbstractItemView.setSelection
-            allIndexes = self.colorListModel.mapToAllSourceIndexes(index)
-            self.beadworkView.selectListOfBeads(allIndexes)
-        elif self.colorMode.isChecked():        # if in color mode, update the colorDialogWidget color
-            self.currentColor.setText((self.colorListModel.data(index, Qt.ItemDataRole.DisplayRole)).upper())
             # Sets all selected beads after changing the color in the colorList
 
     def addColumn(self):
@@ -493,7 +473,7 @@ class MainWindow(QMainWindow):
         self.undoStack.push(command)
         self.updateWidthXHeight()
 
-    def addRow(self, row):
+    def addRow(self):
         """Adds a single row to the original beadwork model."""
         logger.debug("Adding row.")
         command = CommandInsertRow(self.model, self.beadworkView, self.model.rowCount(), 1, f"Add row at index {self.model.rowCount()}")
@@ -521,6 +501,7 @@ class MainWindow(QMainWindow):
         else:
             command = CommandRemoveColumn(self.model, self.beadworkView, self.model.columnCount(), self.modelWidth - value, f"Remove column at index {self.model.columnCount()}")
             self.undoStack.push(command)
+        self.updateWidthXHeight()
 
     def changeHeightTo(self, value):
         """Changes the height (rows) of the beadwork model to the specified value.
@@ -536,6 +517,7 @@ class MainWindow(QMainWindow):
         else:
             command = CommandRemoveRow(self.model, self.beadworkView, self.model.rowCount(), self.modelHeight - value, f"Remove row at index {self.model.rowCount()}")
             self.undoStack.push(command)
+        self.updateWidthXHeight()
 
     def adjustDimensions(self):
         """Adjusts the dimensions of the beadwork model to the specified width 
@@ -551,8 +533,6 @@ class MainWindow(QMainWindow):
 
         if newHeight != self.modelHeight:
             self.changeHeightTo(newHeight)
-
-        self.updateWidthXHeight()
 
         logger.info(f"New width: {newWidth}, New height: {newHeight}.")
 

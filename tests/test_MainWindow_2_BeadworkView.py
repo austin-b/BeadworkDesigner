@@ -146,7 +146,6 @@ def test_beadworkView_changeOrientationOTwice(qtbot):
     for i in range(view.model().columnCount(None)):
         assert(view.columnWidth(i) == view.beadWidth)
 
-# TODO: test for direct input values of any kind, not just current+1
 def test_beadworkView_changeHeight(qtbot):
     mainWindow = MainWindow(debug=True, app_configs=app_configs, project_configs=project_configs)
     qtbot.addWidget(mainWindow)
@@ -169,8 +168,22 @@ def test_beadworkView_changeHeight(qtbot):
     assert(view.verticalHeader().count() == view.model().rowCount(None))
     assert(view.horizontalHeader().count() == view.model().columnCount(None))
 
+    currentHeight = mainWindow.modelHeight
+    mainWindow.changeHeightTo(16)
 
-# TODO: test for direct input values of any kind, not just current+1
+    assert(view.model().rowCount(None) == 16)
+
+    assert(view.verticalHeader().count() == view.model().rowCount(None))
+    assert(view.horizontalHeader().count() == view.model().columnCount(None))
+
+    mainWindow.changeHeightTo(currentHeight)
+
+    assert(view.model().rowCount(None) == currentHeight)
+
+    assert(view.verticalHeader().count() == view.model().rowCount(None))
+    assert(view.horizontalHeader().count() == view.model().columnCount(None))
+
+
 def test_beadworkView_changeWidth(qtbot):
     mainWindow = MainWindow(debug=True, app_configs=app_configs, project_configs=project_configs)
     qtbot.addWidget(mainWindow)
@@ -189,6 +202,21 @@ def test_beadworkView_changeWidth(qtbot):
     mainWindow.removeColumnAction.trigger()
 
     assert(view.model().columnCount(None) == currentWidth - 1)
+
+    assert(view.verticalHeader().count() == view.model().rowCount(None))
+    assert(view.horizontalHeader().count() == view.model().columnCount(None))
+
+    currentWidth = mainWindow.modelWidth
+    mainWindow.changeWidthTo(16)
+
+    assert(view.model().columnCount(None) == 16)
+
+    assert(view.verticalHeader().count() == view.model().rowCount(None))
+    assert(view.horizontalHeader().count() == view.model().columnCount(None))
+
+    mainWindow.changeWidthTo(currentWidth)
+
+    assert(view.model().columnCount(None) == currentWidth)
 
     assert(view.verticalHeader().count() == view.model().rowCount(None))
     assert(view.horizontalHeader().count() == view.model().columnCount(None))
@@ -218,6 +246,21 @@ def test_beadworkView_changeHeightAfterOrientation(qtbot):
     assert(view.verticalHeader().count() == view.model().rowCount(None))
     assert(view.horizontalHeader().count() == view.model().columnCount(None))
 
+    currentHeight = mainWindow.modelHeight
+    mainWindow.changeHeightTo(16)
+
+    assert(view.model().rowCount(None) == 16)
+
+    assert(view.verticalHeader().count() == view.model().rowCount(None))
+    assert(view.horizontalHeader().count() == view.model().columnCount(None))
+
+    mainWindow.changeHeightTo(currentHeight)
+
+    assert(view.model().rowCount(None) == currentHeight)
+
+    assert(view.verticalHeader().count() == view.model().rowCount(None))
+    assert(view.horizontalHeader().count() == view.model().columnCount(None))
+
 # TODO: test for direct input values of any kind, not just current+1
 def test_beadworkView_changeWidthAfterOrientation(qtbot):
     mainWindow = MainWindow(debug=True, app_configs=app_configs, project_configs=project_configs)
@@ -238,6 +281,21 @@ def test_beadworkView_changeWidthAfterOrientation(qtbot):
     mainWindow.removeColumnAction.trigger()
 
     assert(view.model().columnCount(None) == currentWidth - 1)
+
+    assert(view.verticalHeader().count() == view.model().rowCount(None))
+    assert(view.horizontalHeader().count() == view.model().columnCount(None))
+
+    currentWidth = mainWindow.modelWidth
+    mainWindow.changeWidthTo(16)
+
+    assert(view.model().columnCount(None) == 16)
+
+    assert(view.verticalHeader().count() == view.model().rowCount(None))
+    assert(view.horizontalHeader().count() == view.model().columnCount(None))
+
+    mainWindow.changeWidthTo(currentWidth)
+
+    assert(view.model().columnCount(None) == currentWidth)
 
     assert(view.verticalHeader().count() == view.model().rowCount(None))
     assert(view.horizontalHeader().count() == view.model().columnCount(None))
@@ -284,4 +342,39 @@ def test_beadworkView_clearMode(qtbot):
     assert(view.model().data(view.model().index(testRow, testColumn), Qt.ItemDataRole.DisplayRole) == "#FFFFFF")
 
 def test_beadworkView_zoomIn(qtbot):
-    assert(False)
+    mainWindow = MainWindow(debug=True, app_configs=app_configs, project_configs=project_configs)
+    qtbot.addWidget(mainWindow)
+    mainWindow.show()
+    view = mainWindow.beadworkView
+
+    beadHeightBefore = view.beadHeight
+    beadWidthBefore = view.beadWidth
+
+    mainWindow.zoomIn()
+
+    assert(view.beadHeight == beadHeightBefore + 1)
+    assert(view.beadWidth == beadWidthBefore + 1)
+
+    mainWindow.zoomIn()
+
+    assert(view.beadHeight == beadHeightBefore + 2)
+    assert(view.beadWidth == beadWidthBefore + 2)
+
+def test_beadworkView_zoomOut(qtbot):
+    mainWindow = MainWindow(debug=True, app_configs=app_configs, project_configs=project_configs)
+    qtbot.addWidget(mainWindow)
+    mainWindow.show()
+    view = mainWindow.beadworkView
+
+    beadHeightBefore = view.beadHeight
+    beadWidthBefore = view.beadWidth
+
+    mainWindow.zoomOut()
+
+    assert(view.beadHeight == beadHeightBefore - 1)
+    assert(view.beadWidth == beadWidthBefore - 1)
+
+    mainWindow.zoomOut()
+
+    assert(view.beadHeight == beadHeightBefore - 2)
+    assert(view.beadWidth == beadWidthBefore - 2)

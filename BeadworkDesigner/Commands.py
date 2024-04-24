@@ -34,7 +34,6 @@ class CommandChangeColor(QUndoCommand):
         logger.debug(f"Undoing color change at {self.index} from {self.oldColor} to {self.newColor}")
         self.model.setData(self.index, self.oldColor, Qt.ItemDataRole.EditRole)
 
-# TODO: make unittests
 class CommandChangeMultipleColors(QUndoCommand):
     def __init__(self, model, indexes, color, description=None):
         super().__init__(description)

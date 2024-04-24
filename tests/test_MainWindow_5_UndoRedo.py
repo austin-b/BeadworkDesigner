@@ -17,8 +17,6 @@ def mainWindow(qtbot):
     qtbot.addWidget(window)
     return window
 
-# TODO: create test for CommandChangeColor
-
 def test_undoRedo_CommandChangeColor(mainWindow):
     mainWindow.colorMode.trigger()
     mainWindow.currentColor.setText("#FF0000")
@@ -34,6 +32,28 @@ def test_undoRedo_CommandChangeColor(mainWindow):
     
     mainWindow.redoAction.trigger()
     assert(mainWindow.beadworkView.model().data(mainWindow.beadworkView.model().index(0, 0), Qt.ItemDataRole.DisplayRole) == "#FF0000")
+
+def test_UndoRedo_CommandChangeMultipleColors(mainWindow):
+    mainWindow.colorMode.trigger()
+
+    oldColors = {mainWindow.beadworkView.model().index(0, 0): mainWindow.beadworkView.model().data(mainWindow.beadworkView.model().index(0, 0), Qt.ItemDataRole.DisplayRole),
+                 mainWindow.beadworkView.model().index(0, 1): mainWindow.beadworkView.model().data(mainWindow.beadworkView.model().index(0, 1), Qt.ItemDataRole.DisplayRole),
+                 mainWindow.beadworkView.model().index(0, 2): mainWindow.beadworkView.model().data(mainWindow.beadworkView.model().index(0, 2), Qt.ItemDataRole.DisplayRole)}
+
+    mainWindow.beadworkView.selectListOfBeads([mainWindow.beadworkView.model().index(0, 0),
+                                                mainWindow.beadworkView.model().index(0, 1),
+                                                mainWindow.beadworkView.model().index(0, 2)])
+    
+    mainWindow.currentColor.setText("#FF0000")
+
+    assert(mainWindow.beadworkView.model().data(mainWindow.beadworkView.model().index(0, 0), Qt.ItemDataRole.DisplayRole) == "#FF0000")
+    assert(mainWindow.beadworkView.model().data(mainWindow.beadworkView.model().index(0, 1), Qt.ItemDataRole.DisplayRole) == "#FF0000")
+    assert(mainWindow.beadworkView.model().data(mainWindow.beadworkView.model().index(0, 2), Qt.ItemDataRole.DisplayRole) == "#FF0000")
+
+    mainWindow.undoAction.trigger()
+    assert(all([mainWindow.beadworkView.model().data(mainWindow.beadworkView.model().index(0, 0), Qt.ItemDataRole.DisplayRole) == oldColors[mainWindow.beadworkView.model().index(0, 0)],
+                mainWindow.beadworkView.model().data(mainWindow.beadworkView.model().index(0, 1), Qt.ItemDataRole.DisplayRole) == oldColors[mainWindow.beadworkView.model().index(0, 1)],
+                mainWindow.beadworkView.model().data(mainWindow.beadworkView.model().index(0, 2), Qt.ItemDataRole.DisplayRole) == oldColors[mainWindow.beadworkView.model().index(0, 2)]]))
 
 def test_UndoRedo_CommandInsertRow(mainWindow):
     rowCountBefore = mainWindow.beadworkView.model().rowCount(None)
