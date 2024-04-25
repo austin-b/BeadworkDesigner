@@ -176,6 +176,9 @@ def test_MainWindow_clearModeOnly(mainWindow):
 
     assert(mainWindow.currentColor.text() == "")
 
+def test_MainWindow_setConfig(mainWindow):
+    assert(False)
+
 def test_MainWindow_configs(qtbot):
     app_configs = {
         "debug": True,

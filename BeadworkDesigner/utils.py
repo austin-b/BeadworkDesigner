@@ -3,6 +3,20 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+def readConfigFile(filename):
+    """Reads a configuration file in JSON format.
+
+    Args:
+        filename (str): The filename of the configuration file.
+
+    Returns:
+        dict: The configuration file as a dictionary.
+    """
+    with open(filename, 'r') as file:
+        config = json.load(file)
+    logger.info(f"Config file {filename} read.")
+    return config["project_configs"], config["app_configs"]
+
 def saveProject(project, filename):
     """Saves a project to a file in JSON format.
 

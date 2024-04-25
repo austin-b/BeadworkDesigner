@@ -431,7 +431,6 @@ class MainWindow(QMainWindow):
         if self.selectionMode.isChecked():      # if in selection mode, update the current color text
             self.updateCurrentColorText(index) 
         elif self.colorMode.isChecked():        # if in color mode, change the color of the bead selected
-            # TODO: currently, does set the color of the bead, but does not account for multiple selections
             command = CommandChangeColor(self.model, index, self.currentColor.text(), f"Change color to {self.currentColor.text()}")
             self.undoStack.push(command)
         elif self.clearMode.isChecked():        # if in clear mode, clear the color of the bead selected
@@ -796,12 +795,12 @@ class MainWindow(QMainWindow):
                     self.app_configs = {}
 
                 logger.error(f"Config {key} not found, returning default. Message: {e}.")
-                import bin.default_config as default_config
+                default_config = utils.loadProject(bin_dir + "/default_config.json")
                 try:
-                    self.project_configs[key] = default_config.project_configs[key]
+                    self.project_configs[key] = default_config["project_configs"][key]
                     value = self.project_configs[key]
                 except (TypeError, KeyError, AttributeError) as e:
-                    self.app_configs[key] = default_config.app_configs[key]
+                    self.app_configs[key] = default_config["app_configs"][key]
                     value = self.app_configs[key]
                 finally:
                     del default_config  # clean up

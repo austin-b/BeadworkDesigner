@@ -8,14 +8,14 @@ import sys
 from PySide6.QtWidgets import QApplication
 
 from BeadworkDesigner.MainWindow import MainWindow
-from BeadworkDesigner.utils import loadProject
+from BeadworkDesigner.utils import readConfigFile, loadProject
 
 # TODO: add capability to return config to default_config.py
 try:
-    from bin.config import project_configs, app_configs  # import config file
+    project_configs, app_configs = readConfigFile(os.path.join(os.path.abspath(__file__)), "bin/config.json")  # import config file
 except ImportError:
     logging.error("Custom config not found, importing default.")
-    from bin.default_config import project_configs, app_configs  # import default config file
+    project_configs, app_configs = readConfigFile(os.path.join(os.path.abspath(__file__)), "bin/config.json")  # import default config file
 
 parser = argparse.ArgumentParser(description="Beadwork Designer: An attempt at a Python-based desktop application for designing loom-based beadwork (https://en.wikipedia.org/wiki/Beadwork), also known as beadweaving (https://en.wikipedia.org/wiki/Bead_weaving).")
 parser.add_argument("--debug", help="Enable debug mode", action="store_true")
