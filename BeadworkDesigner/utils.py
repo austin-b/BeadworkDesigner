@@ -17,9 +17,6 @@ def readConfigFile(filename):
     logger.info(f"Config file {filename} read.")
     return config["project_configs"], config["app_configs"]
 
-# TODO: implement
-# project configs will save in the project, so only save the 
-# project configs if the user wants them to be default
 def saveConfigFile(configs, filename):
     """Saves a configuration file in JSON format.
 

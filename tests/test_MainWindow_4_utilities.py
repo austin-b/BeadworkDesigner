@@ -6,7 +6,7 @@ from BeadworkDesigner.utils import loadProject, readConfigFile
 
 testProjectFilesFolder = "tests/testProjectFiles/"
 testSavedProject = testProjectFilesFolder + "test.json"
-configFilePath = os.path.join(os.path.dirname(os.path.abspath(__file__)), "testProjectFiles/config.json")
+configFilePath = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../bin/config.json")
 
 @pytest.fixture
 def mainWindow(qtbot):
@@ -168,16 +168,6 @@ def test_MainWindow_clearModeOnly(mainWindow):
 
     assert(mainWindow.currentColor.text() == "")
 
-def test_MainWindow_setConfig(mainWindow):
-    mainWindow.setConfig("width", 15)
-    assert(mainWindow.project_configs["width"] == 15)
-
-    mainWindow.setConfig("beadHeight", 15)
-    mainWindow.saveConfig(configFilePath)
-    
-    _, newConfig = readConfigFile(configFilePath)
-    assert(newConfig["beadHeight"] == 15)
-
 def test_MainWindow_getConfig(qtbot):
     app_configs = {
         "debug": True,
@@ -193,3 +183,34 @@ def test_MainWindow_getConfig(qtbot):
 
     with pytest.raises(KeyError):
         window.getConfig("should_fail") # fails
+
+def test_MainWindow_setConfig(mainWindow):
+    mainWindow.setConfig("width", 15)
+    assert(mainWindow.project_configs["width"] == 15)
+
+    mainWindow.setConfig("beadHeight", 15)
+    mainWindow.saveAppConfig()
+    
+    _, newConfig = readConfigFile(configFilePath)
+    assert(newConfig["beadHeight"] == 15)
+
+    # now return to normal
+    mainWindow.setConfig("beadHeight", 22)
+    mainWindow.saveAppConfig()
+    
+    _, newConfig = readConfigFile(configFilePath)
+    assert(newConfig["beadHeight"] == 22)
+
+def test_MainWindow_saveDefaultProjectConfig(mainWindow):
+    mainWindow.setConfig("height", mainWindow.getConfig("height") + 1)
+    mainWindow.saveDefaultProjectConfig()
+    
+    newConfig = readConfigFile(configFilePath)
+    assert(newConfig[0] == mainWindow.project_configs)
+
+    # now return to normal
+    mainWindow.setConfig("height", mainWindow.getConfig("height") - 1)
+    mainWindow.saveDefaultProjectConfig()
+
+    newConfig = readConfigFile(configFilePath)
+    assert(newConfig[0] == mainWindow.project_configs)

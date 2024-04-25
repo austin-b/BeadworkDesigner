@@ -771,14 +771,19 @@ class MainWindow(QMainWindow):
         else:
             logger.error(f"Config {key} not found in project or app configs.")
 
-    def saveConfig(self, filename):
-        """Saves the app configurations to a JSON file."""
-        project_configs, _ = utils.readConfigFile(filename)
-        utils.saveProject({"app_configs": self.app_configs, "project_configs": project_configs}, filename)
+    # two different save methods as these will have separate sections in the
+    # Settings menu to change individually, and are different sets of settings
+    def saveAppConfig(self):
+        """Saves the app configurations to the config file."""
+        filename = os.path.join(bin_dir, "config.json")
+        default_project_configs, _ = utils.readConfigFile(filename) # not overwriting project configs, just app configs
+        utils.saveConfigFile({"app_configs": self.app_configs, "project_configs": default_project_configs}, filename)
 
-    # TODO: implement
     def saveDefaultProjectConfig(self):
-        pass
+        """Saves the default project configurations to the config file."""
+        filename = os.path.join(bin_dir, "config.json")
+        _, default_app_configs = utils.readConfigFile(filename) # not overwriting project configs, just app configs
+        utils.saveConfigFile({"app_configs": default_app_configs, "project_configs": self.project_configs}, filename)
 
     # retrieveConfig method: and if no config is available, log it to prevent errors (and use default config instead)
     # NOTE: this still fails with a KeyError if the key is not in any config
