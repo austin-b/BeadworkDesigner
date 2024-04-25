@@ -95,6 +95,7 @@ class MainWindow(QMainWindow):
         self.setupStatusBar()
         self.setupMenu()
         self.setupDimensionsWindow()
+        self.setupSettingsWindow()
   
         ### SETUP MAIN LAYOUT & WIDGET
         logger.debug("Setting up main layout and widget.")
@@ -268,6 +269,9 @@ class MainWindow(QMainWindow):
         self.adjustDimensionsAction = QAction('Adjust Dimensions', self)
         self.adjustDimensionsAction.triggered.connect(lambda x: self.dimensionsWindow.show())
 
+        self.settingsWindowAction = QAction('Settings', self)
+        self.settingsWindowAction.triggered.connect(lambda x: self.settingsWindow.show())
+
     def setupToolbar(self):
         """Sets up the toolbar with the orientationWidget and the actions."""
         logger.debug("Setting up self.toolbar.")
@@ -352,6 +356,8 @@ class MainWindow(QMainWindow):
 
         self.editMenu = self.menu.addMenu('Edit')
         self.editMenu.addAction(self.adjustDimensionsAction)
+        self.editMenu.addSeparator()
+        self.editMenu.addAction(self.settingsWindowAction)
 
         self.viewMenu = self.menu.addMenu('View')
         self.viewMenu.addAction(self.zoomInAction)
@@ -394,6 +400,13 @@ class MainWindow(QMainWindow):
         self.dimensionsWindowLayout.addWidget(heightLineWidget)
         self.dimensionsWindowLayout.addWidget(self.changeDimensionsButton)
 
+    def setupSettingsWindow(self):
+        """Sets up the settingsWindow."""
+        logger.debug("Setting up settingsWindow.")
+        self.settingsWindow = QWidget()
+        self.settingsWindow.setWindowTitle("Settings")
+        self.settingsWindow.setFixedSize(300, 200)
+        
     # This is currently the workaround as I cannot figure out how to
     # get the rows and columns to size properly without explicitly
     # calling repaint()

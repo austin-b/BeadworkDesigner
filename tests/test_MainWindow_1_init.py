@@ -82,6 +82,12 @@ def test_MainWindow_init_toolbar(mainWindow):
     assert(mainWindow.toolbar.actions()[14] == mainWindow.colorMode)
     assert(mainWindow.toolbar.actions()[15] == mainWindow.clearMode)
 
+def test_MainWindow_init_dimensionsWidget(mainWindow):
+    assert(False)
+
+def test_MainWindow_init_settingsWindow(mainWindow):
+    assert(False)
+
 def test_MainWindow_close(mainWindow):
     mainWindow.close()
     assert(not mainWindow.isVisible())

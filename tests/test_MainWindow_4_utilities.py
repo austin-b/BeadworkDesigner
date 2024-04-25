@@ -214,3 +214,6 @@ def test_MainWindow_saveDefaultProjectConfig(mainWindow):
 
     newConfig = readConfigFile(configFilePath)
     assert(newConfig[0] == mainWindow.project_configs)
+
+def test_MainWindow_settingsDialog(mainWindow):
+    assert(False)
