@@ -719,10 +719,10 @@ class MainWindow(QMainWindow):
 
         # these ifs are necessary as a horizontal model is only changing the orientation,
         # not the underlying structure
-        self.project_configs["width"] = self.modelWidth if self.currentOrientation == BeadworkOrientation.VERTICAL else self.modelHeight    
-        self.project_configs["height"] = self.modelHeight if self.currentOrientation == BeadworkOrientation.VERTICAL else self.modelWidth
+        self.setConfig("width", self.modelWidth if self.currentOrientation == BeadworkOrientation.VERTICAL else self.modelHeight)
+        self.setConfig("height", self.modelHeight if self.currentOrientation == BeadworkOrientation.VERTICAL else self.modelWidth)
 
-        self.project_configs["defaultOrientation"] = self.orientationOptions[self.currentOrientation]
+        self.setConfig("defaultOrientation", self.orientationOptions[self.currentOrientation])
 
         project = {
             "info": {
@@ -746,7 +746,7 @@ class MainWindow(QMainWindow):
 
         json = utils.loadProject(filename)
         for key in json['configs'].keys():
-            self.project_configs[key] = json['configs'][key]           # replace any config with the loaded one
+            self.setConfig(key, json['configs'][key])           # replace any config with the loaded one
         
         self.currentOrientation = BeadworkOrientation.VERTICAL     # if this does not match the config, it will be changed in the if statement
 
