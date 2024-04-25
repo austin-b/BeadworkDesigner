@@ -535,6 +535,33 @@ class MainWindow(QMainWindow):
 
         logger.info(f"New width: {newWidth}, New height: {newHeight}.")
 
+    def changeOrientation(self, spinboxValue): # does not use spinboxValue yet, may implement later if there are more orientation options
+        """Changes the orientation of the beadwork from horizontal to vertical or vice versa.
+
+        Args:
+            spinboxValue (str): the value of the spinbox when changed.
+        """
+        logger.debug(f"Changing orientation to {self.orientationOptions[self.currentOrientation]}.")
+
+        self.currentOrientation = BeadworkOrientation.VERTICAL if self.currentOrientation == BeadworkOrientation.HORIZONTAL else BeadworkOrientation.HORIZONTAL
+
+        # swap models
+        if self.model == self.origModel:
+            self.model = self.transposeModel
+        else:
+            self.model = self.origModel
+        self.beadworkView.setModel(self.model)
+        self.colorListModel.setSourceModel(self.model)
+
+        # change internal orientations of delegate and view
+        self.delegate.changeOrientation()
+        self.beadworkView.changeOrientation()
+        logger.debug(f"self.beadworkView.model() changed to {self.model}.")
+
+        self.updateWidthXHeight()
+
+        logger.info(f"Orientation changed to {self.orientationOptions[self.currentOrientation]}.")
+
     def changeColorFromCurrentColorDialog(self, colorString):
         """Changes the color of a selected bead when the colorDialog is updated.
 
@@ -615,33 +642,6 @@ class MainWindow(QMainWindow):
 
         logger.debug("Entered clear mode.")
 
-    def changeOrientation(self, spinboxValue): # does not use spinboxValue yet, may implement later if there are more orientation options
-        """Changes the orientation of the beadwork from horizontal to vertical or vice versa.
-
-        Args:
-            spinboxValue (str): the value of the spinbox when changed.
-        """
-        logger.debug(f"Changing orientation to {self.orientationOptions[self.currentOrientation]}.")
-
-        self.currentOrientation = BeadworkOrientation.VERTICAL if self.currentOrientation == BeadworkOrientation.HORIZONTAL else BeadworkOrientation.HORIZONTAL
-
-        # swap models
-        if self.model == self.origModel:
-            self.model = self.transposeModel
-        else:
-            self.model = self.origModel
-        self.beadworkView.setModel(self.model)
-        self.colorListModel.setSourceModel(self.model)
-
-        # change internal orientations of delegate and view
-        self.delegate.changeOrientation()
-        self.beadworkView.changeOrientation()
-        logger.debug(f"self.beadworkView.model() changed to {self.model}.")
-
-        self.updateWidthXHeight()
-
-        logger.info(f"Orientation changed to {self.orientationOptions[self.currentOrientation]}.")
-
     def zoomIn(self):
         self.beadworkView.setBeadSize(self.beadworkView.beadHeight + 1, self.beadworkView.beadWidth + 1)
         logger.debug(f"Zooming in to {self.beadworkView.beadHeight + 1} x {self.beadworkView.beadWidth + 1}.")
@@ -653,14 +653,6 @@ class MainWindow(QMainWindow):
     def zoomReset(self):
         self.beadworkView.setBeadSize(self.getConfig("beadHeight"), self.getConfig("beadWidth"))
         logger.debug(f"Resetting zoom to {self.getConfig('beadHeight')} x {self.getConfig('beadWidth')}.")
-
-    # TODO: currently shows the default_project.json filename -- refactor this to just pull 
-        # default config and a blank project data before implementing a single "SAVE" action
-        # without a file dialog
-    def loadNewProject(self):
-        """Loads a new project, replacing the current project with a blank one."""
-        logger.info("Loading new project")
-        self.importProject(bin_dir + "/default_project.json")
 
     def saveDialog(self):
         """Opens a file dialog to save the project to a JSON file."""
@@ -728,7 +720,7 @@ class MainWindow(QMainWindow):
             "info": {
                         "version": 0.1
                     },
-            "configs": self.project_configs,    # TODO: do I pull current configs from variables or reassign directly to configs?
+            "configs": self.project_configs,
             "project": self.origModel.exportData()
         }
         utils.saveProject(project, filename)
@@ -763,13 +755,13 @@ class MainWindow(QMainWindow):
 
         self.updateWidthXHeight()
 
-    def setConfig(self, key, value):
-        if key in self.project_configs:
-            self.project_configs[key] = value
-        elif key in self.app_configs:
-            self.app_configs[key] = value
-        else:
-            logger.error(f"Config {key} not found in project or app configs.")
+    # TODO: currently shows the default_project.json filename -- refactor this to just pull 
+    # default config and a blank project data before implementing a single "SAVE" action
+    # without a file dialog
+    def loadNewProject(self):
+        """Loads a new project, replacing the current project with a blank one."""
+        logger.info("Loading new project")
+        self.importProject(bin_dir + "/default_project.json")
 
     # two different save methods as these will have separate sections in the
     # Settings menu to change individually, and are different sets of settings
@@ -827,3 +819,11 @@ class MainWindow(QMainWindow):
         
         logger.debug(f"Returning {value} for {key}.")
         return value
+    
+    def setConfig(self, key, value):
+        if key in self.project_configs:
+            self.project_configs[key] = value
+        elif key in self.app_configs:
+            self.app_configs[key] = value
+        else:
+            logger.error(f"Config {key} not found in project or app configs.")
