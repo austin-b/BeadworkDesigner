@@ -1,3 +1,4 @@
+import os
 import pytest
 import logging
 
@@ -7,8 +8,9 @@ from PySide6.QtGui import QColor
 from BeadworkDesigner.MainWindow import MainWindow
 from BeadworkDesigner.BeadworkModel import BeadworkModel
 from BeadworkDesigner.ColorList import BeadworkToColorListProxyModel
+from BeadworkDesigner.utils import readConfigFile
 
-from bin.config import app_configs, project_configs
+project_configs, app_configs = readConfigFile(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../bin/config.json"))  # import config file
 
 # creates a list of unique colors from the BeadworkModel
 def uniqueColors(model):

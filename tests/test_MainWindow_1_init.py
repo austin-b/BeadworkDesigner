@@ -1,8 +1,10 @@
+import os
 import pytest
 
 from BeadworkDesigner.MainWindow import BeadworkOrientation, MainWindow
+from BeadworkDesigner.utils import readConfigFile
 
-from bin.config import app_configs, project_configs
+project_configs, app_configs = readConfigFile(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../bin/config.json"))  # import config file
 
 # What do I need to test?
 # - Are the proxy models working as expected?
