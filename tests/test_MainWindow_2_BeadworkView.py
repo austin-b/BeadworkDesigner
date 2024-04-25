@@ -22,8 +22,8 @@ def test_beadworkView_init(qtbot):
     assert(view.model() == mainWindow.origModel)
     assert(view.itemDelegate() == mainWindow.delegate)
     assert(view.showGrid() == False)
-    assert(view.beadHeight == 22)  # default value
-    assert(view.beadWidth == 12)   # default value
+    assert(view.beadHeight == mainWindow.getConfig("beadHeight"))  # default value
+    assert(view.beadWidth == mainWindow.getConfig("beadWidth"))   # default value
     assert(view.rowHeight(0) == view.beadHeight)  # default value
     assert(view.columnWidth(0) == view.beadWidth) # default value
     assert(view.verticalHeader().isVisible())
@@ -130,8 +130,8 @@ def test_beadworkView_changeOrientationOnce(qtbot):
     view = mainWindow.beadworkView
     view.changeOrientation()
 
-    assert(view.beadHeight == 12)
-    assert(view.beadWidth == 22)
+    assert(view.beadHeight == mainWindow.getConfig("beadWidth"))
+    assert(view.beadWidth == mainWindow.getConfig("beadHeight"))
 
     assert(view.verticalHeader().count() == view.model().rowCount(None))
     assert(view.horizontalHeader().count() == view.model().columnCount(None))
@@ -151,8 +151,8 @@ def test_beadworkView_changeOrientationOTwice(qtbot):
     assert(view.verticalHeader().count() == view.model().rowCount(None))
     assert(view.horizontalHeader().count() == view.model().columnCount(None))
 
-    assert(view.beadHeight == 12)
-    assert(view.beadWidth == 22)
+    assert(view.beadHeight == mainWindow.getConfig("beadWidth"))
+    assert(view.beadWidth == mainWindow.getConfig("beadHeight"))
 
     for i in range(view.model().rowCount(None)):
         assert(view.rowHeight(i) == view.beadHeight)
@@ -164,8 +164,8 @@ def test_beadworkView_changeOrientationOTwice(qtbot):
     assert(view.verticalHeader().count() == view.model().rowCount(None))
     assert(view.horizontalHeader().count() == view.model().columnCount(None))
 
-    assert(view.beadHeight == 22)
-    assert(view.beadWidth == 12)
+    assert(view.beadHeight == mainWindow.getConfig("beadHeight"))
+    assert(view.beadWidth == mainWindow.getConfig("beadWidth"))
 
     for i in range(view.model().rowCount(None)):
         assert(view.rowHeight(i) == view.beadHeight)
