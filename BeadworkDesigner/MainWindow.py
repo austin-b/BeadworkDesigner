@@ -28,6 +28,7 @@ from BeadworkDesigner.Commands import (CommandChangeColor,
                                        CommandRemoveRow,
                                        CommandInsertColumn,
                                        CommandRemoveColumn)
+from BeadworkDesigner.Settings import SettingsWindow
 
 logger = logging.getLogger(__name__)
 
@@ -400,12 +401,11 @@ class MainWindow(QMainWindow):
         self.dimensionsWindowLayout.addWidget(heightLineWidget)
         self.dimensionsWindowLayout.addWidget(self.changeDimensionsButton)
 
+    # TODO: do I need this setup function, or should I create a new SettingsWindow each time it's called (so I can pass in the configs)?
     def setupSettingsWindow(self):
         """Sets up the settingsWindow."""
         logger.debug("Setting up settingsWindow.")
-        self.settingsWindow = QWidget()
-        self.settingsWindow.setWindowTitle("Settings")
-        self.settingsWindow.setFixedSize(300, 200)
+        self.settingsWindow = SettingsWindow()
         
     # This is currently the workaround as I cannot figure out how to
     # get the rows and columns to size properly without explicitly

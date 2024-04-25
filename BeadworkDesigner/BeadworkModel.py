@@ -298,11 +298,11 @@ class BeadworkTransposeModel(QTransposeProxyModel):
 
         logger.info(f"BeadworkTransposeModel {self} created.")
 
-    def rowCount(self, parent):
+    def rowCount(self, parent=None):
         """Returns the number of rows in the model."""
         return self.sourceModel().columnCount(parent)
     
-    def columnCount(self, parent):
+    def columnCount(self, parent=None):
         """Returns the number of columns in the model."""
         return self.sourceModel().rowCount(parent)
     
