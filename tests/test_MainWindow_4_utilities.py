@@ -1,6 +1,6 @@
 import pytest
 
-from BeadworkDesigner.MainWindow import MainWindow
+from BeadworkDesigner.MainWindow import BeadworkOrientation, MainWindow
 from BeadworkDesigner.utils import loadProject
 
 testProjectFilesFolder = "tests/testProjectFiles/"
@@ -24,7 +24,6 @@ def mainWindow(qtbot):
     qtbot.addWidget(window)
     return window
 
-# TODO: add tests for ensuring all other GUI elements are properly
 # TODO: add tests for failure to load
 @pytest.mark.parametrize("filename", ["5x7_Vertical.json", "5x7_Horizontal.json"])
 def test_mainWindow_importProject(mainWindow, filename):
@@ -33,6 +32,21 @@ def test_mainWindow_importProject(mainWindow, filename):
     testProject = loadProject(filename)
     assert(mainWindow.origModel._data == testProject["project"])
     assert(mainWindow.project_configs == testProject["configs"])
+
+    if mainWindow.currentOrientation == BeadworkOrientation.VERTICAL:
+        assert(mainWindow.getConfig("defaultOrientation") == "Vertical")
+        assert(mainWindow.modelWidth == mainWindow.getConfig("width"))
+        assert(mainWindow.modelHeight == mainWindow.getConfig("height"))
+        assert(mainWindow.beadworkView.beadWidth == mainWindow.getConfig("beadWidth"))
+        assert(mainWindow.beadworkView.beadHeight == mainWindow.getConfig("beadHeight"))
+    else:
+        assert(mainWindow.getConfig("defaultOrientation") == "Horizontal")
+        assert(mainWindow.modelWidth == mainWindow.getConfig("height"))
+        assert(mainWindow.modelHeight == mainWindow.getConfig("width"))
+        assert(mainWindow.beadworkView.beadWidth == mainWindow.getConfig("beadHeight"))
+        assert(mainWindow.beadworkView.beadHeight == mainWindow.getConfig("beadWidth"))
+
+    assert(mainWindow.windowTitle() == f'Beadwork Designer - {filename}')
 
 # this test depends on loadProject to work properly to ensure identity of saved and loaded projects
     # -- probably not correct, but it's a start
@@ -172,8 +186,8 @@ def test_MainWindow_configs(qtbot):
     }
 
     window = MainWindow(debug=False, app_configs=app_configs)
-    assert(window.retrieveConfig("height") == 12) # not provided, from default_configs
-    assert(window.retrieveConfig("beadHeight") == 22) # from app_configs
+    assert(window.getConfig("height") == 12) # not provided, from default_configs
+    assert(window.getConfig("beadHeight") == 22) # from app_configs
 
     with pytest.raises(KeyError):
-        window.retrieveConfig("should_fail") # fails
+        window.getConfig("should_fail") # fails

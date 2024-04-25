@@ -270,6 +270,7 @@ class ColorList(QListView):
         else:
             logger.error("No view to select all items in.")
 
+    # TODO: test ColorDialog
     def openColorDialog(self):
         """Opens the color dialog to select a new color."""
         self.colorDialog.show()

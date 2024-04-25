@@ -60,7 +60,7 @@ def test_MainWindow_init_colorDialogWidget(mainWindow):
     assert(mainWindow.currentColor.text() == "")
 
 def test_MainWindow_init_colorList(mainWindow):
-    pass # TODO: implement test_MainWindow_init_colorList
+    assert(mainWindow.colorList.model() == mainWindow.colorListModel)
 
 def test_MainWindow_init_toolbar(mainWindow):
     assert(mainWindow.toolbar.actions()[0] == mainWindow.toolbarOrientationAction)

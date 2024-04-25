@@ -70,14 +70,14 @@ class MainWindow(QMainWindow):
         self.undoStack = QUndoStack(self)
 
         ### TRACK INITIAL ORIENTATION
-        if self.retrieveConfig("defaultOrientation") == "Horizontal":
+        if self.getConfig("defaultOrientation") == "Horizontal":
             self.currentOrientation = BeadworkOrientation.HORIZONTAL
         else:
             self.currentOrientation = BeadworkOrientation.VERTICAL
         
         ### SETUP MODELS & VIEW
-        self.setupModels(self.retrieveConfig("height"), self.retrieveConfig("width"), modelData)
-        self.setupView(self.retrieveConfig("beadHeight"), self.retrieveConfig("beadWidth"))
+        self.setupModels(self.getConfig("height"), self.getConfig("width"), modelData)
+        self.setupView(self.getConfig("beadHeight"), self.getConfig("beadWidth"))
 
         ### KEEP TRACK OF INITIAL WIDTH x HEIGHT
         self.modelWidth = self.model.columnCount(QModelIndex())
@@ -652,8 +652,8 @@ class MainWindow(QMainWindow):
         logger.debug(f"Zooming out to {self.beadworkView.beadHeight - 1} x {self.beadworkView.beadWidth - 1}.")
 
     def zoomReset(self):
-        self.beadworkView.setBeadSize(self.retrieveConfig("beadHeight"), self.retrieveConfig("beadWidth"))
-        logger.debug(f"Resetting zoom to {self.retrieveConfig('beadHeight')} x {self.retrieveConfig('beadWidth')}.")
+        self.beadworkView.setBeadSize(self.getConfig("beadHeight"), self.getConfig("beadWidth"))
+        logger.debug(f"Resetting zoom to {self.getConfig('beadHeight')} x {self.getConfig('beadWidth')}.")
 
     # TODO: currently shows the default_project.json filename -- refactor this to just pull 
         # default config and a blank project data before implementing a single "SAVE" action
@@ -752,7 +752,7 @@ class MainWindow(QMainWindow):
         self.currentOrientation = BeadworkOrientation.VERTICAL     # if this does not match the config, it will be changed in the if statement
 
         ### LOAD DATA
-        self.origModel.importData(json['project'], debug=self.retrieveConfig('debug'))
+        self.origModel.importData(json['project'], debug=self.getConfig('debug'))
 
         ### UPDATE ELEMENTS & CHANGE ORIENTATION IF NECESSARY
         if json['configs']["defaultOrientation"] == "Horizontal":
@@ -761,12 +761,14 @@ class MainWindow(QMainWindow):
             self.orientationComboBox.currentTextChanged.disconnect(self.changeOrientation)  # temporarily disconnect signal  
             self.orientationComboBox.setCurrentText("Horizontal")                           # to avoid switching back to Vertical on this set
             self.orientationComboBox.currentTextChanged.connect(self.changeOrientation)     # reconnect signal
-        else:
-            self.updateWidthXHeight()
+
+        self.updateWidthXHeight()
+
+    # TODO: make a setConfig method to handle setting configs
 
     # retrieveConfig method: and if no config is available, log it to prevent errors (and use default config instead)
     # NOTE: this still fails with a KeyError if the key is not in any config
-    def retrieveConfig(self, key, config=None):
+    def getConfig(self, key, config=None):
         """Retrieves a configuration value from the project or app configs.
 
         Args:
