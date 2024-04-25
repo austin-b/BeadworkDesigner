@@ -1,4 +1,5 @@
 import logging
+import os
 
 from PySide6.QtWidgets import (QFormLayout,
                                QLineEdit,
@@ -6,12 +7,18 @@ from PySide6.QtWidgets import (QFormLayout,
                                QVBoxLayout,
                                QWidget)
 
+from BeadworkDesigner import utils
+
 logger = logging.getLogger(__name__)
 
 # TODO: currently only passing in configs at time of setup, will need to
 # refactor for passing in current configs
 
 # TODO: add save/cancel buttons
+
+base_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
+bin_dir = os.path.join(base_dir, "bin")
+configFile = os.path.join(bin_dir, "config.json")
 
 class SettingsWindow(QWidget):
     def __init__(self, app_configs, project_configs):
@@ -50,6 +57,16 @@ class SettingsWindow(QWidget):
         self.setLayout(mainlayout)
 
         logger.info("Settings window initialized.")
+
+    def saveAppConfig(self):
+        """Saves the app configurations to the config file."""
+        default_project_configs, _ = utils.readConfigFile(configFile) # not overwriting project configs, just app configs
+        utils.saveConfigFile({"app_configs": self.app_configs, "project_configs": default_project_configs}, configFile)
+
+    def saveDefaultProjectConfig(self):
+        """Saves the default project configurations to the config file."""
+        _, default_app_configs = utils.readConfigFile(configFile) # not overwriting project configs, just app configs
+        utils.saveConfigFile({"app_configs": default_app_configs, "project_configs": self.project_configs}, configFile)
 
     def closeEvent(self, event):
         logger.info("Settings window closed.")

@@ -96,7 +96,6 @@ class MainWindow(QMainWindow):
         self.setupStatusBar()
         self.setupMenu()
         self.setupDimensionsWindow()
-        self.setupSettingsWindow()
   
         ### SETUP MAIN LAYOUT & WIDGET
         logger.debug("Setting up main layout and widget.")
@@ -271,7 +270,7 @@ class MainWindow(QMainWindow):
         self.adjustDimensionsAction.triggered.connect(lambda x: self.dimensionsWindow.show())
 
         self.settingsWindowAction = QAction('Settings', self)
-        self.settingsWindowAction.triggered.connect(lambda x: self.settingsWindow.show())
+        self.settingsWindowAction.triggered.connect(self.openSettingsWindow)
 
     def setupToolbar(self):
         """Sets up the toolbar with the orientationWidget and the actions."""
@@ -400,12 +399,6 @@ class MainWindow(QMainWindow):
         self.dimensionsWindowLayout.addWidget(widthLineWidget)
         self.dimensionsWindowLayout.addWidget(heightLineWidget)
         self.dimensionsWindowLayout.addWidget(self.changeDimensionsButton)
-
-    # TODO: do I need this setup function, or should I create a new SettingsWindow each time it's called (so I can pass in the configs)?
-    def setupSettingsWindow(self):
-        """Sets up the settingsWindow."""
-        logger.debug("Setting up settingsWindow.")
-        self.settingsWindow = SettingsWindow(self.app_configs, self.project_configs)
         
     # This is currently the workaround as I cannot figure out how to
     # get the rows and columns to size properly without explicitly
@@ -688,6 +681,13 @@ class MainWindow(QMainWindow):
         if filename:
             self.importProject(filename)
 
+    def openSettingsWindow(self):
+        """Opens a settings window."""
+        logger.info("Opening settings window.")
+        settings = SettingsWindow(self.app_configs, self.project_configs)
+        settings.show()
+        logger.info("Settings window opened.")
+
     ########################################
     # UTILITY METHODS
     ########################################
@@ -775,20 +775,6 @@ class MainWindow(QMainWindow):
         """Loads a new project, replacing the current project with a blank one."""
         logger.info("Loading new project")
         self.importProject(bin_dir + "/default_project.json")
-
-    # two different save methods as these will have separate sections in the
-    # Settings menu to change individually, and are different sets of settings
-    def saveAppConfig(self):
-        """Saves the app configurations to the config file."""
-        filename = os.path.join(bin_dir, "config.json")
-        default_project_configs, _ = utils.readConfigFile(filename) # not overwriting project configs, just app configs
-        utils.saveConfigFile({"app_configs": self.app_configs, "project_configs": default_project_configs}, filename)
-
-    def saveDefaultProjectConfig(self):
-        """Saves the default project configurations to the config file."""
-        filename = os.path.join(bin_dir, "config.json")
-        _, default_app_configs = utils.readConfigFile(filename) # not overwriting project configs, just app configs
-        utils.saveConfigFile({"app_configs": default_app_configs, "project_configs": self.project_configs}, filename)
 
     # retrieveConfig method: and if no config is available, log it to prevent errors (and use default config instead)
     # NOTE: this still fails with a KeyError if the key is not in any config
