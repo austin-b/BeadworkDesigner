@@ -1,25 +1,17 @@
+import os
 import pytest
 
 from BeadworkDesigner.MainWindow import BeadworkOrientation, MainWindow
-from BeadworkDesigner.utils import loadProject
+from BeadworkDesigner.utils import loadProject, readConfigFile
 
 testProjectFilesFolder = "tests/testProjectFiles/"
 testSavedProject = testProjectFilesFolder + "test.json"
+configFilePath = os.path.join(os.path.dirname(os.path.abspath(__file__)), "testProjectFiles/config.json")
 
 @pytest.fixture
 def mainWindow(qtbot):
-    app_configs = {
-        "debug": True,
+    project_configs, app_configs = readConfigFile(configFilePath)  # import config file
 
-        # defaults
-        "beadHeight": 22,
-        "beadWidth": 12,
-    }
-    project_configs = {
-        "width": 10,
-        "height": 12,
-        "defaultOrientation": "Vertical"
-    }
     window = MainWindow(debug=False, app_configs=app_configs, project_configs=project_configs)
     qtbot.addWidget(window)
     return window
@@ -177,9 +169,16 @@ def test_MainWindow_clearModeOnly(mainWindow):
     assert(mainWindow.currentColor.text() == "")
 
 def test_MainWindow_setConfig(mainWindow):
-    assert(False)
+    mainWindow.setConfig("width", 15)
+    assert(mainWindow.project_configs["width"] == 15)
 
-def test_MainWindow_configs(qtbot):
+    mainWindow.setConfig("beadHeight", 15)
+    mainWindow.saveConfig(configFilePath)
+    
+    _, newConfig = readConfigFile(configFilePath)
+    assert(newConfig["beadHeight"] == 15)
+
+def test_MainWindow_getConfig(qtbot):
     app_configs = {
         "debug": True,
 

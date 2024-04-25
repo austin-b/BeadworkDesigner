@@ -10,11 +10,11 @@ import logging
 import os
 from enum import Enum
 
-from PySide6.QtCore import QItemSelectionModel, QModelIndex, Qt
+from PySide6.QtCore import QModelIndex, Qt
 from PySide6.QtGui import QAction, QIcon, QUndoStack
 from PySide6.QtWidgets import (QColorDialog, QComboBox, QFileDialog,
                                QHBoxLayout, QLabel, QLineEdit, QMainWindow,
-                               QPushButton, QSpinBox, QStatusBar, QToolBar,
+                               QPushButton, QStatusBar, QToolBar,
                                QVBoxLayout, QWidget)
 
 import BeadworkDesigner.utils as utils
@@ -763,7 +763,22 @@ class MainWindow(QMainWindow):
 
         self.updateWidthXHeight()
 
-    # TODO: make a setConfig method to handle setting configs
+    def setConfig(self, key, value):
+        if key in self.project_configs:
+            self.project_configs[key] = value
+        elif key in self.app_configs:
+            self.app_configs[key] = value
+        else:
+            logger.error(f"Config {key} not found in project or app configs.")
+
+    def saveConfig(self, filename):
+        """Saves the app configurations to a JSON file."""
+        project_configs, _ = utils.readConfigFile(filename)
+        utils.saveProject({"app_configs": self.app_configs, "project_configs": project_configs}, filename)
+
+    # TODO: implement
+    def saveDefaultProjectConfig(self):
+        pass
 
     # retrieveConfig method: and if no config is available, log it to prevent errors (and use default config instead)
     # NOTE: this still fails with a KeyError if the key is not in any config
