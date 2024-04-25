@@ -405,7 +405,7 @@ class MainWindow(QMainWindow):
     def setupSettingsWindow(self):
         """Sets up the settingsWindow."""
         logger.debug("Setting up settingsWindow.")
-        self.settingsWindow = SettingsWindow()
+        self.settingsWindow = SettingsWindow(self.app_configs, self.project_configs)
         
     # This is currently the workaround as I cannot figure out how to
     # get the rows and columns to size properly without explicitly

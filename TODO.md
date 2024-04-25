@@ -9,6 +9,7 @@
 - [ ] Settings menu
     - [ ] font options
     - [ ] add a way to change the size of the beads
+    - [ ] rewrite configs to be QSettings? https://doc.qt.io/qt-6/qsettings.html
 - [ ] add a way to change the color of the background
 - [ ] add a "bucket fill" option/tool
 - [x] optimize -- 100 x 100 grid is slow and laggy
