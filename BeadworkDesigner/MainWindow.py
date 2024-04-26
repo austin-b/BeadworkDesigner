@@ -661,14 +661,17 @@ class MainWindow(QMainWindow):
         logger.debug("Entered clear mode.")
 
     def zoomIn(self):
+        """Zooms in on the beadwork by increasing the size of the beads."""
         self.beadworkView.setBeadSize(self.beadworkView.beadHeight + 1, self.beadworkView.beadWidth + 1)
         logger.debug(f"Zooming in to {self.beadworkView.beadHeight + 1} x {self.beadworkView.beadWidth + 1}.")
 
     def zoomOut(self):
+        """Zooms out on the beadwork by decreasing the size of the beads."""
         self.beadworkView.setBeadSize(self.beadworkView.beadHeight - 1, self.beadworkView.beadWidth - 1)
         logger.debug(f"Zooming out to {self.beadworkView.beadHeight - 1} x {self.beadworkView.beadWidth - 1}.")
 
     def zoomReset(self):
+        """Resets the zoom of the beadwork to the default size."""
         self.beadworkView.setBeadSize(self.getConfig("beadHeight"), self.getConfig("beadWidth"))
         logger.debug(f"Resetting zoom to {self.getConfig('beadHeight')} x {self.getConfig('beadWidth')}.")
 
@@ -716,6 +719,7 @@ class MainWindow(QMainWindow):
         logger.info("Opening settings window.")
         self.settingsWindow.updateConfigs(self.app_configs, self.project_configs)
         self.settingsWindow.show()
+        # TODO: check for and update any changes to the app after closing the settings window - esp. for graphics changes, i.e. font or color changes
 
     ########################################
     # UTILITY METHODS

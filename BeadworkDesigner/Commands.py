@@ -35,7 +35,17 @@ class CommandChangeColor(QUndoCommand):
         self.model.setData(self.index, self.oldColor, Qt.ItemDataRole.EditRole)
 
 class CommandChangeMultipleColors(QUndoCommand):
+    """Command to change the color of multiple beads in the BeadworkModel."""
+
     def __init__(self, model, indexes, color, description=None):
+        """Create a new CommandChangeMultipleColors object.
+
+        Args:
+            model (BeadworkModel): The model that contains the data to be changed.
+            indexes (list): A list of QModelIndex objects representing the data to be changed.
+            color (str): The new color to be set (no leading '#').
+            description (str, optional): The description of the command. Defaults to None.
+        """
         super().__init__(description)
 
         self.model = model
@@ -57,7 +67,18 @@ class CommandChangeMultipleColors(QUndoCommand):
             self.model.setData(index, self.oldColors[index], Qt.ItemDataRole.EditRole)
 
 class CommandInsertRow(QUndoCommand):
+    """Command to insert a row into the BeadworkModel."""
+
     def __init__(self, model, view, row, rowCount=1, description=None):
+        """Create a new CommandInsertRow object.
+
+        Args:
+            model (BeadworkModel): The model to insert the row into.
+            view (BeadworkView): The view to repaint after the row is inserted.
+            row (int): The row to insert the new row before.
+            rowCount (int, optional): The number of rows to insert. Defaults to 1.
+            description (str, optional): The description of the command. Defaults to None.
+        """
         # from https://doc.qt.io/qtforpython-6/PySide6/QtCore/QAbstractItemModel.html#PySide6.QtCore.QAbstractItemModel.insertRows:
         #   inserts count rows into the model before the given row
         #   If row is 0, the rows are prepended to any existing rows in the parent.
@@ -78,7 +99,18 @@ class CommandInsertRow(QUndoCommand):
         self.view.repaint()
 
 class CommandRemoveRow(QUndoCommand):
+    """Command to remove a row from the BeadworkModel."""
+
     def __init__(self, model, view, row, rowCount=1, description=None):
+        """Create a new CommandRemoveRow object.
+
+        Args:
+            model (BeadworkModel): The model to remove the row from.
+            view (BeadworkView): The view to repaint after the row is removed.
+            row (int): The row to remove.
+            rowCount (int, optional): The number of rows to remove. Defaults to 1.
+            description (str, optional): The description of the command. Defaults to None.
+        """
         super().__init__(description)
 
         self.model = model
@@ -113,7 +145,18 @@ class CommandRemoveRow(QUndoCommand):
         self.view.repaint()
       
 class CommandInsertColumn(QUndoCommand):
+    """Command to insert a column into the BeadworkModel."""
+
     def __init__(self, model, view, column, columnCount=1, description=None):
+        """Create a new CommandInsertColumn object.
+
+        Args:
+            model (BeadworkModel): The model to insert the column into.
+            view (BeadworkView): The view to repaint after the column is inserted.
+            column (int): The column to insert the new column before.
+            columnCount (int, optional): The number of columns to insert. Defaults to 1.
+            description (str, optional): The description of the command. Defaults to None.
+        """
         # from https://doc.qt.io/qtforpython-6/PySide6/QtCore/QAbstractItemModel.html#PySide6.QtCore.QAbstractItemModel.insertRows:
         #   inserts count rows into the model before the given row
         #   If row is 0, the rows are prepended to any existing rows in the parent.
@@ -135,7 +178,18 @@ class CommandInsertColumn(QUndoCommand):
         self.view.repaint()
 
 class CommandRemoveColumn(QUndoCommand):
+    """Command to remove a column from the BeadworkModel."""
+
     def __init__(self, model, view, column, columnCount=1, description=None):
+        """Create a new CommandRemoveColumn object.
+
+        Args:
+            model (BeadworkModel): The model to remove the column from.
+            view (BeadworkView): The view to repaint after the column is removed.
+            column (int): The column to remove.
+            columnCount (int, optional): The number of columns to remove. Defaults to 1.
+            description (str, optional): The description of the command. Defaults to None.
+        """
         super().__init__(description)
 
         self.model = model
@@ -154,7 +208,6 @@ class CommandRemoveColumn(QUndoCommand):
         self.columnCountAfter = self.model.columnCount(None)
         self.view.repaint()
 
-    # TODO: probably not going to work and will need the for loops fixed
     def undo(self):
         if self.column == self.columnCountBefore:
             self.model.insertColumn(self.columnCountAfter, self.count)

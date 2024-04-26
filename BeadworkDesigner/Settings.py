@@ -17,7 +17,15 @@ bin_dir = os.path.join(base_dir, "bin")
 configFile = os.path.join(bin_dir, "config.json")
 
 class SettingsWindow(QWidget):
+    """A window for changing the application and project configurations."""
+
     def __init__(self, app_configs, project_configs):
+        """Initializes the settings window.
+
+        Args:
+            app_configs (dict): The application configurations.
+            project_configs (dict): The project configurations.
+        """
         super().__init__()
 
         self.setWindowTitle("Settings")
@@ -75,7 +83,8 @@ class SettingsWindow(QWidget):
         
         Args:
             app_configs (dict): The new app configurations.
-            project_configs (dict): The new project configurations."""
+            project_configs (dict): The new project configurations.
+        """
         self.app_configs = app_configs
         self.project_configs = project_configs
 
@@ -104,4 +113,5 @@ class SettingsWindow(QWidget):
         utils.saveConfigFile({"app_configs": default_app_configs, "project_configs": self.project_configs}, configFile)
 
     def closeEvent(self, event):
+        """Logs that the settings window was closed."""
         logger.info("Settings window closed.")

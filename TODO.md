@@ -16,7 +16,8 @@
     - turns out it was all the log entries that I have now commented out
 - [x] implement undo and redo functionality
 - [ ] implement a copy and paste functionality for selected beads
-- [ ] add a way to align beads horizontally and vertically
+- [ ] add a way to align beads horizontally and vertically ?
 - [ ] implement a way to group and ungroup beads for easier manipulation
 - [ ] Add a way to add text labels or annotations to the beadwork design
 - [ ] add a way to print or export to PDF
+- [ ] add different levels of logging (so that DEBUG doesn't give EVERYTHING, but that another level will)
