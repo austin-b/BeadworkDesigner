@@ -1,8 +1,10 @@
 import logging
 import os
 
-from PySide6.QtWidgets import (QFormLayout,
+from PySide6.QtWidgets import (QPushButton,
+                               QFormLayout,
                                QLineEdit,
+                               QHBoxLayout,
                                QTabWidget, 
                                QVBoxLayout,
                                QWidget)
@@ -31,39 +33,71 @@ class SettingsWindow(QWidget):
 
         mainlayout = QVBoxLayout()
 
-        self.tab = QTabWidget()
+        tab = QTabWidget()
 
-        self.updateConfigs(app_configs, project_configs)
+        appConfigTab = QWidget()
+        appConfigTabLayout = QVBoxLayout()
+        self.appConfigForm = QFormLayout()
 
-        mainlayout.addWidget(self.tab)
+        for key in self.app_configs.keys():
+            self.appConfigForm.addRow(key, QLineEdit(str(self.app_configs[key]))) # wrapped in str() because QLineEdit only accepts strings, not bools
+
+        appConfigTabLayout.addLayout(self.appConfigForm)
+
+        saveAppConfigButton = QPushButton("Save App Configs")
+        saveAppConfigButton.clicked.connect(self.saveAppConfig)
+
+        appConfigTabLayout.addWidget(saveAppConfigButton)
+
+        appConfigTab.setLayout(appConfigTabLayout)
+
+        projectConfigTab = QWidget()
+        projectConfigTabLayout = QVBoxLayout()
+        self.projectConfigForm = QFormLayout()
+
+        for key in self.project_configs.keys():
+            self.projectConfigForm.addRow(key, QLineEdit(str(self.project_configs[key]))) # wrapped in str() because QLineEdit only accepts strings, not bools
+
+        projectConfigTabLayout.addLayout(self.projectConfigForm)
+
+        saveDefaultProjectConfigButton = QPushButton("Save Default Project Configs")
+        saveDefaultProjectConfigButton.clicked.connect(self.saveDefaultProjectConfig)
+
+        projectConfigTabLayout.addWidget(saveDefaultProjectConfigButton)
+
+        projectConfigTab.setLayout(projectConfigTabLayout)
+
+        tab.addTab(appConfigTab, "App Configs")
+        tab.addTab(projectConfigTab, "Project Configs")
+
+        mainlayout.addWidget(tab)
         self.setLayout(mainlayout)
 
         logger.info("Settings window initialized.")
 
+    # TODO: unit tests
     def updateConfigs(self, app_configs, project_configs):
+        """Updates the configurations in the settings window. All fields are removed and then re-added with the new configurations.
+        
+        Args:
+            app_configs (dict): The new app configurations.
+            project_configs (dict): The new project configurations."""
         self.app_configs = app_configs
         self.project_configs = project_configs
 
-        self.tab.clear()
+        # remove old fields
+        for i in range(self.appConfigForm.rowCount()):
+            self.appConfigForm.removeRow(0)
 
-        appConfigTab = QWidget()
-        appConfigForm = QFormLayout()
+        for i in range(self.projectConfigForm.rowCount()):
+            self.projectConfigForm.removeRow(0)
 
+        # add new fields
         for key in self.app_configs.keys():
-            appConfigForm.addRow(key, QLineEdit(str(self.app_configs[key]))) # wrapped in str() because QLineEdit only accepts strings, not bools
-
-        appConfigTab.setLayout(appConfigForm)
-
-        projectConfigTab = QWidget()
-        projectConfigForm = QFormLayout()
+            self.appConfigForm.addRow(key, QLineEdit(str(self.app_configs[key])))     
 
         for key in self.project_configs.keys():
-            projectConfigForm.addRow(key, QLineEdit(str(self.project_configs[key]))) # wrapped in str() because QLineEdit only accepts strings, not bools
-
-        projectConfigTab.setLayout(projectConfigForm)
-
-        self.tab.addTab(appConfigTab, "App Configs")
-        self.tab.addTab(projectConfigTab, "Project Configs")
+            self.projectConfigForm.addRow(key, QLineEdit(str(self.project_configs[key])))   
 
     # TODO: unit tests
     def saveAppConfig(self):

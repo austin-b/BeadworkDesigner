@@ -430,6 +430,7 @@ class MainWindow(QMainWindow):
         self.currentColor.setText((self.model.data(index, Qt.ItemDataRole.DisplayRole)).upper())
 
     # TODO: refactor to set an enum instead of checking the button values each time
+    # TODO: how to handle multiple selections -- selecting without changing color in ColorMode does not change their color?
     def handleViewClicked(self, index):
         """Handles different behavior types for clicking on the BeadworkView
         depending on the mode selected:
