@@ -1,10 +1,10 @@
 ### List of features to add
 
 - [x] make a Goals/Ideas/Features file
-- [ ] add Save As file menu action
-- [ ] add "New Project" option to menu
-    - [ ] have loadNewProject - needs to import default config and create blank project, not load default
-    - [ ] OR: load default_project.json, but not allow Save, only Save As (determine via non-existent title field?)
+- [x] add Save As file menu action
+- [x] add "New Project" option to menu
+    - [x] have loadNewProject - needs to import default config and create blank project, not load default
+    - [x] OR: load default_project.json, but not allow Save, only Save As (determine via non-existent title field?)
 - [ ] change from RGB hex to HSV
 - [x] Settings menu
     - [ ] font options

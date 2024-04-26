@@ -262,6 +262,9 @@ class MainWindow(QMainWindow):
         self.saveAction = QAction('Save', self)
         self.saveAction.triggered.connect(self.saveDialog)
 
+        self.saveAsAction = QAction('Save As', self)
+        self.saveAsAction.triggered.connect(self.saveAsDialog)
+
         self.openAction = QAction('Open', self)
         self.openAction.triggered.connect(self.openDialog)
 
@@ -354,6 +357,7 @@ class MainWindow(QMainWindow):
         self.fileMenu.addAction(self.openAction)
         self.fileMenu.addSeparator()
         self.fileMenu.addAction(self.saveAction)
+        self.fileMenu.addAction(self.saveAsAction)
 
         self.editMenu = self.menu.addMenu('Edit')
         self.editMenu.addAction(self.adjustDimensionsAction)
@@ -668,10 +672,28 @@ class MainWindow(QMainWindow):
         self.beadworkView.setBeadSize(self.getConfig("beadHeight"), self.getConfig("beadWidth"))
         logger.debug(f"Resetting zoom to {self.getConfig('beadHeight')} x {self.getConfig('beadWidth')}.")
 
-    def saveDialog(self):
+    def saveAsDialog(self):
         """Opens a file dialog to save the project to a JSON file."""
         logger.info("Saving project.")
         filename = QFileDialog.getSaveFileName(self, 'Save Project', os.path.expanduser("~"), 'Beadwork Designer Project (*.json)')[0]
+        logger.debug(f"Selected filename: {filename}.")
+        if filename:
+            try:
+                self.exportProject(filename)
+                self.writeToStatusBar("Saved")
+            except Exception as e:
+                logger.error(f"Failed to save project to {filename}: {e}.")
+                self.writeToStatusBar("Failed to save project.")
+
+    # TODO: unit tests
+    def saveDialog(self):
+        """Saves the project to the current filename."""
+        logger.info("Saving project.")
+        try:
+            filename = self.windowTitle().split(" - ")[1]
+        except IndexError:
+            logger.error("No filename to save to.")
+            filename = QFileDialog.getSaveFileName(self, 'Save Project', os.path.expanduser("~"), 'Beadwork Designer Project (*.json)')[0]
         logger.debug(f"Selected filename: {filename}.")
         if filename:
             try:
@@ -778,13 +800,30 @@ class MainWindow(QMainWindow):
 
         self.updateWidthXHeight()
 
-    # TODO: currently shows the default_project.json filename -- refactor this to just pull 
-    # default config and a blank project data before implementing a single "SAVE" action
-    # without a file dialog
     def loadNewProject(self):
         """Loads a new project, replacing the current project with a blank one."""
         logger.info("Loading new project")
-        self.importProject(bin_dir + "/default_project.json")
+        
+        filename = bin_dir + "/default_project.json"
+
+        json = utils.loadProject(filename)
+        for key in json['configs'].keys():
+            self.setConfig(key, json['configs'][key])           # replace any config with the loaded one
+        
+        self.currentOrientation = BeadworkOrientation.VERTICAL     # if this does not match the config, it will be changed in the if statement
+
+        ### LOAD DATA
+        self.origModel.importData(json['project'], debug=self.getConfig('debug'))
+
+        ### UPDATE ELEMENTS & CHANGE ORIENTATION IF NECESSARY
+        if json['configs']["defaultOrientation"] == "Horizontal":
+            self.changeOrientation("Horizontal")
+
+            self.orientationComboBox.currentTextChanged.disconnect(self.changeOrientation)  # temporarily disconnect signal  
+            self.orientationComboBox.setCurrentText("Horizontal")                           # to avoid switching back to Vertical on this set
+            self.orientationComboBox.currentTextChanged.connect(self.changeOrientation)     # reconnect signal
+
+        self.updateWidthXHeight()
 
     # retrieveConfig method: and if no config is available, log it to prevent errors (and use default config instead)
     # NOTE: this still fails with a KeyError if the key is not in any config
