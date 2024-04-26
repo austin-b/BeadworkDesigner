@@ -144,7 +144,8 @@ class MainWindow(QMainWindow):
         """
         logger.debug("Setting up BeadworkView and BeadDelegate.")
         self.beadworkView = BeadworkView(beadHeight=beadHeight if self.currentOrientation == BeadworkOrientation.VERTICAL else beadWidth, 
-                                         beadWidth=beadWidth if self.currentOrientation == BeadworkOrientation.VERTICAL else beadHeight)
+                                         beadWidth=beadWidth if self.currentOrientation == BeadworkOrientation.VERTICAL else beadHeight,
+                                         parent=self)
         self.delegate = BeadDelegate(beadHeight=beadHeight if self.currentOrientation == BeadworkOrientation.VERTICAL else beadWidth, 
                                      beadWidth=beadWidth if self.currentOrientation == BeadworkOrientation.VERTICAL else beadHeight)
         self.beadworkView.setItemDelegate(self.delegate)
