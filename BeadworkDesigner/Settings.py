@@ -11,8 +11,7 @@ from BeadworkDesigner import utils
 
 logger = logging.getLogger(__name__)
 
-# TODO: currently only passing in configs at time of setup, will need to
-# refactor for passing in current configs
+# TODO: unit tests
 
 # TODO: add save/cancel buttons
 
@@ -32,7 +31,20 @@ class SettingsWindow(QWidget):
 
         mainlayout = QVBoxLayout()
 
-        tab = QTabWidget()
+        self.tab = QTabWidget()
+
+        self.updateConfigs(app_configs, project_configs)
+
+        mainlayout.addWidget(self.tab)
+        self.setLayout(mainlayout)
+
+        logger.info("Settings window initialized.")
+
+    def updateConfigs(self, app_configs, project_configs):
+        self.app_configs = app_configs
+        self.project_configs = project_configs
+
+        self.tab.clear()
 
         appConfigTab = QWidget()
         appConfigForm = QFormLayout()
@@ -50,19 +62,16 @@ class SettingsWindow(QWidget):
 
         projectConfigTab.setLayout(projectConfigForm)
 
-        tab.addTab(appConfigTab, "App Configs")
-        tab.addTab(projectConfigTab, "Project Configs")
+        self.tab.addTab(appConfigTab, "App Configs")
+        self.tab.addTab(projectConfigTab, "Project Configs")
 
-        mainlayout.addWidget(tab)
-        self.setLayout(mainlayout)
-
-        logger.info("Settings window initialized.")
-
+    # TODO: unit tests
     def saveAppConfig(self):
         """Saves the app configurations to the config file."""
         default_project_configs, _ = utils.readConfigFile(configFile) # not overwriting project configs, just app configs
         utils.saveConfigFile({"app_configs": self.app_configs, "project_configs": default_project_configs}, configFile)
 
+    # TODO: unit tests
     def saveDefaultProjectConfig(self):
         """Saves the default project configurations to the config file."""
         _, default_app_configs = utils.readConfigFile(configFile) # not overwriting project configs, just app configs

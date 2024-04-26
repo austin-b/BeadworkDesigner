@@ -96,6 +96,7 @@ class MainWindow(QMainWindow):
         self.setupStatusBar()
         self.setupMenu()
         self.setupDimensionsWindow()
+        self.setupSettingsWindow()
   
         ### SETUP MAIN LAYOUT & WIDGET
         logger.debug("Setting up main layout and widget.")
@@ -399,6 +400,12 @@ class MainWindow(QMainWindow):
         self.dimensionsWindowLayout.addWidget(widthLineWidget)
         self.dimensionsWindowLayout.addWidget(heightLineWidget)
         self.dimensionsWindowLayout.addWidget(self.changeDimensionsButton)
+
+    def setupSettingsWindow(self):
+        """Sets up the settingsWindow to allow the user to adjust the 
+        settings of the application."""
+        logger.debug("Setting up settingsWindow.")
+        self.settingsWindow = SettingsWindow(self.app_configs, self.project_configs)
         
     # This is currently the workaround as I cannot figure out how to
     # get the rows and columns to size properly without explicitly
@@ -684,9 +691,8 @@ class MainWindow(QMainWindow):
     def openSettingsWindow(self):
         """Opens a settings window."""
         logger.info("Opening settings window.")
-        settings = SettingsWindow(self.app_configs, self.project_configs)
-        settings.show()
-        logger.info("Settings window opened.")
+        self.settingsWindow.updateConfigs(self.app_configs, self.project_configs)
+        self.settingsWindow.show()
 
     ########################################
     # UTILITY METHODS
@@ -713,6 +719,9 @@ class MainWindow(QMainWindow):
 
         self.widthEdit.setText(str(self.modelWidth))
         self.heightEdit.setText(str(self.modelHeight))
+
+        self.setConfig("width", self.modelWidth if self.currentOrientation == BeadworkOrientation.VERTICAL else self.modelHeight)
+        self.setConfig("height", self.modelHeight if self.currentOrientation == BeadworkOrientation.VERTICAL else self.modelWidth)
         
     def exportProject(self, filename):
         """Exports the project to a JSON file.
