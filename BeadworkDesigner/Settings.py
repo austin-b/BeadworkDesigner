@@ -4,7 +4,6 @@ import os
 from PySide6.QtWidgets import (QPushButton,
                                QFormLayout,
                                QLineEdit,
-                               QHBoxLayout,
                                QTabWidget, 
                                QVBoxLayout,
                                QWidget)
@@ -14,8 +13,6 @@ from BeadworkDesigner import utils
 logger = logging.getLogger(__name__)
 
 # TODO: unit tests
-
-# TODO: add save/cancel buttons
 
 base_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 bin_dir = os.path.join(base_dir, "bin")
@@ -75,7 +72,6 @@ class SettingsWindow(QWidget):
 
         logger.info("Settings window initialized.")
 
-    # TODO: unit tests
     def updateConfigs(self, app_configs, project_configs):
         """Updates the configurations in the settings window. All fields are removed and then re-added with the new configurations.
         
@@ -99,13 +95,11 @@ class SettingsWindow(QWidget):
         for key in self.project_configs.keys():
             self.projectConfigForm.addRow(key, QLineEdit(str(self.project_configs[key])))   
 
-    # TODO: unit tests
     def saveAppConfig(self):
         """Saves the app configurations to the config file."""
         default_project_configs, _ = utils.readConfigFile(configFile) # not overwriting project configs, just app configs
         utils.saveConfigFile({"app_configs": self.app_configs, "project_configs": default_project_configs}, configFile)
 
-    # TODO: unit tests
     def saveDefaultProjectConfig(self):
         """Saves the default project configurations to the config file."""
         _, default_app_configs = utils.readConfigFile(configFile) # not overwriting project configs, just app configs

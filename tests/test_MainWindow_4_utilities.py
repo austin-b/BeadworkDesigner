@@ -184,36 +184,41 @@ def test_MainWindow_getConfig(qtbot):
     with pytest.raises(KeyError):
         window.getConfig("should_fail") # fails
 
-def test_MainWindow_setConfig(mainWindow):
+def test_MainWindow_saveAppConfig(mainWindow):
     mainWindow.setConfig("width", 15)
     assert(mainWindow.project_configs["width"] == 15)
 
     mainWindow.setConfig("beadHeight", 15)
-    mainWindow.saveAppConfig()
+
+    mainWindow.settingsWindow.updateConfigs(mainWindow.app_configs, mainWindow.project_configs)
+    mainWindow.settingsWindow.saveAppConfig()
     
     _, newConfig = readConfigFile(configFilePath)
     assert(newConfig["beadHeight"] == 15)
 
     # now return to normal
     mainWindow.setConfig("beadHeight", 22)
-    mainWindow.saveAppConfig()
+
+    mainWindow.settingsWindow.updateConfigs(mainWindow.app_configs, mainWindow.project_configs)
+    mainWindow.settingsWindow.saveAppConfig()
     
     _, newConfig = readConfigFile(configFilePath)
     assert(newConfig["beadHeight"] == 22)
 
 def test_MainWindow_saveDefaultProjectConfig(mainWindow):
     mainWindow.setConfig("height", mainWindow.getConfig("height") + 1)
-    mainWindow.saveDefaultProjectConfig()
+    
+    mainWindow.settingsWindow.updateConfigs(mainWindow.app_configs, mainWindow.project_configs)
+    mainWindow.settingsWindow.saveDefaultProjectConfig()
     
     newConfig = readConfigFile(configFilePath)
     assert(newConfig[0] == mainWindow.project_configs)
 
     # now return to normal
     mainWindow.setConfig("height", mainWindow.getConfig("height") - 1)
-    mainWindow.saveDefaultProjectConfig()
+
+    mainWindow.settingsWindow.updateConfigs(mainWindow.app_configs, mainWindow.project_configs)
+    mainWindow.settingsWindow.saveDefaultProjectConfig()
 
     newConfig = readConfigFile(configFilePath)
     assert(newConfig[0] == mainWindow.project_configs)
-
-def test_MainWindow_settingsDialog(mainWindow):
-    assert(False)
