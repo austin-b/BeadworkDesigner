@@ -7,9 +7,6 @@ from PySide6.QtGui import QColor
 
 from BeadworkDesigner.BeadworkModel import BeadworkModel, BeadworkTransposeModel
 
-# TODO: create test for BeadworkModel init with data
-# TODO: create test for TransposeModel
-
 def is_hex_color(s):
     return bool(re.fullmatch(r'#[0-9a-fA-F]{6}', s))
 
@@ -29,6 +26,38 @@ def test_BeadworkModel_init_nodata():
     testModel = BeadworkModel(debug=True)
     assert(data != "#FFFFFF" for row in testModel._data for data in row)
 
+def test_BeadworkModel_init_withdata():
+    testData = [
+        [
+            "#F0000F", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF"
+        ],
+        [
+            "#FFFFFF", "#F0000F", "#FFFFFF", "#FFFFFF", "#FFFFFF"
+        ],
+        [
+            "#FFFFFF", "#FFFFFF", "#F0000F", "#FFFFFF", "#FFFFFF"
+        ],
+        [
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#F0000F", "#FFFFFF"
+        ],
+        [
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#F0000F"
+        ],
+        [
+            "#FFFFFF", "#FFFFFF", "#CCCCCC", "#F0000F", "#FFFFFF"
+        ],
+        [
+            "#FFFFFF", "#FFFFFF", "#F0000F", "#FFFFFF", "#FFFFFF"
+        ]
+    ]
+
+    testModel = BeadworkModel(data=testData)
+
+    assert(testModel.rowCount(None) == len(testData))
+    assert(testModel.columnCount(None) == len(testData[0]))
+
+    assert(testModel._data == testData)
+    
 @pytest.fixture
 def testingModel():
     return BeadworkModel(debug=True)

@@ -6,9 +6,9 @@
     - [ ] have loadNewProject - needs to import default config and create blank project, not load default
     - [ ] OR: load default_project.json, but not allow Save, only Save As (determine via non-existent title field?)
 - [ ] change from RGB hex to HSV
-- [ ] Settings menu
+- [x] Settings menu
     - [ ] font options
-    - [ ] add a way to change the size of the beads
+    - [x] add a way to change the size of the beads
     - [ ] rewrite configs to be QSettings? https://doc.qt.io/qt-6/qsettings.html
 - [ ] add a way to change the color of the background
 - [ ] add a "bucket fill" option/tool

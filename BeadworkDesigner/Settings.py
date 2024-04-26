@@ -12,8 +12,6 @@ from BeadworkDesigner import utils
 
 logger = logging.getLogger(__name__)
 
-# TODO: unit tests
-
 base_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 bin_dir = os.path.join(base_dir, "bin")
 configFile = os.path.join(bin_dir, "config.json")
