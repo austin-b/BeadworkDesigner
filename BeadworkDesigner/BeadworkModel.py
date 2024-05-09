@@ -175,6 +175,9 @@ class BeadworkModel(QtCore.QAbstractTableModel):
             row (int): The index of the row to remove.
             count (int, optional): The number of rows to remove. Defaults to 1.
             parent (QModelIndex, optional): The parent index. Defaults to None.
+
+        Returns:
+            list[[str]]: The rows removed from the model.
         """
         rowsRemoved = []
         logger.debug(f"Removing row at {row}.")
@@ -233,6 +236,9 @@ class BeadworkModel(QtCore.QAbstractTableModel):
             column (int): The index of the column to remove.
             count (int, optional): The number of columns to remove. Defaults to 1.
             parent (QModelIndex, optional): The parent index. Defaults to None.
+
+        Returns:
+            dict(row: [columns]): The columns removed from the model.
         """
         columnsRemoved = {}
         logger.debug(f"Removing column at {column}.")
@@ -260,6 +266,45 @@ class BeadworkModel(QtCore.QAbstractTableModel):
         self.endRemoveColumns()
         logger.debug(f"Removed column at {column}.")
         return columnsRemoved
+    
+
+    # TODO: optimize this function?
+    def nearbyIndicesThatMatch(self, index):
+        """Finds all nearby beads that match the data at the given index.
+        
+        Args:
+            index (QIndex): index of the data.
+
+        Returns:
+            list[QIndex]: a list of indices of nearby beads that match the data.
+        """
+
+        nearby = []
+
+        def findAllNearbyThatMatchData(row, column, data):
+            nonlocal nearby   # use the nearby variable from the outer function
+            for i in range(-1, 2):
+                for j in range(-1, 2):
+                    try:                            # how do I get this to only check the 4 immediate neighbors?
+                        new_row = row + i
+                        new_column = column + j
+                        logger.debug(f"Checking {new_row}, {new_column}")
+                        # check we're within bounds and the bead matches the data
+                        if self._data[new_row][new_column] == data and new_row >= 0 and new_column >= 0 and new_row < self.rowCount(None) and new_column < self.columnCount(None):
+                            # check that the bead is either immediately above, below, left, or right of the current bead
+                            if (i == 0 and j != 0) or (i != 0 and j == 0):
+                                # check we haven't already found this bead
+                                if (new_row, new_column) not in nearby:
+                                    logger.debug(f"Found nearby bead that matches data: {new_row}, {new_column}")
+                                    nearby += [(new_row, new_column)]
+                                    findAllNearbyThatMatchData(new_row, new_column, data)
+                    except IndexError as e:
+                        pass
+            return nearby
+
+        findAllNearbyThatMatchData(index.row(), index.column(), self.data(index, role=Qt.ItemDataRole.DisplayRole))
+
+        return [self.index(row, column) for row, column in nearby]
     
     def importData(self, data, debug=False):    # debug flag will fix issues importing data from a debug model to a non-debug existing model
         """Imports data into the BeadworkModel.

@@ -152,6 +152,40 @@ def test_BeadworkModel_importData(testingModel):
     testModel.importData(testDict)
     assert(testModel._data == testingModel._data)
 
+def test_BeadworkModel_nearbyIndicesThatMatch():
+    testData = [
+        [
+            "#F0000F", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF"
+        ],
+        [
+            "#FFFFFF", "#F0000F", "#FFFFFF", "#FFFFFF", "#FFFFFF"
+        ],
+        [
+            "#FFFFFF", "#FFFFFF", "#F0000F", "#FFFFFF", "#FFFFFF"
+        ],
+        [
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#F0000F", "#FFFFFF"
+        ],
+        [
+            "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#F0000F"
+        ],
+        [
+            "#FFFFFF", "#FFFFFF", "#CCCCCC", "#F0000F", "#FFFFFF"
+        ],
+        [
+            "#FFFFFF", "#FFFFFF", "#F0000F", "#FFFFFF", "#FFFFFF"
+        ]
+    ]
+    testModel = BeadworkModel(data=testData)
+
+    assertData = []
+    for i in [(0, 2), (0, 1), (0, 3), (0, 4), (1, 4), (1, 3), (1, 2), (2, 3), (2, 4), (3, 4)]:
+        assertData.append(testModel.index(i[0], i[1]))
+
+    # test for 0, 3
+    assert(testModel.nearbyIndicesThatMatch(testModel.index(0, 3)) == assertData)
+    
+
 
 ### TESTING BEADWORKTRANSPOSEMODEL ###
 
