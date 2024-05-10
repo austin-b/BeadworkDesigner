@@ -239,6 +239,8 @@ class MainWindow(QMainWindow):
         self.removeRowAction.triggered.connect(self.removeRow)
         self.removeRowAction.setIcon(QIcon(os.path.join(icons_dir, "table-delete-row.png")))
 
+        ### MODE ACTIONS
+
         self.selectionMode = QAction('Selection Mode', self)
         self.selectionMode.setCheckable(True)
         self.selectionMode.triggered.connect(self.inSelectionMode)
@@ -254,6 +256,11 @@ class MainWindow(QMainWindow):
         self.clearMode.setCheckable(True)
         self.clearMode.triggered.connect(self.inClearMode)
         self.clearMode.setIcon(QIcon(os.path.join(icons_dir, "eraser.png")))
+
+        self.bucketMode = QAction('Bucket Mode', self)
+        self.bucketMode.setCheckable(True)
+        self.bucketMode.triggered.connect(self.inBucketMode)
+        self.bucketMode.setIcon(QIcon(os.path.join(icons_dir, "paint-can.png")))
 
         ### FILE MENU ACTIONS
 
@@ -298,6 +305,7 @@ class MainWindow(QMainWindow):
         self.toolbar.addAction(self.selectionMode)
         self.toolbar.addAction(self.colorMode)
         self.toolbar.addAction(self.clearMode)
+        self.toolbar.addAction(self.bucketMode)
 
     def setupColorList(self):
         """Sets up the ColorList view and the BeadworkToColorListProxyModel."""
@@ -450,12 +458,18 @@ class MainWindow(QMainWindow):
         if self.selectionMode.isChecked():      # if in selection mode, update the current color text
             self.updateCurrentColorText(index) 
         elif self.colorMode.isChecked():        # if in color mode, change the color of the bead selected
-            command = CommandChangeColor(self.model, index, self.currentColor.text(), f"Change color to {self.currentColor.text()}")
-            self.undoStack.push(command)
+            if self.currentColor.text() != "":
+                command = CommandChangeColor(self.model, index, self.currentColor.text(), f"Change color to {self.currentColor.text()}")
+                self.undoStack.push(command)
         elif self.clearMode.isChecked():        # if in clear mode, clear the color of the bead selected
             # TODO: currently, does clear the color of the bead, but does not account for multiple selections
             command = CommandChangeColor(self.model, index, "FFFFFF", f"Change color to #FFFFFF")
             self.undoStack.push(command)
+        elif self.bucketMode.isChecked():       # TODO: unit tests
+            if self.currentColor.text() != "":  # TODO: this only does multiple beads selected, but not if there is only one
+                selected = self.model.nearbyIndicesThatMatch(index)
+                command = CommandChangeMultipleColors(self.model, selected, self.currentColor.text(), f"Change color to {self.currentColor.text()}")
+                self.undoStack.push(command)
 
     # TODO: build unit tests
     def handleColorListClicked(self, index):
@@ -473,7 +487,7 @@ class MainWindow(QMainWindow):
             # https://doc.qt.io/qtforpython-6/PySide6/QtWidgets/QAbstractItemView.html#PySide6.QtWidgets.QAbstractItemView.setSelection
             allIndexes = self.colorListModel.mapToAllSourceIndexes(index)
             self.beadworkView.selectListOfBeads(allIndexes)
-        elif self.colorMode.isChecked():        # if in color mode, update the colorDialogWidget color
+        elif self.colorMode.isChecked() or self.bucketMode.isChecked():        # if in color mode, update the colorDialogWidget color
             self.currentColor.setText((self.colorListModel.data(index, Qt.ItemDataRole.DisplayRole)).upper())
             # Sets all selected beads after changing the color in the colorList
 
@@ -610,6 +624,7 @@ class MainWindow(QMainWindow):
         if checked:
             self.colorMode.setChecked(False)
             self.clearMode.setChecked(False)
+            self.bucketMode.setChecked(False)
         else:   # if not checked but clicked, revert back to checked
             self.selectionMode.setChecked(True)
 
@@ -631,6 +646,7 @@ class MainWindow(QMainWindow):
         if checked:
             self.selectionMode.setChecked(False)
             self.clearMode.setChecked(False)
+            self.bucketMode.setChecked(False)
         else:   # if not checked but clicked, revert back to checked
             self.colorMode.setChecked(True)
 
@@ -652,6 +668,7 @@ class MainWindow(QMainWindow):
         if checked:
             self.selectionMode.setChecked(False)
             self.colorMode.setChecked(False)
+            self.bucketMode.setChecked(False)
         else:   # if not checked but clicked, revert back to checked
             self.clearMode.setChecked(True)
 
@@ -660,6 +677,23 @@ class MainWindow(QMainWindow):
         self.currentColor.setText("")   # clear the current color dialog
 
         logger.debug("Entered clear mode.")
+
+    def inBucketMode(self, checked):
+        """Changes the mode to Bucket Mode. Slot for the triggered bucketMode action.
+
+        Args:
+            checked (bool): flag for if the bucketMode action/button is checked.
+        """
+        if checked:
+            self.selectionMode.setChecked(False)
+            self.colorMode.setChecked(False)
+            self.clearMode.setChecked(False)
+        else:
+            self.bucketMode.setChecked(True)
+
+        self.writeToStatusBar("Bucket Mode")
+
+        logger.debug("Entered bucket mode.")
 
     def zoomIn(self):
         """Zooms in on the beadwork by increasing the size of the beads."""

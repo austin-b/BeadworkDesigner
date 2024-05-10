@@ -288,7 +288,7 @@ class BeadworkModel(QtCore.QAbstractTableModel):
                     try:                            # how do I get this to only check the 4 immediate neighbors?
                         new_row = row + i
                         new_column = column + j
-                        logger.debug(f"Checking {new_row}, {new_column}")
+                        # logger.debug(f"Checking {new_row}, {new_column}")
                         # check we're within bounds and the bead matches the data
                         if self._data[new_row][new_column] == data and new_row >= 0 and new_column >= 0 and new_row < self.rowCount(None) and new_column < self.columnCount(None):
                             # check that the bead is either immediately above, below, left, or right of the current bead
@@ -370,3 +370,8 @@ class BeadworkTransposeModel(QTransposeProxyModel):
         """Removes a column at the given index."""
         logger.debug("Calling removeRow from BeadworkTransposeModel.")
         self.sourceModel().removeRow(column, count)
+
+    def nearbyIndicesThatMatch(self, index):
+        """Finds all nearby beads that match the data at the given index."""
+        logger.debug("Calling nearbyIndicesThatMatch from BeadworkTransposeModel.")
+        return self.sourceModel().nearbyIndicesThatMatch(index)
