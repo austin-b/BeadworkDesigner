@@ -20,4 +20,14 @@
 - [ ] implement a way to group and ungroup beads for easier manipulation
 - [ ] Add a way to add text labels or annotations to the beadwork design
 - [ ] add a way to print or export to PDF
-- [ ] add different levels of logging (so that DEBUG doesn't give EVERYTHING, but that another level will)
+- [x] add different levels of logging (so that DEBUG doesn't give EVERYTHING, but that another level will)
+- [ ] add different types of beads: 
+    - Delica sizing (type I use is DB style): https://www.miyuki-beads.co.jp/english/seed/09.html
+    - have types/classes of beads that know their dimension, for calculation and to automatically set the ratios for bead height and width displayed?
+    - any way to get available colors for the types of bead chosen?
+    - multiple bead types in one project?
+- [ ] add padding at the end of the bead view for aesthetic purposes, as when you add enough beads to scroll, it will stop at the end
+- [ ] more keyboard shortcuts:
+    - [ ] ENTER for adjust dimensions button window button and other settings, etc.
+    - [ ] switch orientation
+    - [ ] switch mode

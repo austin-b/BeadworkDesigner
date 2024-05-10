@@ -102,11 +102,13 @@ class SettingsWindow(QWidget):
         for key in self.project_configs.keys():
             self.projectConfigForm.addRow(key, QLineEdit(str(self.project_configs[key])))   
 
+    # TODO: does not work because I just re-wrote the config file with the same data
     def saveAppConfig(self):
         """Saves the app configurations to the config file."""
         default_project_configs, _ = utils.readConfigFile(configFile) # not overwriting project configs, just app configs
         utils.saveConfigFile({"app_configs": self.app_configs, "project_configs": default_project_configs}, configFile)
 
+    # TODO: does not work because I just re-wrote the config file with the same data
     def saveDefaultProjectConfig(self):
         """Saves the default project configurations to the config file."""
         _, default_app_configs = utils.readConfigFile(configFile) # not overwriting project configs, just app configs
