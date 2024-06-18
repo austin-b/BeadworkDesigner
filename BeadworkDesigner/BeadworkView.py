@@ -187,20 +187,18 @@ class BeadworkView(QTableView):
         logger.debug(f"Orientation changed to {self.beadWidth}, {self.beadHeight}.")
 
     # TODO: unit tests
-    # TODO: take out the vertBar and horizBar and make them class variables
+    # TODO: FIX -- when it hits maximum, this function highjacks all scroll movements and increases the value. How to check for "down" movement only?
     def vertScrollActionTriggered(self, action):
         """Slot for when the vertical scroll bar is triggered."""
-        vertBar = self.verticalScrollBar()
-        if vertBar.value()==vertBar.maximum():  #if we are at the maximum
+        if self.verticalScrollBar().value()==self.verticalScrollBar().maximum():  #if we are at the maximum
             if QAbstractSlider.SliderAction.SliderPageStepSub == action:
                 #set a new maximum to go one more step past the original maximum, this lets us "go past" the last row/column
-                vertBar.setMaximum(vertBar.maximum()+vertBar.singleStep())
+                self.verticalScrollBar().setMaximum(self.verticalScrollBar().maximum()+self.verticalScrollBar().singleStep())
 
-                vertBar.setValue(vertBar.maximum())
+                self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())
 
     def horizScrollActionTriggered(self, action):
         """Slot for when the horizontal scroll bar is triggered."""
-        horizBar = self.horizontalScrollBar()
-        if horizBar.value()==horizBar.maximum():
-            horizBar.setMaximum(horizBar.maximum()+horizBar.singleStep())
-            horizBar.setValue(horizBar.maximum())
+        if self.horizontalScrollBar().value()==self.horizontalScrollBar().maximum():
+            self.horizontalScrollBar().setMaximum(self.horizontalScrollBar().maximum()+self.horizontalScrollBar().singleStep())
+            self.horizontalScrollBar().setValue(self.horizontalScrollBar().maximum())
