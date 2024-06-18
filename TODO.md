@@ -27,6 +27,7 @@
     - any way to get available colors for the types of bead chosen?
     - multiple bead types in one project?
 - [ ] add padding at the end of the bead view for aesthetic purposes, as when you add enough beads to scroll, it will stop at the end
+    - https://www.qtcentre.org/threads/55953-Scroll-QTableView-beyond-last-column-row
 - [ ] more keyboard shortcuts:
     - [ ] ENTER for adjust dimensions button window button and other settings, etc.
     - [ ] switch orientation

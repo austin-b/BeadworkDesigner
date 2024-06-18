@@ -1,6 +1,6 @@
 import logging
 
-from PySide6.QtWidgets import QAbstractItemView, QHeaderView, QMenu, QTableView
+from PySide6.QtWidgets import QAbstractItemView, QAbstractSlider, QHeaderView, QMenu, QTableView
 from PySide6.QtCore import (QItemSelection,
                             QItemSelectionModel,
                             QItemSelectionRange,
@@ -89,6 +89,12 @@ class BeadworkView(QTableView):
         # TODO: can I remove the grey borders?
         self.setVerticalHeader(BeadworkHeaderView(Qt.Orientation.Vertical))
         self.setHorizontalHeader(BeadworkHeaderView(Qt.Orientation.Horizontal))
+
+        self.verticalScrollBar().actionTriggered.connect(self.vertScrollActionTriggered)
+        self.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
+        
+        self.horizontalScrollBar().actionTriggered.connect(self.horizScrollActionTriggered)
+        self.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
 
         self.beadHeight = beadHeight
         self.beadWidth = beadWidth
@@ -179,3 +185,22 @@ class BeadworkView(QTableView):
         self.beadHeight, self.beadWidth = self.beadWidth, self.beadHeight
         self.setBeadSize()
         logger.debug(f"Orientation changed to {self.beadWidth}, {self.beadHeight}.")
+
+    # TODO: unit tests
+    # TODO: take out the vertBar and horizBar and make them class variables
+    def vertScrollActionTriggered(self, action):
+        """Slot for when the vertical scroll bar is triggered."""
+        vertBar = self.verticalScrollBar()
+        if vertBar.value()==vertBar.maximum():  #if we are at the maximum
+            if QAbstractSlider.SliderAction.SliderPageStepSub == action:
+                #set a new maximum to go one more step past the original maximum, this lets us "go past" the last row/column
+                vertBar.setMaximum(vertBar.maximum()+vertBar.singleStep())
+
+                vertBar.setValue(vertBar.maximum())
+
+    def horizScrollActionTriggered(self, action):
+        """Slot for when the horizontal scroll bar is triggered."""
+        horizBar = self.horizontalScrollBar()
+        if horizBar.value()==horizBar.maximum():
+            horizBar.setMaximum(horizBar.maximum()+horizBar.singleStep())
+            horizBar.setValue(horizBar.maximum())
