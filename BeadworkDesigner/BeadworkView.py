@@ -69,6 +69,18 @@ class BeadworkHeaderView(QHeaderView):
             logger.debug(f"Removing row at {index}.")
             undostack.push(CommandRemoveRow(self.parent().model(), self.parent(), index))
 
+class BeadworkViewSlider(QAbstractSlider):
+    """A slider for the BeadworkView that allows for scrolling past the beadwork to a certain point."""
+
+    def __init__(self, orientation, parent=None):
+        """Initializes the BeadworkViewSlider."""
+        super().__init__(parent=parent)
+
+        self.setOrientation(orientation)
+        self.setPageStep(1)
+
+        logger.info("BeadworkViewSlider initialized.")
+
 class BeadworkView(QTableView):
     """A view for the BeadworkModel that displays the beadwork as a grid of colored beads.
 
@@ -89,12 +101,6 @@ class BeadworkView(QTableView):
         # TODO: can I remove the grey borders?
         self.setVerticalHeader(BeadworkHeaderView(Qt.Orientation.Vertical))
         self.setHorizontalHeader(BeadworkHeaderView(Qt.Orientation.Horizontal))
-
-        self.verticalScrollBar().actionTriggered.connect(self.vertScrollActionTriggered)
-        self.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
-        
-        self.horizontalScrollBar().actionTriggered.connect(self.horizScrollActionTriggered)
-        self.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
 
         self.beadHeight = beadHeight
         self.beadWidth = beadWidth
@@ -185,20 +191,3 @@ class BeadworkView(QTableView):
         self.beadHeight, self.beadWidth = self.beadWidth, self.beadHeight
         self.setBeadSize()
         logger.debug(f"Orientation changed to {self.beadWidth}, {self.beadHeight}.")
-
-    # TODO: unit tests
-    # TODO: FIX -- when it hits maximum, this function highjacks all scroll movements and increases the value. How to check for "down" movement only?
-    def vertScrollActionTriggered(self, action):
-        """Slot for when the vertical scroll bar is triggered."""
-        if self.verticalScrollBar().value()==self.verticalScrollBar().maximum():  #if we are at the maximum
-            if QAbstractSlider.SliderAction.SliderPageStepSub == action:
-                #set a new maximum to go one more step past the original maximum, this lets us "go past" the last row/column
-                self.verticalScrollBar().setMaximum(self.verticalScrollBar().maximum()+self.verticalScrollBar().singleStep())
-
-                self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())
-
-    def horizScrollActionTriggered(self, action):
-        """Slot for when the horizontal scroll bar is triggered."""
-        if self.horizontalScrollBar().value()==self.horizontalScrollBar().maximum():
-            self.horizontalScrollBar().setMaximum(self.horizontalScrollBar().maximum()+self.horizontalScrollBar().singleStep())
-            self.horizontalScrollBar().setValue(self.horizontalScrollBar().maximum())
