@@ -4,6 +4,8 @@ from PySide6.QtCore import QAbstractProxyModel, QModelIndex, Qt
 from PySide6.QtGui import QAction, QColor
 from PySide6.QtWidgets import QColorDialog, QListView, QMenu
 
+from BeadworkDesigner.Commands import CommandChangeMultipleColors
+
 logger = logging.getLogger(__name__)
 
 class BeadworkToColorListProxyModel(QAbstractProxyModel):
@@ -19,6 +21,8 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
             parent (QObject, optional): The parent object. Defaults to None.
         """
         super().__init__(parent) 
+
+        self.undoStack = parent.undoStack    # TODO: should be an easier way to get this
 
         self._colors = {}
         self._colors_index = []
@@ -183,9 +187,7 @@ class BeadworkToColorListProxyModel(QAbstractProxyModel):
         """
         indexes = self.allIndexesForColor(initColor)
         logger.info(f"Changing all instances of {initColor} to {newColor}.")
-        for index in indexes:
-            # TODO: make this an Undo/Redo command
-            self.sourceModel().setData(index, newColor, Qt.ItemDataRole.EditRole)
+        self.undoStack.push(CommandChangeMultipleColors(self.sourceModel(), indexes, newColor[1:])) # skip the '#' in the color as it is added in the command
 
     # runs through model and creates a dictionary of unique colors
     def evaluateModelForUniqueColors(self):

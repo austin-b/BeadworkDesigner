@@ -10,7 +10,6 @@ from PySide6.QtWidgets import QApplication
 from BeadworkDesigner.MainWindow import MainWindow
 from BeadworkDesigner.utils import readConfigFile, loadProject
 
-# TODO: add capability to return config to default_config.py
 try:
     project_configs, app_configs = readConfigFile(os.path.join(os.path.dirname(os.path.abspath(__file__)), "bin/config.json"))  # import config file
 except ImportError:
