@@ -697,12 +697,12 @@ class MainWindow(QMainWindow):
 
     def zoomIn(self):
         """Zooms in on the beadwork by increasing the size of the beads."""
-        self.beadworkView.setBeadSize(self.beadworkView.beadHeight + 1, self.beadworkView.beadWidth + 1)
+        self.beadworkView.increaseSize()
         logger.debug(f"Zooming in to {self.beadworkView.beadHeight + 1} x {self.beadworkView.beadWidth + 1}.")
 
     def zoomOut(self):
         """Zooms out on the beadwork by decreasing the size of the beads."""
-        self.beadworkView.setBeadSize(self.beadworkView.beadHeight - 1, self.beadworkView.beadWidth - 1)
+        self.beadworkView.decreaseSize()
         logger.debug(f"Zooming out to {self.beadworkView.beadHeight - 1} x {self.beadworkView.beadWidth - 1}.")
 
     def zoomReset(self):

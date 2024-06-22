@@ -1,4 +1,5 @@
 import logging
+import math
 
 from PySide6.QtWidgets import QAbstractItemView, QAbstractSlider, QHeaderView, QMenu, QTableView
 from PySide6.QtCore import (QItemSelection,
@@ -68,18 +69,6 @@ class BeadworkHeaderView(QHeaderView):
         else:
             logger.debug(f"Removing row at {index}.")
             undostack.push(CommandRemoveRow(self.parent().model(), self.parent(), index))
-
-class BeadworkViewSlider(QAbstractSlider):
-    """A slider for the BeadworkView that allows for scrolling past the beadwork to a certain point."""
-
-    def __init__(self, orientation, parent=None):
-        """Initializes the BeadworkViewSlider."""
-        super().__init__(parent=parent)
-
-        self.setOrientation(orientation)
-        self.setPageStep(1)
-
-        logger.info("BeadworkViewSlider initialized.")
 
 class BeadworkView(QTableView):
     """A view for the BeadworkModel that displays the beadwork as a grid of colored beads.
@@ -162,19 +151,21 @@ class BeadworkView(QTableView):
         super().repaint()
 
     def setBeadSize(self, height=None, width=None):
-        """Sets the size of the beads in the view.
+        """Sets the size of the beads in the view. If no height or width is given, uses the stored values.
         
         Args:
             height (int, optional): The height, in pixels, of the beads. 
                                     If none, uses stored value. Defaults to None.
             width (int, optional):  The width, in pixels, of the beads. 
                                     If none, uses stored value. Defaults to None.
-        """
+        """     
+        # TODO: add a check for bead ratio
+
         if height != None:
-            self.beadHeight = height
+            self.beadHeight = math.ceil(height) # round up to ensure that the bead size is always at least 1 pixel
 
         if width != None:
-            self.beadWidth = width
+            self.beadWidth = math.ceil(width)   # round up to ensure that the bead size is always at least 1 pixel
 
         for i in range(self.model().rowCount(None)):
             self.setRowHeight(i, self.beadHeight)
@@ -185,6 +176,22 @@ class BeadworkView(QTableView):
         self.itemDelegate().changeBeadDimensions(self.beadWidth-1, self.beadHeight-1)
 
         logger.debug(f"Bead size set to {self.beadWidth}, {self.beadHeight}.")
+
+    def increaseSize(self):
+        """Increases the size of the beads in the view while retaining the current ratio."""
+        # any decimal places will be truncated in the setBeadSize method
+        h = self.beadHeight * 1.25
+        w = self.beadWidth * 1.25
+
+        self.setBeadSize(h, w)
+    
+    def decreaseSize(self):
+        """Decreases the size of the beads in the view while retaining the bead type ratio."""
+        # any decimal places will be truncated in the setBeadSize method
+        h = self.beadHeight * 0.75
+        w = self.beadWidth * 0.75
+
+        self.setBeadSize(h, w)
 
     def changeOrientation(self):
         """Changes the orientation of the beads in the view - swaps width and height."""
